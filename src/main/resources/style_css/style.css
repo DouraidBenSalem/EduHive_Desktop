@@ -1,0 +1,36 @@
+.sidebar {
+    -fx-background-color: white;
+    -fx-border-color: black;
+
+    /* Alternative syntax (older JavaFX versions): */
+    /* -fx-background-color: linear-gradient(from top to bottom, #009FE3, #003C88); */
+}
+.icon_nav{
+    -fx-background-color: white;
+
+}
+.btn {
+    /* Remove border and background */
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 8px 16px;
+
+    /* Center the button content (text/graphic) */
+    -fx-alignment: center;
+    -fx-content-display: center;
+
+    /* Text styling (optional) */
+
+    -fx-font-size: 14px;
+}
+
+.navbar {
+    -fx-background-color: white;
+
+}
+
+.screen {
+    -fx-background-color: #eef1ff;
+}
