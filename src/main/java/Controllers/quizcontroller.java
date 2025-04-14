@@ -21,6 +21,9 @@ import java.sql.Statement;
 public class quizcontroller {
 
     @FXML
+    private NavBarController navbarController;
+
+    @FXML
     private Button exporter;
 
     @FXML
@@ -51,6 +54,7 @@ public class quizcontroller {
 
     @FXML
     void initialize() {
+        navbarController.setParent(this);
         id_quiz.setCellValueFactory(new PropertyValueFactory<>("id"));
         titre.setCellValueFactory(new PropertyValueFactory<>("titre"));
         question.setCellValueFactory(new PropertyValueFactory<>("question"));
