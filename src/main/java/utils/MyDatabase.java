@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class MyDatabase {
 
-    final String URL="jdbc:mysql://localhost:3306/eduhivee";
+    final String URL="jdbc:mysql://localhost:3306/eduhive_databas";
 
     final String USERNAME="root";
     final String PASSWORD="";

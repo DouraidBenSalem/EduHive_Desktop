@@ -1,4 +1,4 @@
-package crud_quiz;
+package Controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

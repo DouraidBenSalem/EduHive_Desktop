@@ -1,4 +1,4 @@
-package crud_quiz;
+package Main;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -7,10 +7,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class quizapp extends Application {
+public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(quizapp.class.getResource("quizpage.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/Controllers/quizpage.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         scene.getStylesheets().add(getClass().getResource("/style_css/style.css").toExternalForm());
         stage.setTitle("Eduhive");

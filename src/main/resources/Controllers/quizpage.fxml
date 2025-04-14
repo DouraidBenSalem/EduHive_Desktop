@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
@@ -13,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="900.0" styleClass="screen" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="crud_quiz.quizcontroller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="900.0" styleClass="screen" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.quizcontroller">
    <children>
       <VBox alignment="TOP_RIGHT" prefHeight="650.0" prefWidth="191.0" styleClass="sidebar" AnchorPane.topAnchor="0.0">
          <children>
@@ -55,6 +57,13 @@
                         <Insets left="-10.0" />
                      </HBox.margin>
                   </Button>
+                  <MenuButton mnemonicParsing="false" text="MenuButton">
+                     <items>
+                        <MenuItem mnemonicParsing="false" text="Action 1" />
+                        <MenuItem mnemonicParsing="false" text="Action 2" />
+                        <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                     </items>
+                  </MenuButton>
                </children>
                <padding>
                   <Insets top="5.0" />
@@ -180,16 +189,16 @@
       <Pane layoutX="190.0" layoutY="44.0" prefHeight="657.0" prefWidth="710.0">
          <children>
             <TableView fx:id="quizztable" layoutX="14.0" layoutY="140.0" prefHeight="406.0" prefWidth="675.0">
-              <columns>
-                <TableColumn fx:id="id_quiz" prefWidth="49.60003662109375" text="ID" />
-                <TableColumn fx:id="titre" prefWidth="84.79998779296875" text="titre" />
+               <columns>
+                  <TableColumn fx:id="id_quiz" prefWidth="49.60003662109375" text="ID" />
+                  <TableColumn fx:id="titre" prefWidth="84.79998779296875" text="titre" />
                   <TableColumn fx:id="question" prefWidth="147.99993896484375" text="question" />
                   <TableColumn fx:id="rep_correct" prefWidth="82.40011596679688" text="rep_correct" />
                   <TableColumn fx:id="option_a" minWidth="0.0" prefWidth="117.60003662109375" text="option_a" />
                   <TableColumn fx:id="option_b" minWidth="0.0" prefWidth="146.39996337890625" text="option_b" />
                   <TableColumn fx:id="editColumn" prefWidth="134.4000244140625" text="Edit" />
                   <TableColumn fx:id="deleteColumn" text="Delete" />
-              </columns>
+               </columns>
             </TableView>
             <Button layoutX="573.0" layoutY="75.0" mnemonicParsing="false" onAction="#refrechtable" text="Refrech" />
             <Button fx:id="ajouter" layoutX="491.0" layoutY="75.0" mnemonicParsing="false" onAction="#ajoutertable" text="Ajouter" />

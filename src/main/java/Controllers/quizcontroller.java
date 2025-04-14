@@ -1,4 +1,4 @@
-package crud_quiz;
+package Controllers;
 
 import Entities.quiz;
 import javafx.collections.FXCollections;
@@ -59,7 +59,14 @@ public class quizcontroller {
         option_b.setCellValueFactory(new PropertyValueFactory<>("optionB"));
 
         loadQuizFromDB();
-        /*  addActionButtonsToTable();*/
+
+        // Create action column programmatically if it doesn't exist
+        if (actionColumn == null) {
+            actionColumn = new TableColumn<>("Actions");
+            quizztable.getColumns().add(actionColumn);
+        }
+
+        addActionButtonsToTable();
     }
 
     private void loadQuizFromDB() {
@@ -99,7 +106,7 @@ public class quizcontroller {
         }
     }
 
- /*   private void addActionButtonsToTable() {
+    private void addActionButtonsToTable() {
         actionColumn.setCellFactory(param -> new TableCell<>() {
             private final Button btnEdit = new Button("Edit");
             private final Button btnDelete = new Button("Delete");
@@ -145,7 +152,7 @@ public class quizcontroller {
                 }
             }
         });
-    }*/
+    }
 
 
     @FXML

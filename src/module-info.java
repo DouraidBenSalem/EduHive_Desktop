@@ -1,4 +1,4 @@
-module crud_quiz {
+module Controllers {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -11,6 +11,6 @@ module crud_quiz {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
 
-    opens crud_quiz to javafx.fxml;
-    exports crud_quiz;
+    opens Controllers to javafx.fxml;
+    exports Controllers;
 }
