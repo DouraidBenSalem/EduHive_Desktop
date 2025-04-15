@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eduhive.controller.MainController">
+
+    <!-- Navigation Bar -->
+    <HBox alignment="CENTER_LEFT" style="-fx-background-color: #2196F3; -fx-padding: 10; -fx-spacing: 10;">
+      <ImageView fitHeight="49.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@/style_css/images/logo.png" />
+         </image>
+      </ImageView>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="EduHive" textAlignment="CENTER">
+         <font>
+            <Font name="Calibri" size="16.0" />
+         </font>
+      </Text>
+        <ComboBox fx:id="navigationComboBox" prefWidth="200" style="-fx-background-color: white; -fx-font-size: 14;" />
+      <opaqueInsets>
+         <Insets right="10.0" />
+      </opaqueInsets>
+    </HBox>
+
+    <!-- Content Area -->
+    <StackPane VBox.vgrow="ALWAYS">
+        <fx:include fx:id="annonceView" source="annonce-view.fxml" visible="true" />
+        <fx:include fx:id="stageView" source="stage-view.fxml" visible="false" />
+        <fx:include fx:id="evenementView" source="evenement-view.fxml" visible="false" />
+    </StackPane>
+</VBox>

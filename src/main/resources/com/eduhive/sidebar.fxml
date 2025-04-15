@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+
+<HBox spacing="10" alignment="CENTER_LEFT" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <ImageView fitHeight="48" fitWidth="48">
+            <image>
+                <Image url="@/images/logo.png" />
+            </image>
+        </ImageView>
+        <Label text="EduHive" style="-fx-font-size: 22px; -fx-font-family: 'Constantia'; -fx-font-weight: bold; -fx-text-fill: #222;" />
+        <MenuButton text="Menu" style="-fx-background-color: #f4f4f4; -fx-border-color: #2196F3; -fx-border-radius: 5;">
+            <items>
+                <MenuItem text="Evenement" fx:id="evenementMenuItem" />
+                <MenuItem text="Stage" fx:id="stageMenuItem" />
+                <MenuItem text="Annonce" fx:id="annonceMenuItem" />
+            </items>
+        </MenuButton>
+    </children>
+    <padding>
+        <Insets top="10" left="10" bottom="10" right="10" />
+    </padding>
+</HBox> 
