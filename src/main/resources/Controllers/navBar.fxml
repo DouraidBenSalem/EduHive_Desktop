@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="191.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.NavBarController">
+<AnchorPane id="sidebar" prefHeight="650.0" prefWidth="184.0" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.NavBarController">
     <children>
         <VBox alignment="TOP_RIGHT" prefHeight="650.0" prefWidth="191.0" styleClass="sidebar" AnchorPane.topAnchor="0.0">
             <children>
@@ -26,14 +26,14 @@
                                 <Insets left="10.0" />
                             </HBox.margin>
                         </ImageView>
-                        <Label prefHeight="102.0" prefWidth="88.0" text="EduHive">
+                        <Label prefHeight="102.0" prefWidth="88.0" text="EduHive" textFill="WHITE">
                             <font>
                                 <Font name="Constantia" size="21.0" />
                             </font>
                         </Label>
                     </children>
                     <VBox.margin>
-                        <Insets bottom="90.0" />
+                        <Insets bottom="40.0" />
                     </VBox.margin>
                     <padding>
                         <Insets top="5.0" />
@@ -46,43 +46,16 @@
                                 <Image url="@../style_css/images/home.png" />
                             </image>
                             <HBox.margin>
-                                <Insets left="27.0" />
+                                <Insets left="10.0" />
                             </HBox.margin>
                         </ImageView>
-                        <Button id="btnquiz" mnemonicParsing="false" prefHeight="42.0" prefWidth="90.0" styleClass="btn" text="Accueil">
+                        <Button id="btnquiz" mnemonicParsing="false" onAction="#handleHomeButton" prefHeight="42.0" prefWidth="108.0" styleClass="btn" text="Accueil" textFill="WHITE">
                             <HBox.margin>
                                 <Insets left="-10.0" />
                             </HBox.margin>
-                        </Button>
-                        <MenuButton mnemonicParsing="false" text="MenuButton">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Action 1" />
-                                <MenuItem mnemonicParsing="false" text="Action 2" />
-                                <MenuItem mnemonicParsing="false" text="Unspecified Action" />
-                            </items>
-                        </MenuButton>
-                    </children>
-                    <padding>
-                        <Insets top="5.0" />
-                    </padding>
-                    <VBox.margin>
-                        <Insets bottom="10.0" />
-                    </VBox.margin>
-                </HBox>
-                <HBox prefHeight="47.0" prefWidth="151.0" spacing="5.0">
-                    <children>
-                        <ImageView fitHeight="37.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../style_css/images/utilisateur.png" />
-                            </image>
-                            <HBox.margin>
-                                <Insets left="27.0" />
-                            </HBox.margin>
-                        </ImageView>
-                        <Button id="btnquiz" mnemonicParsing="false" prefHeight="42.0" prefWidth="106.0" styleClass="btn" text="Utilisateur">
-                            <HBox.margin>
-                                <Insets left="-10.0" />
-                            </HBox.margin>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                         </Button>
                     </children>
                     <padding>
@@ -92,75 +65,111 @@
                         <Insets bottom="10.0" />
                     </VBox.margin>
                 </HBox>
-                <HBox prefHeight="47.0" prefWidth="151.0" spacing="5.0">
-                    <children>
-                        <ImageView fitHeight="37.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../style_css/images/un-journal.png" />
-                            </image>
-                            <HBox.margin>
-                                <Insets left="27.0" />
-                            </HBox.margin>
-                        </ImageView>
-                        <Button id="btnquiz" fx:id="HomeButton" mnemonicParsing="false" onAction="#handleHomeButton" prefHeight="42.0" prefWidth="88.0" styleClass="btn" text="Module">
-                            <HBox.margin>
-                                <Insets left="-10.0" />
-                            </HBox.margin>
-                        </Button>
-                    </children>
-                    <padding>
-                        <Insets top="5.0" />
-                    </padding>
-                    <VBox.margin>
-                        <Insets bottom="10.0" />
-                    </VBox.margin>
-                </HBox>
-                <HBox prefHeight="47.0" prefWidth="151.0" spacing="5.0">
-                    <children>
-                        <ImageView fitHeight="37.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../style_css/images/repondre.png" />
-                            </image>
-                            <HBox.margin>
-                                <Insets left="27.0" />
-                            </HBox.margin>
-                        </ImageView>
-                        <Button id="btnquiz" mnemonicParsing="false" prefHeight="42.0" prefWidth="77.0" styleClass="btn" text="Quizz">
-                            <HBox.margin>
-                                <Insets left="-10.0" />
-                            </HBox.margin>
-                        </Button>
-                    </children>
-                    <padding>
-                        <Insets top="5.0" />
-                    </padding>
-                    <VBox.margin>
-                        <Insets bottom="10.0" />
-                    </VBox.margin>
-                </HBox>
-                <HBox prefHeight="47.0" prefWidth="151.0" spacing="5.0">
-                    <children>
-                        <ImageView fitHeight="37.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../style_css/images/les-publicites.png" />
-                            </image>
-                            <HBox.margin>
-                                <Insets left="27.0" />
-                            </HBox.margin>
-                        </ImageView>
-                        <Button id="btnquiz" mnemonicParsing="false" prefHeight="42.0" prefWidth="98.0" styleClass="btn" text="Annonce">
-                            <HBox.margin>
-                                <Insets left="-10.0" />
-                            </HBox.margin>
-                        </Button>
-                    </children>
-                    <padding>
-                        <Insets top="5.0" />
-                    </padding>
-                    <VBox.margin>
-                        <Insets bottom="70.0" />
-                    </VBox.margin>
-                </HBox>
+            <HBox prefHeight="47.0" prefWidth="151.0" spacing="5.0">
+               <children>
+                  <ImageView fitHeight="37.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true" styleClass="icon_nav">
+                     <image>
+                        <Image url="@../style_css/images/utilisateur.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <Button id="btnquiz" mnemonicParsing="false" onAction="#navigateToUser" prefHeight="42.0" prefWidth="108.0" styleClass="btn" text="Utilisateur" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets left="-10.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="47.0" prefWidth="151.0" spacing="5.0">
+               <children>
+                  <ImageView fitHeight="37.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true" styleClass="icon_nav">
+                     <image>
+                        <Image url="@../style_css/images/un-journal.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <Button id="btnquiz" mnemonicParsing="false" onAction="#handleHomeButton" prefHeight="42.0" prefWidth="108.0" styleClass="btn" text="Module" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets left="-10.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="47.0" prefWidth="151.0" spacing="5.0">
+               <children>
+                  <ImageView fitHeight="37.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true" styleClass="icon_nav">
+                     <image>
+                        <Image url="@../style_css/images/repondre.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <MenuButton mnemonicParsing="false" text="Quizz" textFill="WHITE">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#navigateToQuiz" text="Quiz" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleHomeButton" text="Resultat" />
+                     </items>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </MenuButton>
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox prefHeight="47.0" prefWidth="151.0" spacing="5.0">
+               <children>
+                  <ImageView fitHeight="37.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true" styleClass="icon_nav">
+                     <image>
+                        <Image url="@../style_css/images/les-publicites.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <Button id="btnquiz" mnemonicParsing="false" onAction="#navigateToAnnouncement" prefHeight="42.0" prefWidth="108.0" styleClass="btn" text="Annonce" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets bottom="50.0" left="-10.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </HBox>
                 <HBox prefHeight="47.0" prefWidth="151.0">
                     <children>
                         <ImageView fitHeight="37.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
@@ -171,7 +180,7 @@
                                 <Insets left="30.0" />
                             </HBox.margin>
                         </ImageView>
-                        <Button id="btnquiz" mnemonicParsing="false" onAction="#handleLogoutButton" prefHeight="42.0" prefWidth="82.0" styleClass="btn" text="Logout">
+                        <Button id="btnquiz" mnemonicParsing="false" prefHeight="42.0" prefWidth="82.0" styleClass="btn" text="Logout" textFill="WHITE">
                             <HBox.margin>
                                 <Insets left="-10.0" />
                             </HBox.margin>

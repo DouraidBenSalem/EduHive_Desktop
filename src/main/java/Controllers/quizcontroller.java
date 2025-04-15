@@ -8,15 +8,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import utils.MyDatabase;
+import services.QuizService;
+import services.QuizServiceImpl;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 public class quizcontroller {
 
@@ -25,6 +22,9 @@ public class quizcontroller {
 
     @FXML
     private Button exporter;
+
+    @FXML
+    private Button Resultatpage;
 
     @FXML
     private TableColumn<quiz, Integer> id_quiz;
@@ -51,7 +51,11 @@ public class quizcontroller {
     private TableColumn<quiz, Void> actionColumn;
 
     private ObservableList<quiz> quizList = FXCollections.observableArrayList();
-
+    
+    // Add the service
+    // Update the service instantiation
+    private QuizService quizService = new QuizServiceImpl();
+    
     @FXML
     void initialize() {
         navbarController.setParent(this);
@@ -64,7 +68,6 @@ public class quizcontroller {
 
         loadQuizFromDB();
 
-        // Create action column programmatically if it doesn't exist
         if (actionColumn == null) {
             actionColumn = new TableColumn<>("Actions");
             quizztable.getColumns().add(actionColumn);
@@ -75,39 +78,15 @@ public class quizcontroller {
 
     private void loadQuizFromDB() {
         quizList.clear();
-        try {
-            Connection conn = MyDatabase.getInstance().getConnection();
-            String query = "SELECT * FROM quiz";
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-
-            while (rs.next()) {
-                quiz q = new quiz(
-                        rs.getInt("id"),
-                        rs.getString("titre"),
-                        rs.getString("question"),
-                        rs.getString("rep_correct"),
-                        rs.getString("option_a"),
-                        rs.getString("option_b")
-                );
-                quizList.add(q);
-            }
-            quizztable.setItems(quizList);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Use the service instead of direct database access
+        quizList.addAll(quizService.getAllQuizzes());
+        quizztable.setItems(quizList);
     }
 
     private void deleteQuiz(int id) {
-        try {
-            Connection conn = MyDatabase.getInstance().getConnection();
-            String query = "DELETE FROM quiz WHERE id = " + id;
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(query);
-            System.out.println("Quiz supprimé avec succès.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Use the service instead of direct database access
+        quizService.deleteQuiz(id);
+        System.out.println("Quiz supprimé avec succès.");
     }
 
     private void addActionButtonsToTable() {
@@ -124,11 +103,10 @@ public class quizcontroller {
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("ajouterquiz.fxml"));
                         Scene scene = new Scene(loader.load());
 
-                        // Get the controller AFTER loading the FXML
-                        add_quiz_controller controller = loader.getController();
-                        controller.initData(selectedQuiz); // Initialize with selected quiz data
-                        controller.setOnSaveCallback(() -> loadQuizFromDB()); // Set callback to reload quizzes after modification
 
+                        add_quiz_controller controller = loader.getController();
+                        controller.initData(selectedQuiz);
+                        controller.setOnSaveCallback(() -> loadQuizFromDB());
                         Stage stage = new Stage();
                         stage.setTitle("Modifier un Quiz");
                         stage.setScene(scene);
@@ -167,14 +145,13 @@ public class quizcontroller {
             stage.setTitle("Ajouter un Quiz");
             stage.setScene(new Scene(loader.load()));
 
-            // Get the controller after loading
+
             add_quiz_controller controller = loader.getController();
-            // Set callback to refresh the table after saving
+
             controller.setOnSaveCallback(() -> loadQuizFromDB());
 
             stage.show();
 
-            // Add a listener to refresh when the window is closed
             stage.setOnHidden(e -> loadQuizFromDB());
         } catch (IOException e) {
             e.printStackTrace();
@@ -248,9 +225,27 @@ public class quizcontroller {
             alert.showAndWait();
         }
     }
-
     @FXML
-    void refrechtable(ActionEvent event) {
-        loadQuizFromDB();
+    void navigateresultat(ActionEvent event) {
+        try {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("resultatpage.fxml"));
+            Scene scene = new Scene(loader.load());
+
+
+            Stage newStage = new Stage();
+            newStage.setTitle("Résultats");
+            newStage.setScene(scene);
+            newStage.show();
+
+
+            Stage currentStage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            currentStage.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+
 }

@@ -1,15 +1,14 @@
 .sidebar {
-    -fx-background-color: white;
-    -fx-border-color: black;
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #58c7fa, #8ab6f1);
+    -fx-background-radius: 0 30 30 0;
+    -fx-border-radius: 0 30 30 0;
 
-    /* Alternative syntax (older JavaFX versions): */
-    /* -fx-background-color: linear-gradient(from top to bottom, #009FE3, #003C88); */
 }
+
 .icon_nav{
-    -fx-background-color: white;
-
+    -fx-color: white;
 }
-.btn {
+.btn, .menu-button {
     /* Remove border and background */
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -20,10 +19,14 @@
     /* Center the button content (text/graphic) */
     -fx-alignment: center;
     -fx-content-display: center;
+}
 
-    /* Text styling (optional) */
+.menu-button > .arrow-button {
+    -fx-padding: 0;
+}
 
-    -fx-font-size: 14px;
+.menu-button > .arrow-button > .arrow {
+    -fx-background-color: white;
 }
 
 .navbar {
@@ -32,5 +35,5 @@
 }
 
 .screen {
-    -fx-background-color: #eef1ff;
+    -fx-background-color: #ffffff;
 }

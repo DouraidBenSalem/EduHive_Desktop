@@ -5,11 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import Entities.quiz;
-import utils.MyDatabase;
+import services.QuizService;
+import services.QuizServiceImpl;
 import javafx.stage.Stage;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-
 
 public class add_quiz_controller {
 
@@ -24,7 +22,9 @@ public class add_quiz_controller {
 
     private boolean isEditMode = false;
     private quiz quizToEdit;
-    private Runnable onSaveCallback; // pour rafraîchir automatiquement après ajout/modif
+    private Runnable onSaveCallback; 
+    
+    private QuizService quizService = new QuizServiceImpl();
 
     public void setOnSaveCallback(Runnable callback) {
         this.onSaveCallback = callback;
@@ -53,30 +53,29 @@ public class add_quiz_controller {
         String b = option_b.getText();
 
         try {
-            Connection conn = MyDatabase.getInstance().getConnection();
-
             if (isEditMode && quizToEdit != null) {
-                String sql = "UPDATE quiz SET titre=?, question=?, rep_correct=?, option_a=?, option_b=? WHERE id=?";
-                PreparedStatement pst = conn.prepareStatement(sql);
-                pst.setString(1, t);
-                pst.setString(2, q);
-                pst.setString(3, r);
-                pst.setString(4, a);
-                pst.setString(5, b);
-                pst.setInt(6, quizToEdit.getId());
-                pst.executeUpdate();
-
+                // Update existing quiz using the service
+                quiz updatedQuiz = new quiz(
+                    quizToEdit.getId(),
+                    t,
+                    q,
+                    r,
+                    a,
+                    b
+                );
+                quizService.updateQuiz(updatedQuiz);
                 showAlert("Quiz modifié avec succès !");
             } else {
-                String sql = "INSERT INTO quiz (titre, question, rep_correct, option_a, option_b) VALUES (?, ?, ?, ?, ?)";
-                PreparedStatement pst = conn.prepareStatement(sql);
-                pst.setString(1, t);
-                pst.setString(2, q);
-                pst.setString(3, r);
-                pst.setString(4, a);
-                pst.setString(5, b);
-                pst.executeUpdate();
-
+                // Create new quiz using the service
+                quiz newQuiz = new quiz(
+                    0, // ID will be set by the database
+                    t,
+                    q,
+                    r,
+                    a,
+                    b
+                );
+                quizService.addQuiz(newQuiz);
                 showAlert("Quiz ajouté avec succès !");
             }
 

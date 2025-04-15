@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.AddResultController">
+   <children>
+      <VBox layoutX="50.0" layoutY="30.0" prefHeight="440.0" prefWidth="500.0" spacing="15.0">
+         <children>
+            <Label text="Ajouter/Modifier un Résultat" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label prefWidth="150.0" text="Utilisateur:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="userComboBox" prefHeight="30.0" prefWidth="300.0" promptText="Sélectionner un utilisateur" />
+               </children>
+            </HBox>
+            
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label prefWidth="150.0" text="Quiz:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="quizComboBox" prefHeight="30.0" prefWidth="300.0" promptText="Sélectionner un quiz (optionnel)" />
+               </children>
+            </HBox>
+            
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label prefWidth="150.0" text="Note:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="noteField" prefHeight="30.0" prefWidth="300.0" promptText="Entrez la note (0-20)" />
+               </children>
+            </HBox>
+            
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label prefWidth="150.0" text="Réponses correctes:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="nbRepCorrectField" prefHeight="30.0" prefWidth="300.0" promptText="Nombre de réponses correctes" />
+               </children>
+            </HBox>
+            
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label prefWidth="150.0" text="Réponses incorrectes:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="nbRepIncorrectField" prefHeight="30.0" prefWidth="300.0" promptText="Nombre de réponses incorrectes" />
+               </children>
+            </HBox>
+            
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label prefWidth="150.0" text="Commentaire:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextArea fx:id="commentaireArea" prefHeight="100.0" prefWidth="300.0" promptText="Entrez un commentaire" wrapText="true" />
+               </children>
+            </HBox>
+            
+            <HBox alignment="CENTER" spacing="20.0">
+               <children>
+                  <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSave" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #4CAF50;" text="Enregistrer" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#handleCancel" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #f44336;" text="Annuler" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
