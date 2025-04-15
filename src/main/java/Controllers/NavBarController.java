@@ -62,7 +62,7 @@ public class NavBarController {
 
     @FXML
     public void navigateToUser(ActionEvent event) throws IOException {
-        navigateToPage("userpage.fxml", event);
+        navigateToPage("userPage.fxml", event);
     }
 
     @FXML

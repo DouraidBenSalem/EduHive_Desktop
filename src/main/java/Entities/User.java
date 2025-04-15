@@ -159,16 +159,14 @@ public class User implements UserService {
     }
 
     @Override
-    public Boolean deleteUser(User user, Connection connection) {
+    public void deleteUser(User user, Connection connection) {
         String query = "DELETE FROM user WHERE id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, user.getId());
             statement.executeUpdate();
-            return true;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
     }
 
