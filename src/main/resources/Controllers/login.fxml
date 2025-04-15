@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="rootPane" prefHeight="650.0" prefWidth="900.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.LoginController">
+   <children>
+      <AnchorPane layoutX="509.0" prefHeight="650.0" prefWidth="391.0" style="-fx-background-color: #0d47a1;">
+         <children>
+            <ImageView fx:id="loginLogoImage" fitHeight="650.0" fitWidth="391.0" layoutY="59.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../style_css/images/logo.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="loginContentPane" prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <fx:include fx:id="loginForm" source="loginForm.fxml" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

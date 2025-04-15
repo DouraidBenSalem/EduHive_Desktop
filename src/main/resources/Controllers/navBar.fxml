@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="191.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="Controllers.NavBarController">
+<AnchorPane prefHeight="650.0" prefWidth="191.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.NavBarController">
     <children>
         <VBox alignment="TOP_RIGHT" prefHeight="650.0" prefWidth="191.0" styleClass="sidebar" AnchorPane.topAnchor="0.0">
             <children>
@@ -171,7 +171,7 @@
                                 <Insets left="30.0" />
                             </HBox.margin>
                         </ImageView>
-                        <Button id="btnquiz" mnemonicParsing="false" prefHeight="42.0" prefWidth="82.0" styleClass="btn" text="Logout">
+                        <Button id="btnquiz" mnemonicParsing="false" onAction="#handleLogoutButton" prefHeight="42.0" prefWidth="82.0" styleClass="btn" text="Logout">
                             <HBox.margin>
                                 <Insets left="-10.0" />
                             </HBox.margin>

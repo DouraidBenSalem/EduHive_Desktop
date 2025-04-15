@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="509.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.LoginController">
+<AnchorPane prefHeight="650.0" prefWidth="509.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.UserController">
    <children>
-      <TextField fx:id="registerEmailField" layoutX="111.0" layoutY="102.0" prefHeight="45.0" prefWidth="348.0" promptText="Email" />
+      <TextField fx:id="addEmail" layoutX="111.0" layoutY="102.0" prefHeight="45.0" prefWidth="348.0" promptText="Email" />
       <Label layoutX="28.0" layoutY="102.0" prefHeight="45.0" prefWidth="83.0" text="Email:" textFill="#1a00ff">
          <font>
             <Font name="System Bold" size="14.0" />
@@ -21,13 +21,13 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="registerSurnameField" layoutX="111.0" layoutY="227.0" prefHeight="45.0" prefWidth="348.0" promptText="Nom" />
+      <TextField fx:id="addNom" layoutX="111.0" layoutY="227.0" prefHeight="45.0" prefWidth="348.0" promptText="Nom" />
       <Label layoutX="28.0" layoutY="227.0" prefHeight="45.0" prefWidth="83.0" text="Nom:" textFill="#1a00ff">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="registerNameField" layoutX="111.0" layoutY="289.0" prefHeight="45.0" prefWidth="348.0" promptText="Prénom" />
+      <TextField fx:id="addPrenom" layoutX="111.0" layoutY="289.0" prefHeight="45.0" prefWidth="348.0" promptText="Prénom" />
       <Label layoutX="28.0" layoutY="289.0" prefHeight="45.0" prefWidth="83.0" text="Prénom:" textFill="#1a00ff">
          <font>
             <Font name="System Bold" size="14.0" />
@@ -38,22 +38,23 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <PasswordField fx:id="registerPasswordField" layoutX="111.0" layoutY="165.0" prefHeight="45.0" prefWidth="348.0" promptText="Mot de passe" />
-      <Button fx:id="registerButton" layoutX="198.0" layoutY="443.0" mnemonicParsing="false" onAction="#registerButtonOnAction" prefHeight="45.0" prefWidth="174.0" style="-fx-background-color: #0D47A1FF;" text="Confirmer" textFill="WHITE">
+      <PasswordField fx:id="addPassword" layoutX="111.0" layoutY="165.0" prefHeight="45.0" prefWidth="348.0" promptText="Mot de passe" />
+      <Button fx:id="registerButton" layoutX="198.0" layoutY="443.0" mnemonicParsing="false" onAction="#submitUserFormCreate" prefHeight="45.0" prefWidth="174.0" style="-fx-background-color: #0D47A1FF;" text="Confirmer" textFill="WHITE">
          <font>
             <Font size="18.0" />
          </font>
       </Button>
-      <Button fx:id="registerCancelButton" layoutX="198.0" layoutY="494.0" mnemonicParsing="false" onAction="#registerCancelButtonOnAction" prefHeight="45.0" prefWidth="174.0" style="-fx-background-color: #0D47A1FF;" text="Annuler" textFill="WHITE">
+      <Button fx:id="registerCancelButton" layoutX="198.0" layoutY="494.0" mnemonicParsing="false" onAction="#onCancelButton" prefHeight="45.0" prefWidth="174.0" style="-fx-background-color: #0D47A1FF;" text="Annuler" textFill="WHITE">
          <font>
             <Font size="18.0" />
          </font>
       </Button>
-      <Label fx:id="registerEmailError" layoutX="111.0" layoutY="147.0" prefHeight="17.0" prefWidth="348.0" textFill="RED" />
-      <Label fx:id="registerPasswordError" layoutX="111.0" layoutY="210.0" prefHeight="17.0" prefWidth="348.0" textFill="RED" />
-      <Label fx:id="registerSurnameError" layoutX="111.0" layoutY="272.0" prefHeight="17.0" prefWidth="348.0" textFill="RED" />
-      <Label fx:id="registerNameError" layoutX="111.0" layoutY="334.0" prefHeight="17.0" prefWidth="348.0" textFill="RED" />
-      <Label fx:id="registerRoleError" layoutX="111.0" layoutY="388.0" prefHeight="17.0" prefWidth="348.0" textFill="RED" />
-      <ComboBox fx:id="registerRoleComboBox" layoutX="111.0" layoutY="357.0" prefHeight="33.0" prefWidth="348.0" promptText="Choisir un role" />
+      <Label fx:id="addEmailError" layoutX="111.0" layoutY="147.0" prefHeight="17.0" prefWidth="348.0" textFill="RED" />
+      <Label fx:id="addPasswordError" layoutX="111.0" layoutY="210.0" prefHeight="17.0" prefWidth="348.0" textFill="RED" />
+      <Label fx:id="addNomError" layoutX="111.0" layoutY="272.0" prefHeight="17.0" prefWidth="348.0" textFill="RED" />
+      <Label fx:id="addPrenomError" layoutX="111.0" layoutY="334.0" prefHeight="17.0" prefWidth="348.0" textFill="RED" />
+      <Label fx:id="addRoleError" layoutX="111.0" layoutY="388.0" prefHeight="17.0" prefWidth="348.0" textFill="RED" />
+      <ComboBox fx:id="addRole" layoutX="111.0" layoutY="357.0" prefHeight="33.0" prefWidth="348.0" promptText="Choisir un role" />
+      <TextField fx:id="addId" layoutX="124.0" layoutY="30.0" opacity="0.0" />
    </children>
 </AnchorPane>
