@@ -11,8 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import services.ResultService;
-import services.ResultServiceImpl;
+import Services.ResultService;
+import Services.ResultServiceImpl;
 
 import java.io.IOException;
 

@@ -28,7 +28,6 @@
                   </TableView>
                   <Button fx:id="ajouter" layoutX="583.0" layoutY="75.0" mnemonicParsing="false" onAction="#ajoutertable" text="Ajouter" />
                   <Button fx:id="exporter" layoutX="487.0" layoutY="75.0" mnemonicParsing="false" onAction="#exportertable" prefHeight="25.0" prefWidth="56.0" text="Print" />
-                  <Button fx:id="Resultatpage" layoutX="16.0" layoutY="75.0" mnemonicParsing="false" onAction="#navigateresultat" text="Resultat" />
                </children>
             </Pane>
          </children>
