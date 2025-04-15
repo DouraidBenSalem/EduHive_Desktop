@@ -1,0 +1,39 @@
+.sidebar {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #58c7fa, #8ab6f1);
+    -fx-background-radius: 0 30 30 0;
+    -fx-border-radius: 0 30 30 0;
+
+}
+
+.icon_nav{
+    -fx-color: white;
+}
+.btn, .menu-button {
+    /* Remove border and background */
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 8px 16px;
+
+    /* Center the button content (text/graphic) */
+    -fx-alignment: center;
+    -fx-content-display: center;
+}
+
+.menu-button > .arrow-button {
+    -fx-padding: 0;
+}
+
+.menu-button > .arrow-button > .arrow {
+    -fx-background-color: white;
+}
+
+.navbar {
+    -fx-background-color: white;
+
+}
+
+.screen {
+    -fx-background-color: #ffffff;
+}

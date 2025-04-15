@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="467.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.add_quiz_controller">
+   <children>
+      <HBox alignment="TOP_RIGHT" prefHeight="26.0" prefWidth="144.0">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="37.0" prefWidth="344.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Fomulaire quiz">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Text>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="50.0" prefWidth="344.0" spacing="50.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="titre:">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Text>
+            <TextField fx:id="titre" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="50.0" prefWidth="344.0" spacing="50.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="question:">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Text>
+            <TextField fx:id="question" prefHeight="26.0" prefWidth="162.0" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="50.0" prefWidth="344.0" spacing="50.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="rep_correct:">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Text>
+            <TextField fx:id="rep_correct" prefHeight="26.0" prefWidth="212.0" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="50.0" prefWidth="344.0" spacing="50.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="option_a:">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Text>
+            <TextField fx:id="option_a" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="50.0" prefWidth="344.0" spacing="50.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="option_b:">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Text>
+            <TextField fx:id="option_b" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="99.0" prefWidth="344.0" spacing="50.0">
+         <children>
+            <Button fx:id="ajouter" mnemonicParsing="false" onAction="#ajouterquiz" text="Ajouter" />
+            <Button fx:id="effacer" mnemonicParsing="false" onAction="#effacerquiz" text="Effacer" />
+         </children>
+      </HBox>
+   </children>
+</VBox>
