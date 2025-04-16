@@ -1,6 +1,7 @@
 package Controllers;
 
 import Entities.User;
+import Entities.quiz;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -356,5 +357,112 @@ public class UserController {
         }
 
         return isValid;
+    }
+
+    @FXML
+    void exportertable(ActionEvent event) {
+        try {
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Save PDF File");
+            fileChooser.getExtensionFilters().add(
+                    new javafx.stage.FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+
+            javafx.scene.Node source = (javafx.scene.Node) event.getSource();
+            java.io.File file = fileChooser.showSaveDialog(source.getScene().getWindow());
+
+            if (file != null) {
+                // Set up document with margins
+                com.itextpdf.text.Document document = new com.itextpdf.text.Document(com.itextpdf.text.PageSize.A4, 36, 36, 54, 36);
+                com.itextpdf.text.pdf.PdfWriter.getInstance(document, new java.io.FileOutputStream(file));
+                document.open();
+
+                // Add styled header with logo
+                com.itextpdf.text.Font titleFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 24, com.itextpdf.text.Font.BOLD, new com.itextpdf.text.BaseColor(44, 62, 80));
+                com.itextpdf.text.Paragraph title = new com.itextpdf.text.Paragraph("User List", titleFont);
+                title.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                title.setSpacingAfter(20);
+                document.add(title);
+
+                // Add timestamp
+                com.itextpdf.text.Font timestampFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 10, com.itextpdf.text.Font.ITALIC);
+                com.itextpdf.text.Paragraph timestamp = new com.itextpdf.text.Paragraph(
+                    "Exportée le: " + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                    timestampFont
+                );
+                timestamp.setAlignment(com.itextpdf.text.Element.ALIGN_RIGHT);
+                timestamp.setSpacingAfter(20);
+                document.add(timestamp);
+
+                // Create and style table
+                com.itextpdf.text.pdf.PdfPTable pdfTable = new com.itextpdf.text.pdf.PdfPTable(5);
+                pdfTable.setWidthPercentage(100);
+                pdfTable.setSpacingBefore(10f);
+                pdfTable.setSpacingAfter(10f);
+                float[] columnWidths = {0.1f, 0.2f, 0.2f, 0.3f, 0.2f};
+                pdfTable.setWidths(columnWidths);
+
+                // Style headers
+                com.itextpdf.text.Font headerFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 12, com.itextpdf.text.Font.BOLD, new com.itextpdf.text.BaseColor(255, 255, 255));
+                String[] headers = {"ID", "Nom", "Prénom", "Email", "Role"};
+                for (String header : headers) {
+                    com.itextpdf.text.pdf.PdfPCell cell = new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(header, headerFont));
+                    cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                    cell.setBackgroundColor(new com.itextpdf.text.BaseColor(52, 152, 219));
+                    cell.setPadding(8);
+                    pdfTable.addCell(cell);
+                }
+
+                // Style content cells
+                com.itextpdf.text.Font contentFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 11);
+                ObservableList<User> items = userTable.getItems();
+                boolean alternateRow = false;
+                for (User u : items) {
+                    com.itextpdf.text.BaseColor bgColor = alternateRow ? 
+                        new com.itextpdf.text.BaseColor(245, 245, 245) : 
+                        new com.itextpdf.text.BaseColor(255, 255, 255);
+
+                    addStyledCell(pdfTable, String.valueOf(u.getId()), contentFont, bgColor);
+                    addStyledCell(pdfTable, u.getNom(), contentFont, bgColor);
+                    addStyledCell(pdfTable, u.getPrenom(), contentFont, bgColor);
+                    addStyledCell(pdfTable, u.getEmail(), contentFont, bgColor);
+                    addStyledCell(pdfTable, u.getRole(), contentFont, bgColor);
+                    
+                    alternateRow = !alternateRow;
+                }
+
+                document.add(pdfTable);
+
+                // Add footer
+                com.itextpdf.text.Font footerFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 8);
+                com.itextpdf.text.Paragraph footer = new com.itextpdf.text.Paragraph("Généré par EduHive System", footerFont);
+                footer.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                footer.setSpacingBefore(20);
+                document.add(footer);
+
+                document.close();
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Export Réussi");
+                alert.setHeaderText(null);
+                alert.setContentText("Données utilisateur Exportées avec succés!");
+                alert.showAndWait();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Export Error");
+            alert.setHeaderText(null);
+            alert.setContentText("An error occurred while exporting to PDF: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    // Helper method to add styled cells to the PDF table
+    private void addStyledCell(com.itextpdf.text.pdf.PdfPTable table, String content, com.itextpdf.text.Font font, com.itextpdf.text.BaseColor bgColor) {
+        com.itextpdf.text.pdf.PdfPCell cell = new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(content, font));
+        cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+        cell.setBackgroundColor(bgColor);
+        cell.setPadding(6);
+        table.addCell(cell);
     }
 }
