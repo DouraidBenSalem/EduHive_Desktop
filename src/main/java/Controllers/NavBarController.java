@@ -13,11 +13,27 @@ import java.io.IOException;
 
 public class NavBarController {
     @FXML
-    private quizcontroller parent;
+    private Object parent;
 
+    public void setParent(Object parent) {
+        this.parent = parent;
+    }
+
+    // For backward compatibility
     public void setParent(quizcontroller parent) {
         this.parent = parent;
     }
+
+    // For ClasseController
+    public void setParent(ClasseController parent) {
+        this.parent = parent;
+    }
+
+    // For ModuleController
+    public void setParent(ModuleController parent) {
+        this.parent = parent;
+    }
+
 
     private void navigateToPage(String fxmlPath, ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Controllers/" + fxmlPath));
@@ -49,5 +65,13 @@ public class NavBarController {
     @FXML
     public void navigateToAnnouncement(ActionEvent event) throws IOException {
         navigateToPage("announcementpage.fxml", event);
+    }
+    @FXML
+    public void navigateToModule(ActionEvent event) throws IOException {
+        navigateToPage("modulepage.fxml", event);
+    }
+    @FXML
+    public void navigateToClasse(ActionEvent event) throws IOException {
+        navigateToPage("classepage.fxml", event);
     }
 }
