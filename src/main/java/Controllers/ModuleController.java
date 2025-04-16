@@ -19,6 +19,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import services.ModuleService;
+import services.ModuleServiceImpl;
 
 public class ModuleController {
 
@@ -54,6 +56,9 @@ public class ModuleController {
 
     private ObservableList<Module> moduleList = FXCollections.observableArrayList();
     private Connection connection;
+    
+    // Add the service
+    private ModuleService moduleService = new ModuleServiceImpl();
 
     @FXML
     void initialize() {
@@ -71,36 +76,15 @@ public class ModuleController {
 
     private void loadModulesFromDB() {
         moduleList.clear();
-        try {
-            String query = "SELECT * FROM module";
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-
-            while (rs.next()) {
-                Module m = new Module(
-                        rs.getInt("id"),
-                        rs.getString("nom_module"),
-                        rs.getString("description_module"),
-                        rs.getString("module_img"),
-                        rs.getDouble("moy")
-                );
-                moduleList.add(m);
-            }
-            moduletable.setItems(moduleList);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Use the service instead of direct database access
+        moduleList.addAll(moduleService.getAllModules());
+        moduletable.setItems(moduleList);
     }
 
     private void deleteModule(int id) {
-        try {
-            String query = "DELETE FROM module WHERE id = " + id;
-            Statement stmt = connection.createStatement();
-            stmt.executeUpdate(query);
-            System.out.println("Module supprimé avec succès.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Use the service instead of direct database access
+        moduleService.deleteModule(id);
+        System.out.println("Module supprimé avec succès.");
     }
 
     private void addActionButtonsToTable() {

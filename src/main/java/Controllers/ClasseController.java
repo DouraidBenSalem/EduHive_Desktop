@@ -19,6 +19,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import Services.ClasseService;
+import Services.ClasseServiceImpl;
 
 public class ClasseController {
 
@@ -48,6 +50,9 @@ public class ClasseController {
 
     private ObservableList<Classe> classeList = FXCollections.observableArrayList();
     private Connection connection;
+    
+    // Add the service
+    private ClasseService classeService = new ClasseServiceImpl();
 
     @FXML
     void initialize() {
@@ -63,34 +68,15 @@ public class ClasseController {
 
     private void loadClassesFromDB() {
         classeList.clear();
-        try {
-            String query = "SELECT * FROM classe";
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-
-            while (rs.next()) {
-                Classe c = new Classe(
-                        rs.getInt("id"),
-                        rs.getString("classename"),
-                        rs.getInt("num_etudiant")
-                );
-                classeList.add(c);
-            }
-            classetable.setItems(classeList);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Use the service instead of direct database access
+        classeList.addAll(classeService.getAllClasses());
+        classetable.setItems(classeList);
     }
 
     private void deleteClasse(int id) {
-        try {
-            String query = "DELETE FROM classe WHERE id = " + id;
-            Statement stmt = connection.createStatement();
-            stmt.executeUpdate(query);
-            System.out.println("Classe supprimée avec succès.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Use the service instead of direct database access
+        classeService.deleteClasse(id);
+        System.out.println("Classe supprimée avec succès.");
     }
 
     private void addActionButtonsToTable() {
