@@ -8,8 +8,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import Entities.Cours;
-import services.CoursService;
-import services.CoursServiceImpl;
+import Services.CoursService;
+import Services.CoursServiceImpl;
 import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -18,9 +18,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import javafx.scene.web.WebView;
-import javafx.scene.web.WebEngine;
-import netscape.javascript.JSObject;
+import javafx.scene.control.TextArea;
 
 public class AddCoursController {
 
@@ -45,7 +43,7 @@ public class AddCoursController {
     @FXML
     private TextField prerequisCoursId;
     @FXML
-    private WebView descriptionWebView;
+    private TextArea descriptionCours;
 
     // Labels pour les messages d'erreur
     private Label nomError;
@@ -66,7 +64,6 @@ public class AddCoursController {
 
     private CoursService coursService = new CoursServiceImpl();
     private File selectedPdfFile = null;
-    private WebEngine descriptionEngine;
 
     public void setOnSaveCallback(Runnable callback) {
         this.onSaveCallback = callback;
@@ -79,17 +76,8 @@ public class AddCoursController {
 
         btnImportPdf.setOnAction(e -> importPdfFile());
 
-        // Initialiser CKEditor dans le WebView
-        descriptionEngine = descriptionWebView.getEngine();
-        descriptionEngine.loadContent(
-            "<!DOCTYPE html>" +
-            "<html><head>" +
-            "<script src='https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js'></script>" +
-            "</head><body>" +
-            "<textarea name='editor1' id='editor1'></textarea>" +
-            "<script>CKEDITOR.replace('editor1');</script>" +
-            "</body></html>"
-        );
+        // Configuration du TextArea pour la description
+        descriptionCours.setWrapText(true);
     }
 
     private void setupErrorLabels() {
@@ -123,8 +111,8 @@ public class AddCoursController {
         prerequisError.setVisible(false);
 
         ((HBox) nomCours.getParent()).getChildren().add(nomError);
-        // Ajoutez descriptionError sous le WebView :
-        ((VBox) descriptionWebView.getParent()).getChildren().add(descriptionError);
+        // Ajoutez descriptionError sous le TextArea :
+        ((VBox) descriptionCours.getParent()).getChildren().add(descriptionError);
         ((HBox) ordre.getParent()).getChildren().add(ordreError);
         ((HBox) statusCours.getParent()).getChildren().add(statusError);
         ((HBox) niveau.getParent()).getChildren().add(niveauError);
@@ -258,9 +246,7 @@ public class AddCoursController {
             btnSave.setText("Modifier");
 
             nomCours.setText(cours.getNomCours());
-            // Charger la description HTML dans CKEditor
-            descriptionEngine.executeScript("CKEDITOR.instances.editor1.setData(" +
-                "\"" + cours.getDescriptionCours().replace("\"", "\\\"").replace("\n", "\\n") + "\");");
+            descriptionCours.setText(cours.getDescriptionCours());
             ordre.setText(String.valueOf(cours.getOrdre()));
             statusCours.setText(cours.getStatusCours());
             niveau.setText(cours.getNiveau());
@@ -283,8 +269,7 @@ public class AddCoursController {
 
         try {
             String nom = nomCours.getText().trim();
-            // Récupérer le contenu HTML depuis CKEditor
-            String description = (String) descriptionEngine.executeScript("CKEDITOR.instances.editor1.getData();");
+            String description = descriptionCours.getText().trim();
             int ordreValue = Integer.parseInt(ordre.getText().trim());
             String status = statusCours.getText().trim();
             String niveauValue = niveau.getText().trim();
@@ -318,8 +303,7 @@ public class AddCoursController {
                         niveauValue,
                         pdfFileNameValue,
                         null,
-                        coursToEdit.getUpdatedAt()
-                );
+                        coursToEdit.getUpdatedAt());
                 coursService.updateCours(updatedCours);
                 showAlert("Cours modifié avec succès !");
             } else {
@@ -332,8 +316,7 @@ public class AddCoursController {
                         status,
                         niveauValue,
                         pdfFileNameValue,
-                        null
-                );
+                        null);
                 coursService.addCours(newCours);
                 showAlert("Cours ajouté avec succès !");
             }
@@ -362,13 +345,14 @@ public class AddCoursController {
             isValid = false;
         }
 
-        // Validation de la description via CKEditor
-        String description = (String) descriptionEngine.executeScript("CKEDITOR.instances.editor1.getData();");
-        if (description == null || description.trim().isEmpty()) {
+        // Validation de la description
+        if (descriptionCours.getText().trim().isEmpty()) {
+            descriptionCours.setStyle(INVALID_STYLE);
             descriptionError.setText("La description est obligatoire");
             descriptionError.setVisible(true);
             isValid = false;
         } else {
+            descriptionCours.setStyle(VALID_STYLE);
             descriptionError.setVisible(false);
         }
 
