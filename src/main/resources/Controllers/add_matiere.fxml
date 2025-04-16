@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -31,11 +32,11 @@
                        style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="400.0" spacing="30.0">
+      <HBox alignment="CENTER_LEFT" prefHeight="120.0" prefWidth="400.0" spacing="30.0">
          <children>
             <Label text="Description:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
-            <TextField fx:id="descriptionMatiere" prefWidth="240.0" promptText="Entrez une description"
-                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
+            <TextArea fx:id="descriptionMatiere" prefWidth="240.0" prefHeight="100.0" promptText="Entrez une description détaillée"
+                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2; -fx-font-size: 14px;" wrapText="true" />
          </children>
       </HBox>
       <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="400.0" spacing="30.0">

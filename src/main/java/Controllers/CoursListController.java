@@ -12,8 +12,8 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import services.CoursService;
-import services.CoursServiceImpl;
+import Services.CoursService;
+import Services.CoursServiceImpl;
 import java.util.List;
 import javafx.scene.control.TableCell;
 import javafx.util.Callback;
@@ -83,7 +83,7 @@ public class CoursListController {
 
     @FXML
     public void initialize() {
-        // Liaison des colonnes avec les propriétés de l'entité Cours
+
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNom.setCellValueFactory(new PropertyValueFactory<>("nomCours"));
         colDescription.setCellValueFactory(new PropertyValueFactory<>("descriptionCours"));
@@ -91,10 +91,29 @@ public class CoursListController {
         colStatus.setCellValueFactory(new PropertyValueFactory<>("statusCours"));
         colNiveau.setCellValueFactory(new PropertyValueFactory<>("niveau"));
         colPdf.setCellValueFactory(new PropertyValueFactory<>("pdfCours"));
-        // colImage.setCellValueFactory(new PropertyValueFactory<>("imageUrl"));
+
         colMatiereId.setCellValueFactory(new PropertyValueFactory<>("matiereId"));
         colPrerequis.setCellValueFactory(new PropertyValueFactory<>("prerequisCoursId"));
-        // ...vous pouvez ajouter la gestion des actions ici...
+
+        // Configuration du défilement du tableau
+        tableCours.setFixedCellSize(60); // Hauteur fixe des cellules pour un défilement fluide
+        tableCours.setMinHeight(400);
+        tableCours.setPrefHeight(500);
+        tableCours.setMaxHeight(Double.MAX_VALUE); // Permet au tableau de s'étendre verticalement
+
+        // Assurer que le tableau peut défiler correctement
+        VBox.setVgrow(tableCours, javafx.scene.layout.Priority.ALWAYS);
+
+        // Définir la largeur minimale des colonnes pour éviter le problème des "..."
+        colNom.setMinWidth(150);
+        colDescription.setMinWidth(120);
+        colStatus.setMinWidth(100);
+        colNiveau.setMinWidth(100);
+        colPdf.setMinWidth(100);
+        colActions.setMinWidth(180);
+
+        // Permettre le redimensionnement des colonnes
+        tableCours.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         loadCours();
         addActionsToTable();
@@ -110,20 +129,24 @@ public class CoursListController {
         searchField.textProperty().addListener((obs, oldVal, newVal) -> {
             String lower = newVal.toLowerCase();
             filteredCoursList.setPredicate(cours -> {
-                if (lower.isEmpty()) return true;
+                if (lower.isEmpty())
+                    return true;
                 return (cours.getNomCours() != null && cours.getNomCours().toLowerCase().contains(lower))
-                    || (cours.getDescriptionCours() != null && cours.getDescriptionCours().toLowerCase().contains(lower))
-                    || (cours.getStatusCours() != null && cours.getStatusCours().toLowerCase().contains(lower))
-                    || (cours.getNiveau() != null && cours.getNiveau().toLowerCase().contains(lower))
-                    || (cours.getPdfCours() != null && cours.getPdfCours().toLowerCase().contains(lower))
-                    || (String.valueOf(cours.getMatiereId()).contains(lower))
-                    || (cours.getPrerequisCoursId() != null && String.valueOf(cours.getPrerequisCoursId()).contains(lower));
+                        || (cours.getDescriptionCours() != null
+                                && cours.getDescriptionCours().toLowerCase().contains(lower))
+                        || (cours.getStatusCours() != null && cours.getStatusCours().toLowerCase().contains(lower))
+                        || (cours.getNiveau() != null && cours.getNiveau().toLowerCase().contains(lower))
+                        || (cours.getPdfCours() != null && cours.getPdfCours().toLowerCase().contains(lower))
+                        || (String.valueOf(cours.getMatiereId()).contains(lower))
+                        || (cours.getPrerequisCoursId() != null
+                                && String.valueOf(cours.getPrerequisCoursId()).contains(lower));
             });
         });
 
         btnClearSearch.setOnAction(e -> searchField.clear());
         searchField.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.ESCAPE) searchField.clear();
+            if (e.getCode() == KeyCode.ESCAPE)
+                searchField.clear();
         });
 
         setupExportMenu();
@@ -136,7 +159,7 @@ public class CoursListController {
         if (all != null) {
             coursList.addAll(all);
         }
-        // filteredCoursList est automatiquement mis à jour
+
     }
 
     private void openAddCoursWindow() {
@@ -162,12 +185,19 @@ public class CoursListController {
                 return new TableCell<>() {
                     private final Button btnEdit = new Button("Modifier");
                     private final Button btnDelete = new Button("Supprimer");
-                    private final HBox pane = new HBox(8, btnEdit, btnDelete);
+                    private final HBox pane = new HBox(10, btnEdit, btnDelete);
 
                     {
-                        btnEdit.setStyle("-fx-background-color: #64b5f6; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 6;");
-                        btnDelete.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 6;");
-                        pane.setPadding(new Insets(2, 0, 2, 0));
+                        // Assurer que les boutons ont une largeur suffisante
+                        btnEdit.setMinWidth(80);
+                        btnDelete.setMinWidth(80);
+
+                        btnEdit.setStyle(
+                                "-fx-background-color: #64b5f6; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 2);");
+                        btnDelete.setStyle(
+                                "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 2);");
+                        pane.setPadding(new Insets(4, 0, 4, 0));
+                        pane.setAlignment(javafx.geometry.Pos.CENTER);
 
                         btnEdit.setOnAction(event -> {
                             Cours cours = getTableView().getItems().get(getIndex());
@@ -223,12 +253,16 @@ public class CoursListController {
         colPdf.setCellFactory(col -> new TableCell<Cours, String>() {
             private final Button btnViewPdf = new Button("Voir PDF");
             {
-                btnViewPdf.setStyle("-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 6;");
+                // Assurer que le bouton a une largeur suffisante
+                btnViewPdf.setMinWidth(80);
+                btnViewPdf.setStyle(
+                        "-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 6;");
                 btnViewPdf.setOnAction(event -> {
                     Cours cours = getTableView().getItems().get(getIndex());
                     openPdfFile(cours.getPdfCours());
                 });
             }
+
             @Override
             protected void updateItem(String pdfFileName, boolean empty) {
                 super.updateItem(pdfFileName, empty);
@@ -272,12 +306,16 @@ public class CoursListController {
         colDescription.setCellFactory(col -> new TableCell<Cours, String>() {
             private final Button btnView = new Button("Voir");
             {
-                btnView.setStyle("-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 6;");
+                // Assurer que le bouton a une largeur suffisante
+                btnView.setMinWidth(60);
+                btnView.setStyle(
+                        "-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 6;");
                 btnView.setOnAction(event -> {
                     Cours cours = getTableView().getItems().get(getIndex());
                     showDescriptionModal(cours.getNomCours(), cours.getDescriptionCours());
                 });
             }
+
             @Override
             protected void updateItem(String html, boolean empty) {
                 super.updateItem(html, empty);
@@ -297,25 +335,27 @@ public class CoursListController {
 
         // Titre stylé
         Label titleLabel = new Label(titre);
-        titleLabel.setStyle("-fx-font-size: 22px; -fx-font-family: 'Segoe UI Semibold'; -fx-text-fill: #2196f3; -fx-padding: 0 0 12 0;");
+        titleLabel.setStyle(
+                "-fx-font-size: 22px; -fx-font-family: 'Segoe UI Semibold'; -fx-text-fill: #2196f3; -fx-padding: 0 0 12 0;");
 
         // WebView pour le contenu HTML
         WebView webView = new WebView();
         webView.setPrefSize(600, 350);
         webView.getEngine().loadContent(
-            "<html><body style='font-family:Segoe UI;font-size:15px;padding:18px;background:#f7fbff;color:#222;'>" +
-            html +
-            "</body></html>"
-        );
+                "<html><body style='font-family:Segoe UI;font-size:15px;padding:18px;background:#f7fbff;color:#222;'>" +
+                        html +
+                        "</body></html>");
 
         // Bouton fermer
         Button btnClose = new Button("Fermer");
-        btnClose.setStyle("-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-size: 15px; -fx-background-radius: 8;");
+        btnClose.setStyle(
+                "-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-size: 15px; -fx-background-radius: 8;");
         btnClose.setOnAction(e -> modal.close());
 
         VBox vbox = new VBox(0, titleLabel, webView, btnClose);
         vbox.setSpacing(18);
-        vbox.setStyle("-fx-background-color: white; -fx-padding: 24 24 24 24; -fx-background-radius: 14; -fx-effect: dropshadow(gaussian, #b0d0ff, 16, 0.15, 0, 2);");
+        vbox.setStyle(
+                "-fx-background-color: white; -fx-padding: 24 24 24 24; -fx-background-radius: 14; -fx-effect: dropshadow(gaussian, #b0d0ff, 16, 0.15, 0, 2);");
         vbox.setPrefSize(640, 480);
         vbox.setMinSize(400, 300);
 
@@ -340,16 +380,16 @@ public class CoursListController {
                     writer.println("Nom;Description;Ordre;Status;Niveau;PDF");
                     for (Cours cours : filteredCoursList) {
                         String desc = cours.getDescriptionCours() != null
-                            ? cours.getDescriptionCours().replaceAll("\\<.*?\\>", "").replaceAll("[\\r\\n]+", " ").replace(";", ",")
-                            : "";
+                                ? cours.getDescriptionCours().replaceAll("\\<.*?\\>", "").replaceAll("[\\r\\n]+", " ")
+                                        .replace(";", ",")
+                                : "";
                         writer.printf("\"%s\";\"%s\";%d;\"%s\";\"%s\";\"%s\"%n",
-                            safeCsv(cours.getNomCours()),
-                            safeCsv(desc),
-                            cours.getOrdre(),
-                            safeCsv(cours.getStatusCours()),
-                            safeCsv(cours.getNiveau()),
-                            safeCsv(cours.getPdfCours())
-                        );
+                                safeCsv(cours.getNomCours()),
+                                safeCsv(desc),
+                                cours.getOrdre(),
+                                safeCsv(cours.getStatusCours()),
+                                safeCsv(cours.getNiveau()),
+                                safeCsv(cours.getPdfCours()));
                     }
                 }
                 showAlert("Export Excel réussi !\nFichier : " + file.getAbsolutePath());
@@ -379,7 +419,7 @@ public class CoursListController {
             html.append("<colgroup>");
             html.append("<col style='width:18%;'/>"); // Nom
             html.append("<col style='width:36%;'/>"); // Description
-            html.append("<col style='width:8%;'/>");  // Ordre
+            html.append("<col style='width:8%;'/>"); // Ordre
             html.append("<col style='width:12%;'/>"); // Status
             html.append("<col style='width:12%;'/>"); // Niveau
             html.append("<col style='width:14%;'/>"); // PDF
@@ -394,8 +434,9 @@ public class CoursListController {
             html.append("</tr>");
             for (Cours cours : filteredCoursList) {
                 String desc = cours.getDescriptionCours() != null
-                    ? cours.getDescriptionCours().replaceAll("\\<.*?\\>", "").replaceAll("[\\r\\n]+", " ").replace("|", "/")
-                    : "";
+                        ? cours.getDescriptionCours().replaceAll("\\<.*?\\>", "").replaceAll("[\\r\\n]+", " ")
+                                .replace("|", "/")
+                        : "";
                 html.append("<tr>");
                 html.append("<td>").append(escapeHtml(cours.getNomCours())).append("</td>");
                 html.append("<td>").append(escapeHtml(desc)).append("</td>");
@@ -425,7 +466,8 @@ public class CoursListController {
                             boolean success = job.printPage(webView);
                             if (success) {
                                 job.endJob();
-                                showAlert("Export PDF réussi !\nVous pouvez enregistrer le PDF via l'imprimante PDF de votre système.");
+                                showAlert(
+                                        "Export PDF réussi !\nVous pouvez enregistrer le PDF via l'imprimante PDF de votre système.");
                             }
                         }
                     });
@@ -437,9 +479,10 @@ public class CoursListController {
     }
 
     private String escapeHtml(String value) {
-        if (value == null) return "";
+        if (value == null)
+            return "";
         return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-            .replace("\"", "&quot;").replace("'", "&#39;");
+                .replace("\"", "&quot;").replace("'", "&#39;");
     }
 
     private void showAlert(String msg) {
@@ -484,30 +527,28 @@ public class CoursListController {
         // Ajout d'un ComboBox pour filtrer par colonne
         filterComboBox = new ComboBox<>();
         filterComboBox.setItems(FXCollections.observableArrayList(
-            "Tous",
-            "Nom",
-            "Description",
-            "Ordre",
-            "Status",
-            "Niveau",
-            "PDF",
-            "Matière ID",
-            "Prérequis"
-        ));
+                "Tous",
+                "Nom",
+                "Description",
+                "Ordre",
+                "Status",
+                "Niveau",
+                "PDF",
+                "Matière ID",
+                "Prérequis"));
         filterComboBox.setValue("Tous");
 
         // Style moderne et professionnel
         filterComboBox.setStyle(
-            "-fx-background-radius: 18;" +
-            "-fx-border-radius: 18;" +
-            "-fx-background-color: #f7fbff;" +
-            "-fx-border-color: #b0d0ff;" +
-            "-fx-border-width: 1.2;" +
-            "-fx-font-size: 15px;" +
-            "-fx-padding: 6 18 6 18;" +
-            "-fx-pref-width: 160;" +
-            "-fx-text-fill: #2196f3;"
-        );
+                "-fx-background-radius: 18;" +
+                        "-fx-border-radius: 18;" +
+                        "-fx-background-color: #f7fbff;" +
+                        "-fx-border-color: #b0d0ff;" +
+                        "-fx-border-width: 1.2;" +
+                        "-fx-font-size: 15px;" +
+                        "-fx-padding: 6 18 6 18;" +
+                        "-fx-pref-width: 160;" +
+                        "-fx-text-fill: #2196f3;");
         filterComboBox.setPromptText("Filtrer par...");
 
         // Ajout dynamique du ComboBox dans la barre de recherche
@@ -516,19 +557,17 @@ public class CoursListController {
 
         // Ajout d'un effet au survol
         filterComboBox.setOnMouseEntered(e -> filterComboBox.setStyle(
-            filterComboBox.getStyle() + "-fx-border-color: #2196f3; -fx-background-color: #e3f0ff;"
-        ));
+                filterComboBox.getStyle() + "-fx-border-color: #2196f3; -fx-background-color: #e3f0ff;"));
         filterComboBox.setOnMouseExited(e -> filterComboBox.setStyle(
-            "-fx-background-radius: 18;" +
-            "-fx-border-radius: 18;" +
-            "-fx-background-color: #f7fbff;" +
-            "-fx-border-color: #b0d0ff;" +
-            "-fx-border-width: 1.2;" +
-            "-fx-font-size: 15px;" +
-            "-fx-padding: 6 18 6 18;" +
-            "-fx-pref-width: 160;" +
-            "-fx-text-fill: #2196f3;"
-        ));
+                "-fx-background-radius: 18;" +
+                        "-fx-border-radius: 18;" +
+                        "-fx-background-color: #f7fbff;" +
+                        "-fx-border-color: #b0d0ff;" +
+                        "-fx-border-width: 1.2;" +
+                        "-fx-font-size: 15px;" +
+                        "-fx-padding: 6 18 6 18;" +
+                        "-fx-pref-width: 160;" +
+                        "-fx-text-fill: #2196f3;"));
 
         // Listener pour filtrer selon la colonne choisie
         filterComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
@@ -542,23 +581,27 @@ public class CoursListController {
                 if (lower.isEmpty() || filter == null || filter.equals("Tous")) {
                     // Recherche sur tous les champs
                     return (cours.getNomCours() != null && cours.getNomCours().toLowerCase().contains(lower))
-                        || (cours.getDescriptionCours() != null && cours.getDescriptionCours().toLowerCase().contains(lower))
-                        || (cours.getStatusCours() != null && cours.getStatusCours().toLowerCase().contains(lower))
-                        || (cours.getNiveau() != null && cours.getNiveau().toLowerCase().contains(lower))
-                        || (cours.getPdfCours() != null && cours.getPdfCours().toLowerCase().contains(lower))
-                        || (String.valueOf(cours.getOrdre()).contains(lower))
-                        || (String.valueOf(cours.getMatiereId()).contains(lower))
-                        || (cours.getPrerequisCoursId() != null && String.valueOf(cours.getPrerequisCoursId()).contains(lower));
+                            || (cours.getDescriptionCours() != null
+                                    && cours.getDescriptionCours().toLowerCase().contains(lower))
+                            || (cours.getStatusCours() != null && cours.getStatusCours().toLowerCase().contains(lower))
+                            || (cours.getNiveau() != null && cours.getNiveau().toLowerCase().contains(lower))
+                            || (cours.getPdfCours() != null && cours.getPdfCours().toLowerCase().contains(lower))
+                            || (String.valueOf(cours.getOrdre()).contains(lower))
+                            || (String.valueOf(cours.getMatiereId()).contains(lower))
+                            || (cours.getPrerequisCoursId() != null
+                                    && String.valueOf(cours.getPrerequisCoursId()).contains(lower));
                 } else {
                     switch (filter) {
                         case "Nom":
                             return cours.getNomCours() != null && cours.getNomCours().toLowerCase().contains(lower);
                         case "Description":
-                            return cours.getDescriptionCours() != null && cours.getDescriptionCours().toLowerCase().contains(lower);
+                            return cours.getDescriptionCours() != null
+                                    && cours.getDescriptionCours().toLowerCase().contains(lower);
                         case "Ordre":
                             return String.valueOf(cours.getOrdre()).contains(lower);
                         case "Status":
-                            return cours.getStatusCours() != null && cours.getStatusCours().toLowerCase().contains(lower);
+                            return cours.getStatusCours() != null
+                                    && cours.getStatusCours().toLowerCase().contains(lower);
                         case "Niveau":
                             return cours.getNiveau() != null && cours.getNiveau().toLowerCase().contains(lower);
                         case "PDF":
@@ -566,7 +609,8 @@ public class CoursListController {
                         case "Matière ID":
                             return String.valueOf(cours.getMatiereId()).contains(lower);
                         case "Prérequis":
-                            return cours.getPrerequisCoursId() != null && String.valueOf(cours.getPrerequisCoursId()).contains(lower);
+                            return cours.getPrerequisCoursId() != null
+                                    && String.valueOf(cours.getPrerequisCoursId()).contains(lower);
                         default:
                             return true;
                     }

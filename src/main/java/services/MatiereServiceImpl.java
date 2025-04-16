@@ -1,4 +1,4 @@
-package services;
+package Services;
 
 import Entities.Matiere;
 import utils.MyDatabase;
@@ -53,7 +53,8 @@ public class MatiereServiceImpl implements MatiereService {
     @Override
     public void addMatiere(Matiere matiere) {
         try {
-            String query = "INSERT INTO matiere (module_id, enseignant_id, nom_matiere, description_matiere, prerequis_matiere, objectif_matiere) " +
+            String query = "INSERT INTO matiere (module_id, enseignant_id, nom_matiere, description_matiere, prerequis_matiere, objectif_matiere) "
+                    +
                     "VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, matiere.getModuleId());
@@ -177,6 +178,7 @@ public class MatiereServiceImpl implements MatiereService {
 
         String objectifMatiere = rs.getString("objectif_matiere");
 
-        return new Matiere(id, moduleId, enseignantId, nomMatiere, descriptionMatiere, prerequisMatiere, objectifMatiere);
+        return new Matiere(id, moduleId, enseignantId, nomMatiere, descriptionMatiere, prerequisMatiere,
+                objectifMatiere);
     }
 }

@@ -1,4 +1,4 @@
-package services;
+package Services;
 
 import Entities.Cours;
 import utils.MyDatabase;
@@ -14,17 +14,6 @@ public class CoursServiceImpl implements CoursService {
     public CoursServiceImpl() {
         // Correction : utilisez la même classe que dans MatiereServiceImpl
         conn = MyDatabase.getInstance().getConnection();
-
-
-
-
-
-
-
-
-
-
-
 
     }
 
@@ -110,17 +99,16 @@ public class CoursServiceImpl implements CoursService {
 
     private Cours mapResultSetToCours(ResultSet rs) throws SQLException {
         return new Cours(
-            rs.getInt("id"),
-            (Integer) rs.getObject("prerequis_cours_id"),
-            rs.getInt("matiere_id"),
-            rs.getString("nom_cours"),
-            rs.getString("description_cours"),
-            rs.getInt("ordre"),
-            rs.getString("status_cours"),
-            rs.getString("niveau"),
-            rs.getString("pdf_cours"),
-            rs.getString("image_url"),
-            rs.getTimestamp("updated_at") != null ? rs.getTimestamp("updated_at").toLocalDateTime() : null
-        );
+                rs.getInt("id"),
+                (Integer) rs.getObject("prerequis_cours_id"),
+                rs.getInt("matiere_id"),
+                rs.getString("nom_cours"),
+                rs.getString("description_cours"),
+                rs.getInt("ordre"),
+                rs.getString("status_cours"),
+                rs.getString("niveau"),
+                rs.getString("pdf_cours"),
+                rs.getString("image_url"),
+                rs.getTimestamp("updated_at") != null ? rs.getTimestamp("updated_at").toLocalDateTime() : null);
     }
 }

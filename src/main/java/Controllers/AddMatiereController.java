@@ -4,12 +4,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import Entities.Matiere;
-import services.MatiereService;
-import services.MatiereServiceImpl;
+import Services.MatiereService;
+import Services.MatiereServiceImpl;
 import javafx.stage.Stage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,7 +26,7 @@ public class AddMatiereController {
     @FXML
     private TextField nomMatiere;
     @FXML
-    private TextField descriptionMatiere;
+    private TextArea descriptionMatiere;
     @FXML
     private TextField objectifMatiere;
     @FXML
@@ -35,7 +36,6 @@ public class AddMatiereController {
     @FXML
     private TextField prerequisMatiere;
 
-    // Labels pour les messages d'erreur
     private Label nomError;
     private Label descriptionError;
     private Label objectifError;
@@ -43,12 +43,10 @@ public class AddMatiereController {
     private Label enseignantIdError;
     private Label prerequisError;
 
-    // Style CSS pour les champs valides et invalides
     private final String VALID_STYLE = "-fx-border-color: green; -fx-border-width: 2px;";
     private final String INVALID_STYLE = "-fx-border-color: red; -fx-border-width: 2px;";
     private final String NORMAL_STYLE = "-fx-border-color: lightgray; -fx-border-width: 1px;";
 
-    // Tooltips pour les champs
     private Tooltip nomTooltip = new Tooltip("Entrez le nom de la matière");
     private Tooltip descriptionTooltip = new Tooltip("Entrez une description pour la matière");
     private Tooltip objectifTooltip = new Tooltip("Entrez les objectifs de la matière");
@@ -68,10 +66,9 @@ public class AddMatiereController {
 
     @FXML
     public void initialize() {
-        // Initialiser les labels d'erreur
+
         setupErrorLabels();
 
-        // Configurer les tooltips
         nomMatiere.setTooltip(nomTooltip);
         descriptionMatiere.setTooltip(descriptionTooltip);
         objectifMatiere.setTooltip(objectifTooltip);
@@ -79,12 +76,11 @@ public class AddMatiereController {
         enseignantId.setTooltip(enseignantIdTooltip);
         prerequisMatiere.setTooltip(prerequisTooltip);
 
-        // Ajouter les écouteurs pour la validation en temps réel
         setupValidationListeners();
     }
 
     private void setupErrorLabels() {
-        // Créer les labels d'erreur
+
         nomError = new Label();
         nomError.setTextFill(Color.RED);
         nomError.setVisible(false);
@@ -109,7 +105,6 @@ public class AddMatiereController {
         prerequisError.setTextFill(Color.RED);
         prerequisError.setVisible(false);
 
-        // Ajouter les labels d'erreur dans le même HBox parent que chaque champ
         ((HBox) nomMatiere.getParent()).getChildren().add(nomError);
         ((HBox) descriptionMatiere.getParent()).getChildren().add(descriptionError);
         ((HBox) objectifMatiere.getParent()).getChildren().add(objectifError);
@@ -119,7 +114,7 @@ public class AddMatiereController {
     }
 
     private void setupValidationListeners() {
-        // Validation du nom (ne doit pas être vide)
+
         nomMatiere.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.trim().isEmpty()) {
                 nomMatiere.setStyle(INVALID_STYLE);
@@ -131,7 +126,6 @@ public class AddMatiereController {
             }
         });
 
-        // Validation de la description (ne doit pas être vide)
         descriptionMatiere.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.trim().isEmpty()) {
                 descriptionMatiere.setStyle(INVALID_STYLE);
@@ -143,7 +137,13 @@ public class AddMatiereController {
             }
         });
 
-        // Validation de l'objectif (ne doit pas être vide)
+        // Configuration supplémentaire pour la zone de texte de description
+        descriptionMatiere.setWrapText(true);
+        descriptionMatiere.setPrefRowCount(5);
+        descriptionMatiere.setPrefWidth(300);
+        descriptionMatiere.setStyle(
+                "-fx-font-size: 13px; -fx-border-color: lightgray; -fx-border-width: 1px; -fx-border-radius: 4px;");
+
         objectifMatiere.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.trim().isEmpty()) {
                 objectifMatiere.setStyle(INVALID_STYLE);
@@ -155,7 +155,6 @@ public class AddMatiereController {
             }
         });
 
-        // Validation du moduleId (doit être un nombre entier positif)
         moduleId.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 if (newValue.trim().isEmpty()) {
@@ -180,7 +179,6 @@ public class AddMatiereController {
             }
         });
 
-        // Validation de l'enseignantId (doit être un nombre entier positif)
         enseignantId.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 if (newValue.trim().isEmpty()) {
@@ -205,7 +203,6 @@ public class AddMatiereController {
             }
         });
 
-        // Validation du prérequis (doit être un nombre entier positif si non vide)
         prerequisMatiere.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.trim().isEmpty()) {
                 prerequisMatiere.setStyle(NORMAL_STYLE);
@@ -248,13 +245,12 @@ public class AddMatiereController {
                 prerequisMatiere.setText("");
             }
 
-            // Appliquer la validation initiale
             validateAllFields();
         }
     }
 
     private void validateAllFields() {
-        // Déclencher la validation pour tous les champs
+
         String nomValue = nomMatiere.getText();
         nomMatiere.setText(nomValue + " ");
         nomMatiere.setText(nomValue);
@@ -282,7 +278,7 @@ public class AddMatiereController {
 
     @FXML
     void saveMatiere(ActionEvent event) {
-        // Vérifier si tous les champs sont valides avant de sauvegarder
+
         if (!validateForm()) {
             showError("Veuillez corriger les erreurs dans le formulaire avant de sauvegarder.");
             return;
@@ -301,7 +297,7 @@ public class AddMatiereController {
             }
 
             if (isEditMode && matiereToEdit != null) {
-                // Mettre à jour une matière existante
+
                 Matiere updatedMatiere = new Matiere(
                         matiereToEdit.getId(),
                         moduleIdValue,
@@ -313,7 +309,7 @@ public class AddMatiereController {
                 matiereService.updateMatiere(updatedMatiere);
                 showAlert("Matière modifiée avec succès !");
             } else {
-                // Créer une nouvelle matière
+
                 Matiere newMatiere = new Matiere(
                         moduleIdValue,
                         enseignantIdValue,
@@ -328,7 +324,6 @@ public class AddMatiereController {
             if (onSaveCallback != null)
                 onSaveCallback.run();
 
-            // Fermer la fenêtre
             Stage stage = (Stage) btnSave.getScene().getWindow();
             stage.close();
 
@@ -344,7 +339,6 @@ public class AddMatiereController {
     private boolean validateForm() {
         boolean isValid = true;
 
-        // Vérifier le nom
         if (nomMatiere.getText().trim().isEmpty()) {
             nomMatiere.setStyle(INVALID_STYLE);
             nomError.setText("Le nom est obligatoire");
@@ -352,7 +346,6 @@ public class AddMatiereController {
             isValid = false;
         }
 
-        // Vérifier la description
         if (descriptionMatiere.getText().trim().isEmpty()) {
             descriptionMatiere.setStyle(INVALID_STYLE);
             descriptionError.setText("La description est obligatoire");
@@ -360,7 +353,6 @@ public class AddMatiereController {
             isValid = false;
         }
 
-        // Vérifier l'objectif
         if (objectifMatiere.getText().trim().isEmpty()) {
             objectifMatiere.setStyle(INVALID_STYLE);
             objectifError.setText("L'objectif est obligatoire");
@@ -368,7 +360,6 @@ public class AddMatiereController {
             isValid = false;
         }
 
-        // Vérifier le moduleId
         try {
             if (moduleId.getText().trim().isEmpty()) {
                 moduleId.setStyle(INVALID_STYLE);
@@ -391,7 +382,6 @@ public class AddMatiereController {
             isValid = false;
         }
 
-        // Vérifier l'enseignantId
         try {
             if (enseignantId.getText().trim().isEmpty()) {
                 enseignantId.setStyle(INVALID_STYLE);
@@ -414,7 +404,6 @@ public class AddMatiereController {
             isValid = false;
         }
 
-        // Vérifier le prérequis (optionnel)
         if (!prerequisMatiere.getText().trim().isEmpty()) {
             try {
                 int value = Integer.parseInt(prerequisMatiere.getText().trim());
