@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.add_classe_controller">
+   <children>
+      <HBox alignment="TOP_RIGHT" prefHeight="26.0" prefWidth="144.0">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="37.0" prefWidth="344.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Formulaire Classe">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Text>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="50.0" prefWidth="344.0" spacing="50.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nom:">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Text>
+            <TextField fx:id="classename" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="50.0" prefWidth="344.0" spacing="50.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Étudiants:">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Text>
+            <TextField fx:id="num_etudiant" prefHeight="26.0" prefWidth="162.0" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="99.0" prefWidth="344.0" spacing="50.0">
+         <children>
+            <Button fx:id="ajouter" mnemonicParsing="false" onAction="#ajouterclasse" text="Ajouter" />
+            <Button fx:id="effacer" mnemonicParsing="false" onAction="#effacerclasse" text="Effacer" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

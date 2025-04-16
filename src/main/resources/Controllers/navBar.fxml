@@ -75,14 +75,11 @@
                         <Insets left="10.0" />
                      </HBox.margin>
                   </ImageView>
-                  <Button id="btnquiz" mnemonicParsing="false" onAction="#navigateToUser" prefHeight="42.0" prefWidth="108.0" styleClass="btn" text="Utilisateur" textFill="WHITE">
-                     <HBox.margin>
-                        <Insets left="-10.0" />
-                     </HBox.margin>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
+                  <MenuButton mnemonicParsing="false" onAction="#navigateToUser" text="Utilisateur" textFill="WHITE">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#navigateToClasse" text="Classe" />
+                    </items>
+                  </MenuButton>
                </children>
                <padding>
                   <Insets top="5.0" />
@@ -101,14 +98,16 @@
                         <Insets left="10.0" />
                      </HBox.margin>
                   </ImageView>
-                  <Button id="btnquiz" mnemonicParsing="false" onAction="#handleHomeButton" prefHeight="42.0" prefWidth="108.0" styleClass="btn" text="Module" textFill="WHITE">
-                     <HBox.margin>
-                        <Insets left="-10.0" />
-                     </HBox.margin>
+                  <MenuButton mnemonicParsing="false" text="Module" textFill="WHITE">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#navigateToModule" text="Module" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleHomeButton" text="Matiere" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleHomeButton" text="Cours" />
+                     </items>
                      <font>
                         <Font size="14.0" />
                      </font>
-                  </Button>
+                  </MenuButton>
                </children>
                <padding>
                   <Insets top="5.0" />
