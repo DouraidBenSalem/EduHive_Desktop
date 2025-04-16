@@ -77,7 +77,8 @@
                   </ImageView>
                   <MenuButton mnemonicParsing="false" onAction="#navigateToUser" text="Utilisateur" textFill="WHITE">
                     <items>
-                      <MenuItem mnemonicParsing="false" onAction="#navigateToClasse" text="Classe" />
+                      <MenuItem mnemonicParsing="false" onAction="#navigateToUser" text="Utilisateur" />
+                        <MenuItem mnemonicParsing="false" onAction="#navigateToClasse" text="Classe" />
                     </items>
                   </MenuButton>
                </children>
