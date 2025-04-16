@@ -69,13 +69,7 @@ public class add_quiz_controller {
             titreErrorLabel.setManaged(true);
             return false;
         }
-        // Vérifier que le titre ne contient pas de chiffres
-        if (text.matches(".*\\d.*")) {
-            titreErrorLabel.setText("Le titre ne doit pas contenir de chiffres");
-            titreErrorLabel.setVisible(true);
-            titreErrorLabel.setManaged(true);
-            return false;
-        }
+ 
         titreErrorLabel.setVisible(false);
         titreErrorLabel.setManaged(false);
         return true;
@@ -109,13 +103,7 @@ public class add_quiz_controller {
             repCorrectErrorLabel.setManaged(true);
             return false;
         }
-        // Vérifier que la réponse correcte est de type texte (pas uniquement des chiffres)
-        if (text.matches("^\\d+$")) {
-            repCorrectErrorLabel.setText("La réponse correcte ne peut pas être uniquement des chiffres");
-            repCorrectErrorLabel.setVisible(true);
-            repCorrectErrorLabel.setManaged(true);
-            return false;
-        }
+      
         repCorrectErrorLabel.setVisible(false);
         repCorrectErrorLabel.setManaged(false);
         return true;
@@ -130,12 +118,7 @@ public class add_quiz_controller {
             return false;
         }
         // Vérifier que l'option A est de type texte (pas uniquement des chiffres)
-        if (text.matches("^\\d+$")) {
-            optionAErrorLabel.setText("L'option A ne peut pas être uniquement des chiffres");
-            optionAErrorLabel.setVisible(true);
-            optionAErrorLabel.setManaged(true);
-            return false;
-        }
+   
         optionAErrorLabel.setVisible(false);
         optionAErrorLabel.setManaged(false);
         return true;
@@ -150,12 +133,7 @@ public class add_quiz_controller {
             return false;
         }
         // Vérifier que l'option B est de type texte (pas uniquement des chiffres)
-        if (text.matches("^\\d+$")) {
-            optionBErrorLabel.setText("L'option B ne peut pas être uniquement des chiffres");
-            optionBErrorLabel.setVisible(true);
-            optionBErrorLabel.setManaged(true);
-            return false;
-        }
+
         optionBErrorLabel.setVisible(false);
         optionBErrorLabel.setManaged(false);
         return true;
