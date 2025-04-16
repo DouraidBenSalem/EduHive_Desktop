@@ -4,107 +4,119 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="467.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.add_quiz_controller">
+<AnchorPane prefHeight="500.0" prefWidth="600.0" styleClass="form-container" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.add_quiz_controller">
    <children>
-      <HBox alignment="TOP_RIGHT" prefHeight="26.0" prefWidth="144.0">
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-      </HBox>
-      <HBox alignment="CENTER" prefHeight="37.0" prefWidth="344.0">
+      <VBox layoutX="50.0" layoutY="30.0" prefHeight="440.0" prefWidth="500.0" spacing="15.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Fomulaire quiz">
+            <Label text="Formulaire Quiz" textAlignment="CENTER">
                <font>
-                  <Font name="Segoe UI Bold" size="24.0" />
+                  <Font name="System Bold" size="18.0" />
                </font>
-            </Text>
-         </children>
-      </HBox>
-      <VBox spacing="5.0">
-         <children>
-            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="344.0" spacing="50.0">
+            </Label>
+            
+            <VBox spacing="5.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="titre:">
-                     <font>
-                        <Font name="Segoe UI Bold" size="24.0" />
-                     </font>
-                  </Text>
-                  <TextField fx:id="titre" />
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label prefWidth="150.0" text="Titre:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="titre" prefHeight="30.0" prefWidth="300.0" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="titreErrorLabel" textFill="RED" visible="false" managed="false" text="Le titre ne peut pas être vide" />
                </children>
+            </VBox>
+            
+            <VBox spacing="5.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label prefWidth="150.0" text="Question:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="question" prefHeight="30.0" prefWidth="300.0" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="questionErrorLabel" textFill="RED" visible="false" managed="false" text="La question ne peut pas être vide" />
+               </children>
+            </VBox>
+            
+            <VBox spacing="5.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label prefWidth="150.0" text="Réponse correcte:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="rep_correct" prefHeight="30.0" prefWidth="300.0" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="repCorrectErrorLabel" textFill="RED" visible="false" managed="false" text="La réponse correcte ne peut pas être vide" />
+               </children>
+            </VBox>
+            
+            <VBox spacing="5.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label prefWidth="150.0" text="Option A:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="option_a" prefHeight="30.0" prefWidth="300.0" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="optionAErrorLabel" textFill="RED" visible="false" managed="false" text="L'option A ne peut pas être vide" />
+               </children>
+            </VBox>
+            
+            <VBox spacing="5.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label prefWidth="150.0" text="Option B:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="option_b" prefHeight="30.0" prefWidth="300.0" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="optionBErrorLabel" textFill="RED" visible="false" managed="false" text="L'option B ne peut pas être vide" />
+               </children>
+            </VBox>
+            
+            <HBox alignment="CENTER" spacing="20.0">
+               <children>
+                  <Button fx:id="ajouter" mnemonicParsing="false" onAction="#ajouterquiz" prefHeight="40.0" prefWidth="120.0" text="Ajouter">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="effacer" styleClass="danger-button" mnemonicParsing="false" onAction="#effacerquiz" prefHeight="40.0" prefWidth="120.0" text="Effacer">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
             </HBox>
-            <Label fx:id="titreErrorLabel" textFill="RED" visible="false" managed="false" text="Le titre ne peut pas être vide" />
          </children>
       </VBox>
-      <VBox spacing="5.0">
-         <children>
-            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="344.0" spacing="50.0">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="question:">
-                     <font>
-                        <Font name="Segoe UI Bold" size="24.0" />
-                     </font>
-                  </Text>
-                  <TextField fx:id="question" prefHeight="26.0" prefWidth="162.0" />
-               </children>
-            </HBox>
-            <Label fx:id="questionErrorLabel" textFill="RED" visible="false" managed="false" text="La question ne peut pas être vide" />
-         </children>
-      </VBox>
-      <VBox spacing="5.0">
-         <children>
-            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="344.0" spacing="50.0">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="rep_correct:">
-                     <font>
-                        <Font name="Segoe UI Bold" size="24.0" />
-                     </font>
-                  </Text>
-                  <TextField fx:id="rep_correct" prefHeight="26.0" prefWidth="212.0" />
-               </children>
-            </HBox>
-            <Label fx:id="repCorrectErrorLabel" textFill="RED" visible="false" managed="false" text="La réponse correcte ne peut pas être vide" />
-         </children>
-      </VBox>
-      <VBox spacing="5.0">
-         <children>
-            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="344.0" spacing="50.0">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="option_a:">
-                     <font>
-                        <Font name="Segoe UI Bold" size="24.0" />
-                     </font>
-                  </Text>
-                  <TextField fx:id="option_a" />
-               </children>
-            </HBox>
-            <Label fx:id="optionAErrorLabel" textFill="RED" visible="false" managed="false" text="L'option A ne peut pas être vide" />
-         </children>
-      </VBox>
-      <VBox spacing="5.0">
-         <children>
-            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="344.0" spacing="50.0">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="option_b:">
-                     <font>
-                        <Font name="Segoe UI Bold" size="24.0" />
-                     </font>
-                  </Text>
-                  <TextField fx:id="option_b" />
-               </children>
-            </HBox>
-            <Label fx:id="optionBErrorLabel" textFill="RED" visible="false" managed="false" text="L'option B ne peut pas être vide" />
-         </children>
-      </VBox>
-      <HBox alignment="CENTER" prefHeight="99.0" prefWidth="344.0" spacing="50.0">
-         <children>
-            <Button fx:id="ajouter" mnemonicParsing="false" onAction="#ajouterquiz" text="Ajouter" />
-            <Button fx:id="effacer" mnemonicParsing="false" onAction="#effacerquiz" text="Effacer" />
-         </children>
-      </HBox>
    </children>
-</VBox>
+</AnchorPane>
