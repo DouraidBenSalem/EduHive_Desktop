@@ -101,14 +101,13 @@
                         <Insets left="10.0" />
                      </HBox.margin>
                   </ImageView>
-                  <Button id="btnquiz" mnemonicParsing="false" onAction="#handleHomeButton" prefHeight="42.0" prefWidth="108.0" styleClass="btn" text="Module" textFill="WHITE">
-                     <HBox.margin>
-                        <Insets left="-10.0" />
-                     </HBox.margin>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
+                  <MenuButton mnemonicParsing="false" text="Modules">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Module" />
+                      <MenuItem mnemonicParsing="false" onAction="#navigateToMatiere" text="Matieres" />
+                        <MenuItem mnemonicParsing="false" onAction="#navigateToCours" text="Cours" />
+                    </items>
+                  </MenuButton>
                </children>
                <padding>
                   <Insets top="5.0" />

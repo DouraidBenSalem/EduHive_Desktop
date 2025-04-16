@@ -13,9 +13,9 @@ import java.io.IOException;
 
 public class NavBarController {
     @FXML
-    private quizcontroller parent;
+    private Object parent;
 
-    public void setParent(quizcontroller parent) {
+    public void setParent(Object parent) {
         this.parent = parent;
     }
 
@@ -49,5 +49,12 @@ public class NavBarController {
     @FXML
     public void navigateToAnnouncement(ActionEvent event) throws IOException {
         navigateToPage("announcementpage.fxml", event);
+    }
+    @FXML
+    public void navigateToMatiere(ActionEvent event) throws IOException {
+        navigateToPage("MatierePage.fxml", event);
+    }
+    public void navigateToCours(ActionEvent event) throws IOException {
+        navigateToPage("cours_list.fxml", event);
     }
 }
