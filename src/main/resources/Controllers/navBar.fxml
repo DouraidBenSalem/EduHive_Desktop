@@ -99,9 +99,9 @@
                         <Insets left="10.0" />
                      </HBox.margin>
                   </ImageView>
-                  <MenuButton mnemonicParsing="false" text="Modules">
+                  <MenuButton mnemonicParsing="false" text="Modules" textFill="WHITE">
                     <items>
-                      <MenuItem mnemonicParsing="false"  onAction="#navigateToModule" text="Module" />
+                      <MenuItem mnemonicParsing="false" onAction="#navigateToModule" text="Module" />
                       <MenuItem mnemonicParsing="false" onAction="#navigateToMatiere" text="Matieres" />
                         <MenuItem mnemonicParsing="false" onAction="#navigateToCours" text="Cours" />
                     </items>
