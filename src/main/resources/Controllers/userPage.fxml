@@ -28,7 +28,7 @@
                      </columnResizePolicy>
                   </TableView>
                   <Button fx:id="ajouter" layoutX="634.0" layoutY="75.0" mnemonicParsing="false" onAction="#addUserOnAction" text="Ajouter" />
-                  <Button fx:id="exporter" layoutX="558.0" layoutY="75.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="56.0" text="Print" />
+                  <Button fx:id="exporter" layoutX="558.0" layoutY="75.0" mnemonicParsing="false" onAction="#exportertable" prefHeight="25.0" prefWidth="56.0" text="Print" />
                   <Label fx:id="userActionMessage" layoutX="14.0" layoutY="81.0" prefHeight="38.0" prefWidth="238.0" textFill="#1500ff">
                      <font>
                         <Font name="System Bold" size="18.0" />
