@@ -82,6 +82,10 @@ public class NavBarController {
     }
 
     @FXML
+    public void navigateToModule(ActionEvent event) throws IOException {
+        navigateToPage("modulepage.fxml", event);
+    }
+    @FXML
     public void navigateToAnnouncement(ActionEvent event) throws IOException {
         navigateToPage("announcementpage.fxml", event);
     }
@@ -91,5 +95,9 @@ public class NavBarController {
     }
     public void navigateToCours(ActionEvent event) throws IOException {
         navigateToPage("cours_list.fxml", event);
+    }
+    @FXML
+    public void navigateToClasse(ActionEvent event) throws IOException {
+        navigateToPage("classepage.fxml", event);
     }
 }
