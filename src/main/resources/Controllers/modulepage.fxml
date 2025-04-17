@@ -30,7 +30,6 @@
                                 <TableColumn fx:id="deleteColumn" prefWidth="75.0" text="Delete" />
                             </columns>
                         </TableView>
-                        <Button layoutX="573.0" layoutY="75.0" mnemonicParsing="false" onAction="#refrechtable" text="Refrech" />
                         <Button fx:id="ajouter" layoutX="491.0" layoutY="75.0" mnemonicParsing="false" onAction="#ajoutertable" text="Ajouter" />
                         <Button fx:id="exporter" layoutX="410.0" layoutY="75.0" mnemonicParsing="false" onAction="#exportertable" prefHeight="25.0" prefWidth="56.0" text="Print" />
                         <Pane layoutX="1.0" layoutY="-43.0" prefWidth="710.0" styleClass="navbar">

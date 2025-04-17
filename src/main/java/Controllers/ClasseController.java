@@ -51,7 +51,7 @@ public class ClasseController {
     private ObservableList<Classe> classeList = FXCollections.observableArrayList();
     private Connection connection;
     
-    // Add the service
+
     private ClasseService classeService = new ClasseServiceImpl();
 
     @FXML
@@ -68,13 +68,13 @@ public class ClasseController {
 
     private void loadClassesFromDB() {
         classeList.clear();
-        // Use the service instead of direct database access
+     
         classeList.addAll(classeService.getAllClasses());
         classetable.setItems(classeList);
     }
 
     private void deleteClasse(int id) {
-        // Use the service instead of direct database access
+    
         classeService.deleteClasse(id);
         System.out.println("Classe supprimée avec succès.");
     }
@@ -133,7 +133,7 @@ public class ClasseController {
             stage.setTitle("Modifier une Classe");
             stage.setScene(new Scene(loader.load()));
 
-            // Get the controller after loading
+    
             add_classe_controller controller = loader.getController();
             controller.initData(classe);
             controller.setOnSaveCallback(() -> loadClassesFromDB());
@@ -154,7 +154,7 @@ public class ClasseController {
             stage.setTitle("Ajouter une Classe");
             stage.setScene(new Scene(loader.load()));
 
-            // Get the controller after loading
+       
             add_classe_controller controller = loader.getController();
             controller.setOnSaveCallback(() -> loadClassesFromDB());
 
@@ -217,10 +217,6 @@ public class ClasseController {
         }
     }
 
-    @FXML
-    void refrechtable(ActionEvent event) {
-        loadClassesFromDB();
-    }
 
     private void showInfoAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -238,8 +234,8 @@ public class ClasseController {
         alert.showAndWait();
     }
 
-    // Methods for NavBarController
+   
     public void setParent(ClasseController parent) {
-        // This method is needed for NavBarController compatibility
+        
     }
 }

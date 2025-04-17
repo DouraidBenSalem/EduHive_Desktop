@@ -26,7 +26,7 @@ public class add_module_controller {
 
     private boolean isEditMode = false;
     private Module moduleToEdit;
-    private Runnable onSaveCallback; // pour rafraîchir automatiquement après ajout/modif
+    private Runnable onSaveCallback; 
     private String selectedImagePath;
 
     public void setOnSaveCallback(Runnable callback) {
@@ -49,7 +49,7 @@ public class add_module_controller {
 
     @FXML
     void initialize() {
-        // Initialize any components if needed
+       
     }
 
     @FXML
@@ -135,7 +135,7 @@ public class add_module_controller {
 
             if (onSaveCallback != null) onSaveCallback.run();
 
-            // Fermer la fenêtre
+       
             Stage stage = (Stage) ajouter.getScene().getWindow();
             stage.close();
 

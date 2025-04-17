@@ -57,7 +57,7 @@ public class ModuleController {
     private ObservableList<Module> moduleList = FXCollections.observableArrayList();
     private Connection connection;
     
-    // Add the service
+
     private ModuleService moduleService = new ModuleServiceImpl();
 
     @FXML
@@ -76,13 +76,13 @@ public class ModuleController {
 
     private void loadModulesFromDB() {
         moduleList.clear();
-        // Use the service instead of direct database access
+      
         moduleList.addAll(moduleService.getAllModules());
         moduletable.setItems(moduleList);
     }
 
     private void deleteModule(int id) {
-        // Use the service instead of direct database access
+
         moduleService.deleteModule(id);
         System.out.println("Module supprimé avec succès.");
     }
@@ -141,7 +141,7 @@ public class ModuleController {
             stage.setTitle("Modifier un Module");
             stage.setScene(new Scene(loader.load()));
 
-            // Get the controller after loading
+    
             add_module_controller controller = loader.getController();
             controller.initData(module);
             controller.setOnSaveCallback(() -> loadModulesFromDB());
@@ -162,7 +162,7 @@ public class ModuleController {
             stage.setTitle("Ajouter un Module");
             stage.setScene(new Scene(loader.load()));
 
-            // Get the controller after loading
+       
             add_module_controller controller = loader.getController();
             controller.setOnSaveCallback(() -> loadModulesFromDB());
 
@@ -194,9 +194,9 @@ public class ModuleController {
                 com.itextpdf.text.Paragraph title = new com.itextpdf.text.Paragraph("Modules List", titleFont);
                 title.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
                 document.add(title);
-                document.add(new com.itextpdf.text.Paragraph(" ")); // Add space
+                document.add(new com.itextpdf.text.Paragraph(" ")); 
 
-                com.itextpdf.text.pdf.PdfPTable pdfTable = new com.itextpdf.text.pdf.PdfPTable(5); // 5 columns
+                com.itextpdf.text.pdf.PdfPTable pdfTable = new com.itextpdf.text.pdf.PdfPTable(5); 
                 pdfTable.setWidthPercentage(100);
 
                 com.itextpdf.text.Font headerFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 12, com.itextpdf.text.Font.BOLD);
@@ -227,10 +227,7 @@ public class ModuleController {
         }
     }
 
-    @FXML
-    void refrechtable(ActionEvent event) {
-        loadModulesFromDB();
-    }
+    
 
     private void showInfoAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -248,8 +245,8 @@ public class ModuleController {
         alert.showAndWait();
     }
 
-    // Methods for NavBarController
+
     public void setParent(ModuleController parent) {
-        // This method is needed for NavBarController compatibility
+       
     }
 }

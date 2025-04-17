@@ -21,7 +21,7 @@ public class add_classe_controller {
 
     private boolean isEditMode = false;
     private Classe classeToEdit;
-    private Runnable onSaveCallback; // pour rafraîchir automatiquement après ajout/modif
+    private Runnable onSaveCallback; 
 
     public void setOnSaveCallback(Runnable callback) {
         this.onSaveCallback = callback;
@@ -84,7 +84,7 @@ public class add_classe_controller {
 
             if (onSaveCallback != null) onSaveCallback.run();
 
-            // Fermer la fenêtre
+ 
             Stage stage = (Stage) ajouter.getScene().getWindow();
             stage.close();
 
