@@ -8,9 +8,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import Services.ResultService;
 import Services.ResultServiceImpl;
 
@@ -28,31 +28,7 @@ public class ResultController {
     private Button quizPageBtn;
 
     @FXML
-    private TableColumn<Result, Integer> idColumn;
-
-    @FXML
-    private TableColumn<Result, Integer> userIdColumn;
-
-    @FXML
-    private TableColumn<Result, Integer> noteColumn;
-
-    @FXML
-    private TableColumn<Result, String> commentaireColumn;
-
-    @FXML
-    private TableColumn<Result, Integer> nbRepCorrectColumn;
-
-    @FXML
-    private TableColumn<Result, Integer> nbRepIncorrectColumn;
-
-    @FXML
-    private TableColumn<Result, Integer> quizIdColumn;
-
-    @FXML
-    private TableView<Result> resultTable;
-
-    @FXML
-    private TableColumn<Result, Void> actionColumn;
+    private ListView<Result> resultTable;
 
     private ObservableList<Result> resultList = FXCollections.observableArrayList();
     
@@ -64,22 +40,74 @@ public class ResultController {
 
         }
         
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        userIdColumn.setCellValueFactory(new PropertyValueFactory<>("userId"));
-        noteColumn.setCellValueFactory(new PropertyValueFactory<>("note"));
-        commentaireColumn.setCellValueFactory(new PropertyValueFactory<>("commentaire"));
-        nbRepCorrectColumn.setCellValueFactory(new PropertyValueFactory<>("nbRepCorrect"));
-        nbRepIncorrectColumn.setCellValueFactory(new PropertyValueFactory<>("nbRepIncorrect"));
-        quizIdColumn.setCellValueFactory(new PropertyValueFactory<>("quizId"));
-
         loadResultsFromDB();
-
-        if (actionColumn == null) {
-            actionColumn = new TableColumn<>("Actions");
-            resultTable.getColumns().add(actionColumn);
-        }
-
-        addActionButtonsToTable();
+        
+        // Configure ListView cell factory to display result information
+        resultTable.setCellFactory(new Callback<ListView<Result>, ListCell<Result>>() {
+            @Override
+            public ListCell<Result> call(ListView<Result> param) {
+                return new ListCell<Result>() {
+                    private final Button btnEdit = new Button("Edit");
+                    private final Button btnDelete = new Button("Delete");
+                    private final HBox buttons = new HBox(10, btnEdit, btnDelete);
+                    
+                    @Override
+                    protected void updateItem(Result item, boolean empty) {
+                        super.updateItem(item, empty);
+                        
+                        if (empty || item == null) {
+                            setText(null);
+                            setGraphic(null);
+                        } else {
+                            // Format the result information for display
+                            setText(
+                                   " | User ID: " + item.getUserId() + 
+                                   " | Quiz ID: " + item.getQuizId() + 
+                                   " | Note: " + item.getNote() +
+                                           " | nb_rep_correct: " + item.getNbRepCorrect() +
+                                           " | nb_rep_incorrect: " + item.getNbRepIncorrect() +
+                                           " | Commentaire: " + item.getCommentaire());
+                            
+                            // Configure edit button
+                            btnEdit.setOnAction(event -> {
+                                try {
+                                    FXMLLoader loader = new FXMLLoader(getClass().getResource("add_result.fxml"));
+                                    Scene scene = new Scene(loader.load());
+                                    
+                                    AddResultController controller = loader.getController();
+                                    controller.initData(item);
+                                    controller.setOnSaveCallback(() -> loadResultsFromDB());
+                                    
+                                    Stage stage = new Stage();
+                                    stage.setTitle("Modifier un Résultat");
+                                    stage.setScene(scene);
+                                    stage.show();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                            
+                            // Configure delete button
+                            btnDelete.setOnAction(event -> {
+                                Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+                                confirmDialog.setTitle("Confirmation de suppression");
+                                confirmDialog.setHeaderText("Supprimer le résultat");
+                                confirmDialog.setContentText("Êtes-vous sûr de vouloir supprimer ce résultat?");
+                                
+                                confirmDialog.showAndWait().ifPresent(response -> {
+                                    if (response == ButtonType.OK) {
+                                        deleteResult(item.getId());
+                                        loadResultsFromDB();
+                                    }
+                                });
+                            });
+                            
+                            setGraphic(buttons);
+                        }
+                    }
+                };
+            }
+        });
     }
 
     private void loadResultsFromDB() {
@@ -93,62 +121,7 @@ public class ResultController {
         System.out.println("Résultat supprimé avec succès.");
     }
 
-    private void addActionButtonsToTable() {
-        actionColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEdit = new Button("Edit");
-            private final Button btnDelete = new Button("Delete");
-            private final HBox pane = new HBox(10, btnEdit, btnDelete);
-
-            {
-                btnEdit.setOnAction(event -> {
-                    Result selectedResult = getTableView().getItems().get(getIndex());
-
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("add_result.fxml"));
-                        Scene scene = new Scene(loader.load());
-
-                        AddResultController controller = loader.getController();
-                        controller.initData(selectedResult);
-                        controller.setOnSaveCallback(() -> loadResultsFromDB());
-                        
-                        Stage stage = new Stage();
-                        stage.setTitle("Modifier un Résultat");
-                        stage.setScene(scene);
-                        stage.show();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-
-                btnDelete.setOnAction(event -> {
-                    Result selectedResult = getTableView().getItems().get(getIndex());
-                    
-                    Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-                    confirmDialog.setTitle("Confirmation de suppression");
-                    confirmDialog.setHeaderText("Supprimer le résultat");
-                    confirmDialog.setContentText("Êtes-vous sûr de vouloir supprimer ce résultat?");
-                    
-                    confirmDialog.showAndWait().ifPresent(response -> {
-                        if (response == ButtonType.OK) {
-                            deleteResult(selectedResult.getId());
-                            loadResultsFromDB();
-                        }
-                    });
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(pane);
-                }
-            }
-        });
-    }
+    // Method removed as functionality is now integrated in ListView cell factory
 
     @FXML
     void ajouterResult(ActionEvent event) {
