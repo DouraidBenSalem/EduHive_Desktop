@@ -1,32 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="900.0" styleClass="screen" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ResultController">
+<AnchorPane prefHeight="650.0" prefWidth="900.0" styleClass="screen" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ResultController">
    <children>
       <fx:include fx:id="navbar" source="navBar.fxml" />
       <AnchorPane layoutX="189.0" prefHeight="650.0" prefWidth="711.0">
          <children>
             <Pane layoutY="44.0" prefHeight="600.0" prefWidth="710.0">
                <children>
-                  <Button layoutX="567.0" layoutY="75.0" mnemonicParsing="false" onAction="#ajouterResult" prefHeight="33.0" prefWidth="96.0" text="Ajouter" />
-                  <Button fx:id="exporterBtn" layoutX="454.0" layoutY="75.0" mnemonicParsing="false" onAction="#exporterTable" prefHeight="33.0" prefWidth="89.0" text="Export" />
-                  <TableView fx:id="resultTable" layoutX="14.0" layoutY="140.0" prefHeight="264.0" prefWidth="684.0">
-                     <columns>
-                        <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
-                        <TableColumn fx:id="userIdColumn" prefWidth="75.0" text="User ID" />
-                        <TableColumn fx:id="quizIdColumn" prefWidth="75.0" text="Quiz ID" />
-                        <TableColumn fx:id="noteColumn" prefWidth="75.0" text="Note" />
-                        <TableColumn fx:id="nbRepCorrectColumn" prefWidth="120.0" text="Rép. Correctes" />
-                        <TableColumn fx:id="nbRepIncorrectColumn" prefWidth="120.0" text="Rép. Incorrectes" />
-                        <TableColumn fx:id="commentaireColumn" prefWidth="84.80010986328125" text="Commentaire" />
-                        <TableColumn fx:id="actionColumn" prefWidth="116.7999267578125" text="Actions" />
-                     </columns>
-                  </TableView>
+                  <Button mnemonicParsing="false" onAction="#ajouterResult" layoutX="583.0" layoutY="75.0" text="Ajouter" />
+                  <Button fx:id="exporterBtn" mnemonicParsing="false" onAction="#exporterTable" layoutX="487.0" layoutY="75.0" prefHeight="25.0" prefWidth="56.0" text="Print" />
+                  <Button fx:id="quizPageBtn" mnemonicParsing="false" onAction="#navigateToQuiz" layoutX="16.0" layoutY="75.0" text="Quiz" />
+                  <ListView fx:id="resultTable" layoutX="14.0" layoutY="140.0" prefHeight="264.0" prefWidth="655.0" />
                </children>
             </Pane>
          </children>
