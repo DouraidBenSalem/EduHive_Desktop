@@ -41,31 +41,13 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.application.Platform;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ListCell;
 
 public class CoursListController {
     @FXML
-    private TableView<Cours> tableCours;
-    @FXML
-    private TableColumn<Cours, Integer> colId;
-    @FXML
-    private TableColumn<Cours, String> colNom;
-    @FXML
-    private TableColumn<Cours, String> colDescription;
-    @FXML
-    private TableColumn<Cours, Integer> colOrdre;
-    @FXML
-    private TableColumn<Cours, String> colStatus;
-    @FXML
-    private TableColumn<Cours, String> colNiveau;
-    @FXML
-    private TableColumn<Cours, String> colPdf;
-    // @FXML private TableColumn<Cours, String> colImage;
-    @FXML
-    private TableColumn<Cours, Integer> colMatiereId;
-    @FXML
-    private TableColumn<Cours, Integer> colPrerequis;
-    @FXML
-    private TableColumn<Cours, Void> colActions;
+    private ListView<Cours> listCours;
+    // Nous n'avons plus besoin des colonnes car nous utilisons ListView
     @FXML
     private Button btnAddCours;
     @FXML
@@ -83,48 +65,84 @@ public class CoursListController {
 
     @FXML
     public void initialize() {
+        // Configuration du ListView
+        listCours.setMinHeight(400);
+        listCours.setPrefHeight(500);
+        listCours.setMaxHeight(Double.MAX_VALUE); // Permet à la liste de s'étendre verticalement
 
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colNom.setCellValueFactory(new PropertyValueFactory<>("nomCours"));
-        colDescription.setCellValueFactory(new PropertyValueFactory<>("descriptionCours"));
-        colOrdre.setCellValueFactory(new PropertyValueFactory<>("ordre"));
-        colStatus.setCellValueFactory(new PropertyValueFactory<>("statusCours"));
-        colNiveau.setCellValueFactory(new PropertyValueFactory<>("niveau"));
-        colPdf.setCellValueFactory(new PropertyValueFactory<>("pdfCours"));
+        // Assurer que la liste peut défiler correctement
+        VBox.setVgrow(listCours, javafx.scene.layout.Priority.ALWAYS);
 
-        colMatiereId.setCellValueFactory(new PropertyValueFactory<>("matiereId"));
-        colPrerequis.setCellValueFactory(new PropertyValueFactory<>("prerequisCoursId"));
+        // Configuration des cellules personnalisées
+        listCours.setCellFactory(lv -> new ListCell<Cours>() {
+            private final HBox container = new HBox(10);
+            private final VBox infoContainer = new VBox(5);
+            private final Label nomLabel = new Label();
+            private final Label descriptionLabel = new Label();
+            private final Label detailsLabel = new Label();
+            private final Button btnEdit = new Button("Modifier");
+            private final Button btnDelete = new Button("Supprimer");
+            private final Button btnViewPdf = new Button("Voir PDF");
+            private final HBox actionsContainer = new HBox(10, btnEdit, btnDelete, btnViewPdf);
 
-        // Configuration du défilement du tableau
-        tableCours.setFixedCellSize(60); // Hauteur fixe des cellules pour un défilement fluide
-        tableCours.setMinHeight(400);
-        tableCours.setPrefHeight(500);
-        tableCours.setMaxHeight(Double.MAX_VALUE); // Permet au tableau de s'étendre verticalement
+            {
+                // Style des éléments
+                nomLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2196f3;");
+                descriptionLabel.setStyle("-fx-font-size: 14px; -fx-wrap-text: true;");
+                detailsLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #757575;");
 
-        // Assurer que le tableau peut défiler correctement
-        VBox.setVgrow(tableCours, javafx.scene.layout.Priority.ALWAYS);
+                // Style des boutons
+                btnEdit.setStyle(
+                        "-fx-background-color: #64b5f6; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
+                btnDelete.setStyle(
+                        "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
+                btnViewPdf.setStyle(
+                        "-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
 
-        // Définir la largeur minimale des colonnes pour éviter le problème des "..."
-        colNom.setMinWidth(150);
-        colDescription.setMinWidth(120);
-        colStatus.setMinWidth(100);
-        colNiveau.setMinWidth(100);
-        colPdf.setMinWidth(100);
-        colActions.setMinWidth(180);
+                // Organisation des conteneurs
+                infoContainer.getChildren().addAll(nomLabel, descriptionLabel, detailsLabel);
+                infoContainer.setPrefWidth(600);
+                actionsContainer.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+                container.getChildren().addAll(infoContainer, actionsContainer);
+                container.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                container.setPadding(new Insets(10));
+                container
+                        .setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;");
 
-        // Permettre le redimensionnement des colonnes
-        tableCours.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+                // Limiter la largeur de la description
+                descriptionLabel.setMaxWidth(580);
+                descriptionLabel.setWrapText(true);
+            }
+
+            @Override
+            protected void updateItem(Cours cours, boolean empty) {
+                super.updateItem(cours, empty);
+                if (empty || cours == null) {
+                    setGraphic(null);
+                } else {
+                    // Mise à jour des informations
+                    nomLabel.setText(cours.getNomCours());
+                    descriptionLabel.setText(cours.getDescriptionCours());
+                    detailsLabel.setText(String.format("Niveau: %s | Status: %s | Matière ID: %d",
+                            cours.getNiveau(), cours.getStatusCours(), cours.getMatiereId()));
+
+                    // Configuration des actions des boutons
+                    btnEdit.setOnAction(e -> editCours(cours));
+                    btnDelete.setOnAction(e -> deleteCours(cours));
+                    btnViewPdf.setOnAction(e -> openPdf(cours));
+                    btnViewPdf.setVisible(cours.getPdfCours() != null && !cours.getPdfCours().isEmpty());
+
+                    setGraphic(container);
+                }
+            }
+        });
 
         loadCours();
-        addActionsToTable();
-        setPdfColumnWithButton();
-        setDescriptionColumnWithModalButton();
-
         btnAddCours.setOnAction(e -> openAddCoursWindow());
 
         // Initialisation de la recherche avancée
         filteredCoursList = new FilteredList<>(coursList, p -> true);
-        tableCours.setItems(filteredCoursList);
+        listCours.setItems(filteredCoursList);
 
         searchField.textProperty().addListener((obs, oldVal, newVal) -> {
             String lower = newVal.toLowerCase();
@@ -178,51 +196,12 @@ public class CoursListController {
         }
     }
 
-    private void addActionsToTable() {
-        Callback<TableColumn<Cours, Void>, TableCell<Cours, Void>> cellFactory = new Callback<>() {
-            @Override
-            public TableCell<Cours, Void> call(final TableColumn<Cours, Void> param) {
-                return new TableCell<>() {
-                    private final Button btnEdit = new Button("Modifier");
-                    private final Button btnDelete = new Button("Supprimer");
-                    private final HBox pane = new HBox(10, btnEdit, btnDelete);
+    // Cette méthode n'est plus utilisée car nous avons migré vers ListView
+    // Les actions sont maintenant gérées directement dans la cellule personnalisée
+    // du ListView
 
-                    {
-                        // Assurer que les boutons ont une largeur suffisante
-                        btnEdit.setMinWidth(80);
-                        btnDelete.setMinWidth(80);
-
-                        btnEdit.setStyle(
-                                "-fx-background-color: #64b5f6; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 2);");
-                        btnDelete.setStyle(
-                                "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 2);");
-                        pane.setPadding(new Insets(4, 0, 4, 0));
-                        pane.setAlignment(javafx.geometry.Pos.CENTER);
-
-                        btnEdit.setOnAction(event -> {
-                            Cours cours = getTableView().getItems().get(getIndex());
-                            openEditCoursWindow(cours);
-                        });
-
-                        btnDelete.setOnAction(event -> {
-                            Cours cours = getTableView().getItems().get(getIndex());
-                            deleteCours(cours);
-                        });
-                    }
-
-                    @Override
-                    protected void updateItem(Void item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            setGraphic(pane);
-                        }
-                    }
-                };
-            }
-        };
-        colActions.setCellFactory(cellFactory);
+    private void editCours(Cours cours) {
+        openEditCoursWindow(cours);
     }
 
     private void openEditCoursWindow(Cours cours) {
@@ -249,30 +228,16 @@ public class CoursListController {
         }
     }
 
-    private void setPdfColumnWithButton() {
-        colPdf.setCellFactory(col -> new TableCell<Cours, String>() {
-            private final Button btnViewPdf = new Button("Voir PDF");
-            {
-                // Assurer que le bouton a une largeur suffisante
-                btnViewPdf.setMinWidth(80);
-                btnViewPdf.setStyle(
-                        "-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 6;");
-                btnViewPdf.setOnAction(event -> {
-                    Cours cours = getTableView().getItems().get(getIndex());
-                    openPdfFile(cours.getPdfCours());
-                });
-            }
+    // Cette méthode n'est plus utilisée car nous avons migré vers ListView
+    // La fonctionnalité d'affichage des PDF est maintenant gérée dans la cellule
+    // personnalisée du ListView
 
-            @Override
-            protected void updateItem(String pdfFileName, boolean empty) {
-                super.updateItem(pdfFileName, empty);
-                if (empty || pdfFileName == null || pdfFileName.isEmpty()) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(btnViewPdf);
-                }
-            }
-        });
+    private void openPdf(Cours cours) {
+        if (cours != null && cours.getPdfCours() != null && !cours.getPdfCours().isEmpty()) {
+            openPdfFile(cours.getPdfCours());
+        } else {
+            showError("Ce cours n'a pas de PDF associé.");
+        }
     }
 
     private void openPdfFile(String pdfFileName) {
@@ -302,31 +267,9 @@ public class CoursListController {
         alert.showAndWait();
     }
 
-    private void setDescriptionColumnWithModalButton() {
-        colDescription.setCellFactory(col -> new TableCell<Cours, String>() {
-            private final Button btnView = new Button("Voir");
-            {
-                // Assurer que le bouton a une largeur suffisante
-                btnView.setMinWidth(60);
-                btnView.setStyle(
-                        "-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 6;");
-                btnView.setOnAction(event -> {
-                    Cours cours = getTableView().getItems().get(getIndex());
-                    showDescriptionModal(cours.getNomCours(), cours.getDescriptionCours());
-                });
-            }
-
-            @Override
-            protected void updateItem(String html, boolean empty) {
-                super.updateItem(html, empty);
-                if (empty || html == null || html.trim().isEmpty()) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(btnView);
-                }
-            }
-        });
-    }
+    // Cette méthode n'est plus utilisée car nous avons migré vers ListView
+    // La fonctionnalité d'affichage des descriptions est maintenant gérée dans la
+    // cellule personnalisée du ListView
 
     private void showDescriptionModal(String titre, String html) {
         Stage modal = new Stage();
@@ -373,7 +316,7 @@ public class CoursListController {
             fileChooser.setTitle("Exporter la liste des cours");
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
             fileChooser.setInitialFileName("cours_export.csv");
-            File file = fileChooser.showSaveDialog(tableCours.getScene().getWindow());
+            File file = fileChooser.showSaveDialog(listCours.getScene().getWindow());
             if (file != null) {
                 try (PrintWriter writer = new PrintWriter(new FileWriter(file, false))) {
                     // En-tête CSV (sans colonnes ID)
@@ -457,7 +400,7 @@ public class CoursListController {
                 if (newState == javafx.concurrent.Worker.State.SUCCEEDED) {
                     Platform.runLater(() -> {
                         PrinterJob job = PrinterJob.createPrinterJob();
-                        if (job != null && job.showPrintDialog(tableCours.getScene().getWindow())) {
+                        if (job != null && job.showPrintDialog(listCours.getScene().getWindow())) {
                             // Ajuste la hauteur pour tout imprimer
                             Object scrollHeight = webView.getEngine().executeScript("document.body.scrollHeight");
                             if (scrollHeight instanceof Number) {

@@ -10,9 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -80,31 +78,9 @@ public class MatiereController {
     private Button btnAjouter;
 
     @FXML
-    private TableView<Matiere> matiereTable;
+    private ListView<Matiere> listMatiere;
 
-    @FXML
-    private TableColumn<Matiere, Integer> idColumn;
-
-    @FXML
-    private TableColumn<Matiere, String> nomMatiereColumn;
-
-    @FXML
-    private TableColumn<Matiere, String> descriptionMatiereColumn;
-
-    @FXML
-    private TableColumn<Matiere, String> objectifMatiereColumn;
-
-    @FXML
-    private TableColumn<Matiere, Integer> moduleIdColumn;
-
-    @FXML
-    private TableColumn<Matiere, Integer> enseignantIdColumn;
-
-    @FXML
-    private TableColumn<Matiere, Integer> prerequisMatiereColumn;
-
-    @FXML
-    private TableColumn<Matiere, Void> actionColumn;
+    // Nous n'avons plus besoin des colonnes car nous utilisons ListView
 
     @FXML
     private TextField searchField;
@@ -130,59 +106,94 @@ public class MatiereController {
             navbarController.setParent(this);
         }
 
-        // Set up the table columns
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        nomMatiereColumn.setCellValueFactory(new PropertyValueFactory<>("nomMatiere"));
-        descriptionMatiereColumn.setCellValueFactory(new PropertyValueFactory<>("descriptionMatiere"));
-        objectifMatiereColumn.setCellValueFactory(new PropertyValueFactory<>("objectifMatiere"));
-        moduleIdColumn.setCellValueFactory(new PropertyValueFactory<>("moduleId"));
-        enseignantIdColumn.setCellValueFactory(new PropertyValueFactory<>("enseignantId"));
-        prerequisMatiereColumn.setCellValueFactory(new PropertyValueFactory<>("prerequisMatiere"));
+        // Configuration du ListView
+        listMatiere.setMinHeight(400);
+        listMatiere.setPrefHeight(500);
+        listMatiere.setMaxHeight(Double.MAX_VALUE); // Permet à la liste de s'étendre verticalement
 
-        // Configure description column to show modal on click
-        descriptionMatiereColumn.setCellFactory(column -> {
-            TableCell<Matiere, String> cell = new TableCell<Matiere, String>() {
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setText(null);
-                        setGraphic(null);
+        // Assurer que la liste peut défiler correctement
+        VBox.setVgrow(listMatiere, javafx.scene.layout.Priority.ALWAYS);
+
+        // Configuration des cellules personnalisées
+        listMatiere.setCellFactory(lv -> new ListCell<Matiere>() {
+            private final HBox container = new HBox(10);
+            private final VBox infoContainer = new VBox(5);
+            private final Label nomLabel = new Label();
+            private final Label descriptionLabel = new Label();
+            private final Label detailsLabel = new Label();
+            private final Button btnEdit = new Button("Modifier");
+            private final Button btnDelete = new Button("Supprimer");
+            private final Button btnViewDetails = new Button("Détails");
+            private final HBox actionsContainer = new HBox(10, btnEdit, btnDelete, btnViewDetails);
+
+            {
+                // Style des éléments
+                nomLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2196f3;");
+                descriptionLabel.setStyle("-fx-font-size: 14px; -fx-wrap-text: true;");
+                detailsLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #757575;");
+
+                // Style des boutons
+                btnEdit.setStyle(
+                        "-fx-background-color: #58c7fa; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
+                btnDelete.setStyle(
+                        "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
+                btnViewDetails.setStyle(
+                        "-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
+
+                // Organisation des conteneurs
+                infoContainer.getChildren().addAll(nomLabel, descriptionLabel, detailsLabel);
+                infoContainer.setPrefWidth(600);
+                actionsContainer.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+                container.getChildren().addAll(infoContainer, actionsContainer);
+                container.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                container.setPadding(new Insets(10));
+                container
+                        .setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;");
+
+                // Limiter la largeur de la description
+                descriptionLabel.setMaxWidth(580);
+                descriptionLabel.setWrapText(true);
+            }
+
+            @Override
+            protected void updateItem(Matiere matiere, boolean empty) {
+                super.updateItem(matiere, empty);
+                if (empty || matiere == null) {
+                    setGraphic(null);
+                } else {
+                    // Mise à jour des informations
+                    nomLabel.setText(matiere.getNomMatiere());
+
+                    // Afficher une version tronquée de la description
+                    String description = matiere.getDescriptionMatiere();
+                    if (description != null && description.length() > 100) {
+                        descriptionLabel.setText(description.substring(0, 100) + "...");
                     } else {
-                        // Show truncated text in the cell
-                        String displayText = item.length() > 30 ? item.substring(0, 30) + "..." : item;
-                        setText(displayText);
-                        getStyleClass().add("description-cell");
+                        descriptionLabel.setText(description);
                     }
-                }
-            };
 
-            // Add click event to show modal
-            cell.setOnMouseClicked(event -> {
-                if (!cell.isEmpty()) {
-                    Matiere matiere = cell.getTableView().getItems().get(cell.getIndex());
-                    showDescriptionModal(matiere);
-                }
-            });
+                    detailsLabel.setText(String.format("Module ID: %d | Enseignant ID: %d | Objectif: %s",
+                            matiere.getModuleId(), matiere.getEnseignantId(),
+                            matiere.getObjectifMatiere() != null ? (matiere.getObjectifMatiere().length() > 50
+                                    ? matiere.getObjectifMatiere().substring(0, 50) + "..."
+                                    : matiere.getObjectifMatiere()) : "Non défini"));
 
-            return cell;
+                    // Configuration des actions des boutons
+                    btnEdit.setOnAction(e -> editMatiere(matiere));
+                    btnDelete.setOnAction(e -> deleteMatiere(matiere.getId()));
+                    btnViewDetails.setOnAction(e -> showDescriptionModal(matiere));
+
+                    setGraphic(container);
+                }
+            }
         });
 
         // Load data from database
         loadMatieresFromDB();
 
-        // Set up action column if not already set
-        if (actionColumn == null) {
-            actionColumn = new TableColumn<>("Actions");
-            matiereTable.getColumns().add(actionColumn);
-        }
-
-        // Add action buttons to the table
-        addActionButtonsToTable();
-
         // Initialisation de la recherche avancée
         filteredMatiereList = new FilteredList<>(matiereList, p -> true);
-        matiereTable.setItems(filteredMatiereList);
+        listMatiere.setItems(filteredMatiereList);
 
         searchField.textProperty().addListener((obs, oldVal, newVal) -> {
             String lower = newVal.toLowerCase();
@@ -216,6 +227,46 @@ public class MatiereController {
         // Use the service to get all matieres
         matiereList.addAll(matiereService.getAllMatieres());
         // filteredMatiereList est automatiquement mis à jour
+    }
+
+    private void editMatiere(Matiere matiere) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/add_matiere.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            AddMatiereController controller = loader.getController();
+            controller.initData(matiere);
+            controller.setOnSaveCallback(() -> loadMatieresFromDB());
+
+            Stage stage = new Stage();
+            stage.setTitle("Modifier une Matière");
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Erreur lors de l'ouverture du formulaire de modification: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    void ajouterMatiere(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/add_matiere.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            AddMatiereController controller = loader.getController();
+            controller.setOnSaveCallback(() -> loadMatieresFromDB());
+
+            Stage stage = new Stage();
+            stage.setTitle("Ajouter une Matière");
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Erreur lors de l'ouverture du formulaire d'ajout: " + e.getMessage());
+        }
     }
 
     private void setupExportMenu() {
@@ -343,7 +394,7 @@ public class MatiereController {
             fileChooser.setTitle("Exporter la liste des matières");
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
             fileChooser.setInitialFileName("matieres_export.csv");
-            File file = fileChooser.showSaveDialog(matiereTable.getScene().getWindow());
+            File file = fileChooser.showSaveDialog(listMatiere.getScene().getWindow());
             if (file != null) {
                 try (PrintWriter writer = new PrintWriter(new FileWriter(file, false))) {
                     // En-tête CSV (sans colonnes ID)
@@ -432,7 +483,7 @@ public class MatiereController {
                 if (newState == javafx.concurrent.Worker.State.SUCCEEDED) {
                     Platform.runLater(() -> {
                         PrinterJob job = PrinterJob.createPrinterJob();
-                        if (job != null && job.showPrintDialog(matiereTable.getScene().getWindow())) {
+                        if (job != null && job.showPrintDialog(listMatiere.getScene().getWindow())) {
                             // Ajuste la hauteur pour tout imprimer
                             Object scrollHeight = webView.getEngine().executeScript("document.body.scrollHeight");
                             if (scrollHeight instanceof Number) {
@@ -483,95 +534,7 @@ public class MatiereController {
         System.out.println("Matière supprimée avec succès.");
     }
 
-    private void addActionButtonsToTable() {
-        // Définir une largeur suffisante pour la colonne d'action
-        actionColumn.setPrefWidth(230);
-        actionColumn.setMinWidth(230);
+    // Cette méthode n'est plus utilisée car nous avons migré vers ListView
+    // Les actions sont maintenant gérées directement dans la cellule personnalisée
 
-        actionColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEdit = new Button("Modifier");
-            private final Button btnDelete = new Button("Supprimer");
-            private final HBox pane = new HBox(10, btnEdit, btnDelete);
-
-            {
-                // Style pour le bouton Modifier
-                btnEdit.setStyle(
-                        "-fx-background-color: #58c7fa; -fx-text-fill: white; -fx-background-radius: 5px; -fx-font-weight: bold; -fx-cursor: hand;");
-                btnEdit.setPrefWidth(100);
-
-                // Style pour le bouton Supprimer
-                btnDelete.setStyle(
-                        "-fx-background-color: #f44336; -fx-text-fill: white; -fx-background-radius: 5px; -fx-font-weight: bold; -fx-cursor: hand;");
-                btnDelete.setPrefWidth(100);
-
-                // Assurer que le conteneur HBox a une largeur suffisante
-                pane.setMinWidth(220);
-
-                btnEdit.setOnAction(event -> {
-                    Matiere selectedMatiere = getTableView().getItems().get(getIndex());
-
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/add_matiere.fxml"));
-                        Scene scene = new Scene(loader.load());
-
-                        AddMatiereController controller = loader.getController();
-                        controller.initData(selectedMatiere);
-                        controller.setOnSaveCallback(() -> loadMatieresFromDB());
-
-                        Stage stage = new Stage();
-                        stage.setTitle("Modifier une Matière");
-                        stage.setScene(scene);
-                        stage.show();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-
-                btnDelete.setOnAction(event -> {
-                    Matiere selectedMatiere = getTableView().getItems().get(getIndex());
-
-                    Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-                    confirmDialog.setTitle("Confirmation de suppression");
-                    confirmDialog.setHeaderText("Supprimer la matière");
-                    confirmDialog.setContentText("Êtes-vous sûr de vouloir supprimer cette matière?");
-
-                    confirmDialog.showAndWait().ifPresent(response -> {
-                        if (response == ButtonType.OK) {
-                            deleteMatiere(selectedMatiere.getId());
-                            loadMatieresFromDB();
-                        }
-                    });
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(pane);
-                }
-            }
-        });
-    }
-
-    @FXML
-    void ajouterMatiere(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("add_matiere.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Ajouter une Matière");
-            stage.setScene(new Scene(loader.load()));
-
-            AddMatiereController controller = loader.getController();
-            controller.setOnSaveCallback(() -> loadMatieresFromDB());
-
-            stage.show();
-            stage.setOnHidden(e -> loadMatieresFromDB());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -249,6 +249,10 @@ public class AddMatiereController {
         }
     }
 
+    public void setMatiere(Matiere matiere) {
+        initData(matiere);
+    }
+
     private void validateAllFields() {
 
         String nomValue = nomMatiere.getText();
