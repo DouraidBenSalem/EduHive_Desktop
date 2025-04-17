@@ -6,13 +6,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import Services.QuizService;
 import Services.QuizServiceImpl;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import java.io.IOException;
 
 public class quizcontroller {
@@ -27,28 +27,7 @@ public class quizcontroller {
     private Button Resultatpage;
 
     @FXML
-    private TableColumn<quiz, Integer> id_quiz;
-
-    @FXML
-    private TableColumn<quiz, String> option_a;
-
-    @FXML
-    private TableColumn<quiz, String> option_b;
-
-    @FXML
-    private TableColumn<quiz, String> question;
-
-    @FXML
-    private TableView<quiz> quizztable;
-
-    @FXML
-    private TableColumn<quiz, String> rep_correct;
-
-    @FXML
-    private TableColumn<quiz, String> titre;
-
-    @FXML
-    private TableColumn<quiz, Void> actionColumn;
+    private ListView<quiz> quizztable;
 
     private ObservableList<quiz> quizList = FXCollections.observableArrayList();
     
@@ -59,21 +38,63 @@ public class quizcontroller {
     @FXML
     void initialize() {
         navbarController.setParent(this);
-        id_quiz.setCellValueFactory(new PropertyValueFactory<>("id"));
-        titre.setCellValueFactory(new PropertyValueFactory<>("titre"));
-        question.setCellValueFactory(new PropertyValueFactory<>("question"));
-        rep_correct.setCellValueFactory(new PropertyValueFactory<>("repCorrect"));
-        option_a.setCellValueFactory(new PropertyValueFactory<>("optionA"));
-        option_b.setCellValueFactory(new PropertyValueFactory<>("optionB"));
-
+        
         loadQuizFromDB();
-
-        if (actionColumn == null) {
-            actionColumn = new TableColumn<>("Actions");
-            quizztable.getColumns().add(actionColumn);
-        }
-
-        addActionButtonsToTable();
+        
+        // Configure ListView cell factory to display quiz information
+        quizztable.setCellFactory(new Callback<ListView<quiz>, ListCell<quiz>>() {
+            @Override
+            public ListCell<quiz> call(ListView<quiz> param) {
+                return new ListCell<quiz>() {
+                    private final Button btnEdit = new Button("Edit");
+                    private final Button btnDelete = new Button("Delete");
+                    private final HBox buttons = new HBox(10, btnEdit, btnDelete);
+                    
+                    @Override
+                    protected void updateItem(quiz item, boolean empty) {
+                        super.updateItem(item, empty);
+                        
+                        if (empty || item == null) {
+                            setText(null);
+                            setGraphic(null);
+                        } else {
+                            // Format the quiz information for display
+                            setText(
+                                   " | Titre: " + item.getTitre() + 
+                                   " | Question: " + item.getQuestion() + 
+                                   " | Réponse correcte: " + item.getRepCorrect());
+                            
+                            // Configure edit button
+                            btnEdit.setOnAction(event -> {
+                                try {
+                                    FXMLLoader loader = new FXMLLoader(getClass().getResource("ajouterquiz.fxml"));
+                                    Scene scene = new Scene(loader.load());
+                                    
+                                    add_quiz_controller controller = loader.getController();
+                                    controller.initData(item);
+                                    controller.setOnSaveCallback(() -> loadQuizFromDB());
+                                    
+                                    Stage stage = new Stage();
+                                    stage.setTitle("Modifier un Quiz");
+                                    stage.setScene(scene);
+                                    stage.show();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                            
+                            // Configure delete button
+                            btnDelete.setOnAction(event -> {
+                                deleteQuiz(item.getId());
+                                loadQuizFromDB();
+                            });
+                            
+                            setGraphic(buttons);
+                        }
+                    }
+                };
+            }
+        });
     }
 
     private void loadQuizFromDB() {
@@ -89,52 +110,7 @@ public class quizcontroller {
         System.out.println("Quiz supprimé avec succès.");
     }
 
-    private void addActionButtonsToTable() {
-        actionColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEdit = new Button("Edit");
-            private final Button btnDelete = new Button("Delete");
-            private final HBox pane = new HBox(10, btnEdit, btnDelete);
-
-            {
-                btnEdit.setOnAction(event -> {
-                    quiz selectedQuiz = getTableView().getItems().get(getIndex());
-
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("ajouterquiz.fxml"));
-                        Scene scene = new Scene(loader.load());
-
-
-                        add_quiz_controller controller = loader.getController();
-                        controller.initData(selectedQuiz);
-                        controller.setOnSaveCallback(() -> loadQuizFromDB());
-                        Stage stage = new Stage();
-                        stage.setTitle("Modifier un Quiz");
-                        stage.setScene(scene);
-                        stage.show();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-
-                btnDelete.setOnAction(event -> {
-                    quiz selectedQuiz = getTableView().getItems().get(getIndex());
-                    deleteQuiz(selectedQuiz.getId());
-                    loadQuizFromDB();
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(pane);
-                }
-            }
-        });
-    }
+    // Method removed as functionality is now integrated in ListView cell factory
 
 
     @FXML
