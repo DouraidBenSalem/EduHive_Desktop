@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import services.QuizService;
 import services.QuizServiceImpl;
 import javafx.fxml.FXMLLoader;
@@ -41,7 +42,7 @@ public class quizcontroller {
 
         loadQuizFromDB();
 
-        // Configure ListView cell factory to display quiz information
+        // Configure ListView cell factory to display quiz information with card layout
         quizztable.setCellFactory(new Callback<ListView<quiz>, ListCell<quiz>>() {
             @Override
             public ListCell<quiz> call(ListView<quiz> param) {
@@ -58,14 +59,44 @@ public class quizcontroller {
                             setText(null);
                             setGraphic(null);
                         } else {
-                            // Format the quiz information for display
-                            setText(
-                                    " | Titre: " + item.getTitre() +
-                                            " | Question: " + item.getQuestion() +
-                                            " | Réponse correcte: " + item.getRepCorrect());
-
-                            // Le bouton Prendre individuel a été remplacé par un bouton unique en haut de la page
-
+                            // Create a card layout for the quiz
+                            VBox cardLayout = new VBox(8);
+                            cardLayout.setPadding(new javafx.geometry.Insets(10));
+                            cardLayout.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 5px; -fx-background-radius: 5px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);");
+                            
+                            // Title with styling
+                            Label titleLabel = new Label(item.getTitre());
+                            titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3f51b5;");
+                            
+                            // Question with styling
+                            Label questionLabel = new Label("Question: " + item.getQuestion());
+                            questionLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #555555;");
+                            questionLabel.setWrapText(true);
+                            
+                            // Correct answer with styling
+                            Label answerLabel = new Label("Réponse correcte: " + item.getRepCorrect());
+                            answerLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #009688; -fx-font-style: italic;");
+                            
+                            // Options section
+                            HBox optionsBox = new HBox(15);
+                            optionsBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                            
+                            Label optionALabel = new Label("Option A: " + item.getOptionA());
+                            optionALabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666666;");
+                            
+                            Label optionBLabel = new Label("Option B: " + item.getOptionB());
+                            optionBLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666666;");
+                            
+                            optionsBox.getChildren().addAll(optionALabel, optionBLabel);
+                            
+                            // Style the buttons
+                            btnEdit.getStyleClass().add("table-edit-button");
+                            btnDelete.getStyleClass().add("table-delete-button");
+                            buttons.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+                            
+                            // Add all elements to the card
+                            cardLayout.getChildren().addAll(titleLabel, questionLabel, answerLabel, optionsBox, buttons);
+                            
                             // Configure edit button
                             btnEdit.setOnAction(event -> {
                                 try {
@@ -91,7 +122,8 @@ public class quizcontroller {
                                 loadQuizFromDB();
                             });
 
-                            setGraphic(buttons);
+                            setText(null); // Clear text as we're using a custom layout
+                            setGraphic(cardLayout);
                         }
                     }
                 };

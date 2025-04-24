@@ -83,7 +83,7 @@
             </Button>
             
             <!-- Conteneur pour l'animation et l'affichage des résultats -->
-            <AnchorPane fx:id="resultContainer" layoutX="14.0" layoutY="14.0" prefHeight="550.0" prefWidth="683.0" style="-fx-background-color: white;" visible="false">
+            <AnchorPane fx:id="resultContainer" layoutX="14.0" layoutY="14.0" prefHeight="550.0" prefWidth="683.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2; -fx-border-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 5);" visible="false">
                <children>
                   <VBox alignment="CENTER" layoutX="141.0" layoutY="75.0" prefHeight="400.0" prefWidth="400.0" spacing="20.0">
                      <children>
