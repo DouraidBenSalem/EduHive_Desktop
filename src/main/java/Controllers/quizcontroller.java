@@ -6,13 +6,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import services.QuizService;
 import services.QuizServiceImpl;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import java.io.IOException;
 
 public class quizcontroller {
@@ -27,53 +27,76 @@ public class quizcontroller {
     private Button Resultatpage;
 
     @FXML
-    private TableColumn<quiz, Integer> id_quiz;
-
-    @FXML
-    private TableColumn<quiz, String> option_a;
-
-    @FXML
-    private TableColumn<quiz, String> option_b;
-
-    @FXML
-    private TableColumn<quiz, String> question;
-
-    @FXML
-    private TableView<quiz> quizztable;
-
-    @FXML
-    private TableColumn<quiz, String> rep_correct;
-
-    @FXML
-    private TableColumn<quiz, String> titre;
-
-    @FXML
-    private TableColumn<quiz, Void> actionColumn;
+    private ListView<quiz> quizztable;
 
     private ObservableList<quiz> quizList = FXCollections.observableArrayList();
-    
+
     // Add the service
     // Update the service instantiation
     private QuizService quizService = new QuizServiceImpl();
-    
+
     @FXML
     void initialize() {
         navbarController.setParent(this);
-        id_quiz.setCellValueFactory(new PropertyValueFactory<>("id"));
-        titre.setCellValueFactory(new PropertyValueFactory<>("titre"));
-        question.setCellValueFactory(new PropertyValueFactory<>("question"));
-        rep_correct.setCellValueFactory(new PropertyValueFactory<>("repCorrect"));
-        option_a.setCellValueFactory(new PropertyValueFactory<>("optionA"));
-        option_b.setCellValueFactory(new PropertyValueFactory<>("optionB"));
 
         loadQuizFromDB();
 
-        if (actionColumn == null) {
-            actionColumn = new TableColumn<>("Actions");
-            quizztable.getColumns().add(actionColumn);
-        }
+        // Configure ListView cell factory to display quiz information
+        quizztable.setCellFactory(new Callback<ListView<quiz>, ListCell<quiz>>() {
+            @Override
+            public ListCell<quiz> call(ListView<quiz> param) {
+                return new ListCell<quiz>() {
+                    private final Button btnEdit = new Button("Edit");
+                    private final Button btnDelete = new Button("Delete");
+                    private final HBox buttons = new HBox(10, btnEdit, btnDelete);
 
-        addActionButtonsToTable();
+                    @Override
+                    protected void updateItem(quiz item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (empty || item == null) {
+                            setText(null);
+                            setGraphic(null);
+                        } else {
+                            // Format the quiz information for display
+                            setText(
+                                    " | Titre: " + item.getTitre() +
+                                            " | Question: " + item.getQuestion() +
+                                            " | Réponse correcte: " + item.getRepCorrect());
+
+                            // Le bouton Prendre individuel a été remplacé par un bouton unique en haut de la page
+
+                            // Configure edit button
+                            btnEdit.setOnAction(event -> {
+                                try {
+                                    FXMLLoader loader = new FXMLLoader(getClass().getResource("ajouterquiz.fxml"));
+                                    Scene scene = new Scene(loader.load());
+
+                                    add_quiz_controller controller = loader.getController();
+                                    controller.initData(item);
+                                    controller.setOnSaveCallback(() -> loadQuizFromDB());
+
+                                    Stage stage = new Stage();
+                                    stage.setTitle("Modifier un Quiz");
+                                    stage.setScene(scene);
+                                    stage.show();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+
+                            // Configure delete button
+                            btnDelete.setOnAction(event -> {
+                                deleteQuiz(item.getId());
+                                loadQuizFromDB();
+                            });
+
+                            setGraphic(buttons);
+                        }
+                    }
+                };
+            }
+        });
     }
 
     private void loadQuizFromDB() {
@@ -88,53 +111,16 @@ public class quizcontroller {
         quizService.deleteQuiz(id);
         System.out.println("Quiz supprimé avec succès.");
     }
-
-    private void addActionButtonsToTable() {
-        actionColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEdit = new Button("Edit");
-            private final Button btnDelete = new Button("Delete");
-            private final HBox pane = new HBox(10, btnEdit, btnDelete);
-
-            {
-                btnEdit.setOnAction(event -> {
-                    quiz selectedQuiz = getTableView().getItems().get(getIndex());
-
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("ajouterquiz.fxml"));
-                        Scene scene = new Scene(loader.load());
-
-
-                        add_quiz_controller controller = loader.getController();
-                        controller.initData(selectedQuiz);
-                        controller.setOnSaveCallback(() -> loadQuizFromDB());
-                        Stage stage = new Stage();
-                        stage.setTitle("Modifier un Quiz");
-                        stage.setScene(scene);
-                        stage.show();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-
-                btnDelete.setOnAction(event -> {
-                    quiz selectedQuiz = getTableView().getItems().get(getIndex());
-                    deleteQuiz(selectedQuiz.getId());
-                    loadQuizFromDB();
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(pane);
-                }
-            }
-        });
+    
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
+
+    // Method removed as functionality is now integrated in ListView cell factory
 
 
     @FXML
@@ -244,6 +230,26 @@ public class quizcontroller {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    @FXML
+    void prendreQuiz(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/take_quiz.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            TakeQuizController controller = loader.getController();
+            // Charger tous les quiz disponibles au lieu d'un quiz spécifique
+            controller.loadAllQuizzes();
+
+            Stage stage = new Stage();
+            stage.setTitle("Tous les Quiz");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible de charger la page des quiz.");
         }
     }
 
