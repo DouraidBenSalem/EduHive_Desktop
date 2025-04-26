@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="650.0" prefWidth="900.0" styleClass="screen" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.AIQuizGeneratorController">
+   <children>
+      <fx:include fx:id="navbar" source="navBar.fxml" />
+      <AnchorPane layoutX="189.0" prefHeight="650.0" prefWidth="711.0">
+         <children>
+            <VBox alignment="TOP_CENTER" layoutX="14.0" layoutY="16.0" prefHeight="618.0" prefWidth="683.0" spacing="15.0">
+               <children>
+                  <Label styleClass="quiz-title" text="Générateur de Quiz IA">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  
+                  <Label text="Entrez un sujet pour générer un quiz avec l'IA">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  
+                  <HBox alignment="CENTER" spacing="10.0">
+                     <children>
+                        <TextField fx:id="topicInput" prefHeight="40.0" prefWidth="400.0" promptText="Ex: Histoire de France, Mathématiques, Programmation Java...">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Button fx:id="generateButton" mnemonicParsing="false" onAction="#handleGenerateQuiz" prefHeight="40.0" prefWidth="150.0" styleClass="submit-button" text="Générer">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="20.0" top="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  
+                  <Label fx:id="loadingLabel" text="Génération en cours..." visible="false">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  
+                  <ScrollPane fitToWidth="true" prefHeight="400.0" prefWidth="683.0" styleClass="quiz-container">
+                     <content>
+                        <VBox fx:id="quizResultContainer" prefWidth="665.0" spacing="15.0">
+                           <padding>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  
+                  <HBox alignment="CENTER" spacing="20.0">
+                     <children>
+                        <Button fx:id="saveQuizButton" disable="true" mnemonicParsing="false" onAction="#handleSaveQuiz" prefHeight="40.0" prefWidth="200.0" styleClass="submit-button" text="Enregistrer le Quiz">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" prefHeight="40.0" prefWidth="150.0" text="Retour">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

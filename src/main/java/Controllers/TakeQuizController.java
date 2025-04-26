@@ -87,10 +87,6 @@ public class TakeQuizController {
         // Cacher le template de question qui sera utilisé pour générer dynamiquement les questions
         questionTemplate.setVisible(false);
         questionTemplate.setManaged(false);
-        
-        // Configurer le bouton pour voir tous les quiz
-        allQuizzesButton.getStyleClass().add("primary-button");
-        allQuizzesButton.setStyle("-fx-background-color: #58c7fa; -fx-text-fill: white; -fx-font-weight: bold;");
 
         // Charger les questions du quiz (à remplacer par l'ID du quiz sélectionné)
         loadQuizQuestions();
@@ -148,11 +144,9 @@ public class TakeQuizController {
      * Affiche les questions du quiz dans l'interface
      */
     private void displayQuizQuestions() {
-        // Supprimer toutes les questions existantes sauf le titre
+
         quizContainer.getChildren().clear();
         quizContainer.getChildren().add(quizTitle);
-
-        // Ajouter chaque question au conteneur
         for (int i = 0; i < quizQuestions.size(); i++) {
             quiz q = quizQuestions.get(i);
             VBox questionBox = createQuestionBox(q, i);
@@ -200,8 +194,7 @@ public class TakeQuizController {
         optionB.setUserData(q.getOptionB());
         optionB.setStyle("-fx-text-fill: #555555;");
         optionBBox.getChildren().add(optionB);
-        
-        // Ajouter l'option pour la réponse correcte
+
         HBox optionCorrectBox = new HBox(10);
         RadioButton optionCorrect = new RadioButton(q.getRepCorrect());
         optionCorrect.setToggleGroup(answerGroup);
@@ -428,13 +421,12 @@ if (!q.getRepCorrect().equals(q.getOptionA()) && !q.getRepCorrect().equals(q.get
         result.setNbRepCorrect(correctAnswers);
         result.setNbRepIncorrect(incorrectAnswers);
         
-        // Si nous avons un quiz spécifique, définir son ID et son titre
+
         if (currentQuiz != null) {
             result.setQuizId(currentQuiz.getId());
             result.setQuizTitle(currentQuiz.getTitre());
         }
         
-        // Sauvegarder le résultat
         resultService.addResult(result);
     }
 
@@ -467,19 +459,24 @@ if (!q.getRepCorrect().equals(q.getOptionA()) && !q.getRepCorrect().equals(q.get
 
     }
     
+    /**
+     * Gère la navigation vers la page de génération de quiz IA
+     */
     @FXML
-    void handleAllQuizzes(ActionEvent event) {
+    void handleAIQuizGenerator(ActionEvent event) {
         try {
-            // Naviguer vers la page des quiz
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("quizpage.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/ai_quiz_generator.fxml"));
             Scene scene = new Scene(loader.load());
-            Stage stage = (Stage) allQuizzesButton.getScene().getWindow();
+            Stage stage = (Stage) submitButton.getScene().getWindow();
             stage.setScene(scene);
+            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Impossible de charger la page des quiz.");
+            showAlert("Erreur", "Erreur lors de la navigation vers le générateur de quiz IA: " + e.getMessage());
         }
     }
+    
+
 
     /**
      * Affiche une alerte avec le titre et le message spécifiés
