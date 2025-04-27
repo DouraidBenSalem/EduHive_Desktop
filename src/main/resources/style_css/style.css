@@ -97,6 +97,61 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 1, 0, 0, 1);
 }
 
+.search-field {
+    -fx-background-color: white;
+    -fx-border-color: #d0d0d0;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 3, 0, 0, 1);
+}
+
+.search-field:focused {
+    -fx-border-color: #58c7fa;
+}
+
+.search-label, .sort-label {
+    -fx-text-fill: #3f51b5;
+}
+
+.sort-combo {
+    -fx-background-color: white;
+    -fx-border-color: #d0d0d0;
+    -fx-border-radius: 5px;
+    -fx-padding: 4px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 3, 0, 0, 1);
+}
+
+.sort-combo:focused {
+    -fx-border-color: #58c7fa;
+}
+
+.sort-combo .list-cell {
+    -fx-padding: 4px 8px;
+}
+
+.quiz-list {
+    -fx-background-color: white;
+    -fx-border-color: #d0d0d0;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.quiz-list .list-cell {
+    -fx-padding: 8px;
+    -fx-background-color: white;
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.quiz-list .list-cell:odd {
+    -fx-background-color: #e8eaf6;
+}
+
+.quiz-list .list-cell:selected {
+    -fx-background-color: #c5cae9;
+    -fx-text-fill: #3f51b5;
+}
+
 .table-button:hover {
     -fx-background-color: #9575cd;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 2, 0, 0, 1);

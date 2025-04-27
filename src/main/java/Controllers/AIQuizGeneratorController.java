@@ -56,7 +56,7 @@ public class AIQuizGeneratorController {
 
     @FXML
     void initialize() {
-        // Initialisation du contrôleur
+    
     }
 
     @FXML
@@ -67,14 +67,13 @@ public class AIQuizGeneratorController {
             return;
         }
 
-        // Réinitialiser l'interface
+       
         quizResultContainer.getChildren().clear();
         generatedQuizzes.clear();
         saveQuizButton.setDisable(true);
         loadingLabel.setVisible(true);
         generateButton.setDisable(true);
 
-        // Créer une tâche en arrière-plan pour l'appel API
         Task<String> task = new Task<String>() {
             @Override
             protected String call() throws Exception {
@@ -163,7 +162,6 @@ public class AIQuizGeneratorController {
         try {
             System.out.println("Réponse JSON brute: " + jsonResponse);
     
-            // Corriger le modèle regex pour extraire le champ text correctement
             Pattern pattern = Pattern.compile("\"text\"\\s*:\\s*\"(.*?)\"", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(jsonResponse);
     
@@ -189,10 +187,10 @@ public class AIQuizGeneratorController {
     
     
     private void processQuizResponse(String apiResponse) {
-        // Afficher la réponse complète pour le débogage
+        
         System.out.println("Réponse API complète: " + apiResponse);
         
-        // Vérifier si la réponse contient une erreur
+     
         if (apiResponse.startsWith("Erreur:") || apiResponse.contains("Aucune question valide")) {
             Platform.runLater(() -> {
                 Label errorLabel = new Label("Erreur API: " + apiResponse);
@@ -202,7 +200,7 @@ public class AIQuizGeneratorController {
             return;
         }
         
-        // Diviser la réponse en questions individuelles en utilisant un pattern plus strict
+      
         String[] questions = apiResponse.split("\n\n+");
         System.out.println("Nombre de segments après division: " + questions.length);
         
@@ -212,20 +210,20 @@ public class AIQuizGeneratorController {
             String questionText = questions[i].trim();
             System.out.println("Segment " + (i+1) + ": " + questionText);
             
-            // Vérifier si le segment correspond au format attendu d'une question
+           
             if (!questionText.matches("(?s)\\d+\\.\\s*.*\\nA\\).*\\nB\\).*\\nC\\).*")) {
                 System.out.println("Segment ignoré: ne correspond pas au format de question");
                 continue;
             }
 
             try {
-                // Extraire les parties de la question avec des patterns plus robustes
+                
                 Pattern questionPattern = Pattern.compile("\\d+\\.\\s*([^\n]+)");
                 Pattern optionAPattern = Pattern.compile("A\\)\\s*([^\n]+)");
                 Pattern optionBPattern = Pattern.compile("B\\)\\s*([^\n]+)");
                 Pattern optionCPattern = Pattern.compile("C\\)\\s*([^\n]+)");
                 
-                // Il n'y aura pas de correctAnswerPattern ici
+                
                 
                 Matcher questionMatcher = questionPattern.matcher(questionText);
                 Matcher optionAMatcher = optionAPattern.matcher(questionText);
@@ -258,8 +256,7 @@ public class AIQuizGeneratorController {
                     newQuiz.setQuestion(question);
                     newQuiz.setOptionA(optionA);
                     newQuiz.setOptionB(optionB);
-                    newQuiz.setRepCorrect(optionC); // Option C est la bonne réponse
-                
+                    newQuiz.setRepCorrect(optionC); 
                     generatedQuizzes.add(newQuiz);
                     anyQuestionsGenerated = true;
                 
@@ -282,7 +279,7 @@ public class AIQuizGeneratorController {
                 errorLabel.setStyle("-fx-text-fill: red;");
                 quizResultContainer.getChildren().add(errorLabel);
                 
-                // Ajouter des informations de débogage dans l'interface
+         
                 if (apiResponse.length() > 0) {
                     Label debugLabel = new Label("Réponse API reçue mais format incorrect. Essayez un sujet plus spécifique.");
                     debugLabel.setStyle("-fx-text-fill: #666666; -fx-font-size: 12px;");
@@ -321,13 +318,13 @@ public class AIQuizGeneratorController {
         optionBLabel.setStyle("-fx-text-fill: #555555;");
         optionBLabel.setWrapText(true);
     
-        // Now displaying the Correct Answer BELOW options, with different color
+      
         Label correctAnswerLabel = new Label("Réponse correcte: " + q.getRepCorrect());
         correctAnswerLabel.setFont(new javafx.scene.text.Font(14));
-        correctAnswerLabel.setStyle("-fx-text-fill: #4CAF50; -fx-font-weight: bold;"); // Green color
+        correctAnswerLabel.setStyle("-fx-text-fill: #4CAF50; -fx-font-weight: bold;");
         correctAnswerLabel.setWrapText(true);
     
-        // Add in correct order: Question, Options A and B, then Correct Answer
+      
         questionBox.getChildren().addAll(questionText, optionALabel, optionBLabel,optionCLabel, correctAnswerLabel);
         quizResultContainer.getChildren().add(questionBox);
     }
@@ -352,7 +349,7 @@ public class AIQuizGeneratorController {
 
         if (savedCount > 0) {
             showAlert("Succès", savedCount + " questions ont été enregistrées avec succès!");
-            // Réinitialiser l'interface après l'enregistrement
+           
             quizResultContainer.getChildren().clear();
             generatedQuizzes.clear();
             saveQuizButton.setDisable(true);
