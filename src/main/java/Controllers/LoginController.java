@@ -1,5 +1,6 @@
 package Controllers;
 
+import Entities.User;
 import Main.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,21 +10,17 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
+import Services.UserServiceImplementation;
 import javafx.stage.Stage;
 import utils.MyDatabase;
-import org.mindrot.jbcrypt.BCrypt;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.*;
 import java.util.ResourceBundle;
 
 
 public class LoginController implements Initializable {
+
+    private final UserServiceImplementation userService = new UserServiceImplementation(MyDatabase.getInstance().getConnection());
     @FXML
     private TextField loginEmailField;
 
@@ -72,6 +69,29 @@ public class LoginController implements Initializable {
     @FXML
     private TextField registerSurnameField;
 
+    @FXML
+    private TextField forgottenEmail;
+
+    @FXML
+    private Label forgottenError;
+
+    @FXML
+    private Button resetCancel;
+
+    @FXML
+    private Button resetConfirm;
+
+    @FXML
+    private PasswordField resetPassword;
+
+    @FXML
+    private Label resetPasswordError;
+
+    @FXML
+    private TextField resetToken;
+
+    @FXML
+    private Label resetTokenError;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -93,35 +113,16 @@ public class LoginController implements Initializable {
         if (!validateLogin()) {
             return;
         }
-            String email = loginEmailField.getText();
-            String password = loginPasswordField.getText();
+        String email = loginEmailField.getText();
+        String password = loginPasswordField.getText();
 
-        MyDatabase connectNow = MyDatabase.getInstance();
-        Connection con = connectNow.getConnection();
-
-        String query = "SELECT password FROM user WHERE email = ?";
+        if (!userService.loginUser(email, password)) {
+            loginPasswordError.setText("Email ou mot de passe incorrect.");
+            return;
+        }
         try {
-            PreparedStatement pst = con.prepareStatement(query);
-            pst.setString(1, email);
-            ResultSet rs = pst.executeQuery();
-
-            if (rs.next()) {
-                String hashedPassword = rs.getString("password");
-                if (hashedPassword.startsWith("$2y$")) {
-                    hashedPassword = hashedPassword.replaceFirst("\\$2y\\$", "\\$2a\\$");
-                }
-                if (BCrypt.checkpw(password, hashedPassword)) {
-
-                    successLogin();
-                } else {
-                    // Wrong password
-                    loginPasswordError.setText(" Email ou mot de passe incorrect");
-                }
-            } else {
-                // Email not found
-                loginPasswordError.setText(" Email ou mot de passe incorrect");
-            }
-        } catch (Exception e) {
+            successLogin();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -142,34 +143,24 @@ public class LoginController implements Initializable {
             role = "ROLE_TEACHER";
         }
 
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        User user = new User(surname, name, email, role, true);
+        user.setPassword(password);
 
-        try {
-            MyDatabase connectNow = MyDatabase.getInstance();
-            Connection con = connectNow.getConnection();
+        int addError = userService.addUser(user);
 
-            String sql = "INSERT INTO user (nom, prenom, email, password, role, user_type, is_approved, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement stmt = con.prepareStatement(sql);
-            stmt.setString(1, name);
-            stmt.setString(2, surname);
-            stmt.setString(3, email);
-            stmt.setString(4, hashedPassword);
-            stmt.setString(5, role);
-            stmt.setString(6, "user");
-            stmt.setInt(7, 1); // not approved by default
-            stmt.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
-            stmt.executeUpdate();
-            goToLogin();
-
-        }catch (SQLIntegrityConstraintViolationException ex) {
-            // Specific exception for duplicate key
-            if (ex.getMessage().contains("UNIQ_8D93D649E7927C74")) {
-                registerEmailError.setText("cet email existe deja.");
+        if (addError == -1) {
+            registerEmailError.setText("Cette adresse mail existe déja");
+            return;
+        } else if (addError == 0) {
+            registerRoleError.setText("Erreur serveur.");
+            return;
+        } else if (addError == 1) {
+            try {
+                goToLogin();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }catch (Exception e) {
-            e.printStackTrace();
         }
-
     }
 
     public void loginRegisterButtonOnAction(ActionEvent event) throws IOException {
@@ -269,6 +260,98 @@ public class LoginController implements Initializable {
             isValid = false;
         }
 
+        return isValid;
+    }
+
+    public void forgottenButtonOnAction(ActionEvent event) {
+        String email = forgottenEmail.getText();
+        String response = userService.passwordForgotten(email);
+        if (response.equals("")) {
+            forgottenError.setText("Email invalide.");
+        } else {
+            forgottenError.setText("un email a été envoyé.");
+        }
+    }
+
+    @FXML
+    private void forgotPassword(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/Controllers/passwordForgotten.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    @FXML
+    private void forgotConfirmation(ActionEvent event) {
+        if (forgottenEmail.getText().isEmpty()) {
+            forgottenError.setText("Email requis.");
+            return;
+        } else if (!forgottenEmail.getText().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            forgottenError.setText("Email valide requis.");
+            return;
+        }
+        String response = userService.passwordForgotten(forgottenEmail.getText());
+
+        if (response.equals("not found")) {
+            forgottenError.setText("Email introuvable.");
+        } else if (response.equals("failure"))  {
+            forgottenError.setText("une erreur s'est produite.");
+        } else if (response.equals("success")) {
+            try {
+                Parent root = FXMLLoader.load(getClass().getResource("/Controllers/passwordReset.fxml"));
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stage.setScene(new Scene(root));
+                stage.show();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    private void resetConfirmation(ActionEvent event) {
+        resetPasswordError.setText("");
+        resetTokenError.setText("");
+
+        if(!validateReset()) {
+            return;
+        }
+
+        String token = resetToken.getText();
+        String password = resetPassword.getText();
+
+        Boolean response = userService.resetPassword(token, password);
+
+        if (response) {
+            try {
+                Parent root = FXMLLoader.load(getClass().getResource("/Controllers/login.fxml"));
+                Stage stage = (Stage) ((Node) resetConfirm).getScene().getWindow();
+                stage.setScene(new Scene(root));
+                stage.show();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            resetTokenError.setText("Code invalide.");
+        }
+    }
+
+    private Boolean validateReset() {
+        Boolean isValid = true;
+        if (resetToken.getText().isEmpty()) {
+            resetTokenError.setText("Code requis.");
+            isValid = false;
+        }
+        if (resetPassword.getText().isEmpty()) {
+            resetPasswordError.setText("Mot de passe requis.");
+            isValid = false;
+        } else if (resetPassword.getText().length() < 8) {
+            resetPasswordError.setText("Mot de passe minimum 8 characteres.");
+            isValid = false;
+        }
         return isValid;
     }
 

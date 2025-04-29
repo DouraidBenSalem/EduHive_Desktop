@@ -1,32 +1,28 @@
 package Controllers;
 
 import Entities.User;
-import Entities.quiz;
+import Services.UserServiceImplementation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import utils.MyDatabase;
-
+import javafx.collections.transformation.FilteredList;
 import java.io.IOException;
-import java.net.URL;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ResourceBundle;
 
 public class UserController {
 
+    private final UserServiceImplementation userService = new UserServiceImplementation(MyDatabase.getInstance().getConnection());
+
     @FXML
-    private TableView<User> userTable;
+    private ListView<User> userList;
 
     @FXML
     private TableColumn<User, Integer> userID;
@@ -85,7 +81,15 @@ public class UserController {
     private TextField addId;
 
     private Runnable onSaveCallback;
-    
+
+    @FXML
+    private TextField userSearch;
+
+    private FilteredList<User> filteredUserList;
+
+    @FXML
+    private HBox userListHeader;
+
     @FXML
     void initialize() {
         if (addRole != null) {
@@ -93,32 +97,177 @@ public class UserController {
             addRole.setValue("Etudiant");
         }
 
-        if(userTable != null) {
-            userID.setCellValueFactory(new PropertyValueFactory<>("id"));
-            userNom.setCellValueFactory(new PropertyValueFactory<>("nom"));
-            userPrenom.setCellValueFactory(new PropertyValueFactory<>("prenom"));
-            userEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-            userRole.setCellValueFactory(new PropertyValueFactory<>("role"));
-    
-            getUsersFromDB();
-    
-            if (actionColumn == null) {
-                actionColumn = new TableColumn<>("Actions");
-                userTable.getColumns().add(actionColumn);
+        if (userList != null) {
+            // Setup the header labels using the existing HBox in the FXML
+            if (userListHeader != null) {
+                userListHeader.getStyleClass().add("user-list-header");
+                userListHeader.getChildren().clear();
+                
+                Label nomHeaderLabel = new Label("Nom Complet");
+                nomHeaderLabel.setPrefWidth(150);
+                nomHeaderLabel.getStyleClass().add("header-label");
+                
+                Label emailHeaderLabel = new Label("Email");
+                emailHeaderLabel.setPrefWidth(200);
+                emailHeaderLabel.getStyleClass().add("header-label");
+                
+                Label roleHeaderLabel = new Label("Role");
+                roleHeaderLabel.setPrefWidth(120);
+                roleHeaderLabel.getStyleClass().add("header-label");
+                
+                Label actionsHeaderLabel = new Label("Actions");
+                actionsHeaderLabel.setPrefWidth(150);
+                actionsHeaderLabel.getStyleClass().add("header-label");
+                
+                userListHeader.getChildren().addAll(nomHeaderLabel, emailHeaderLabel, roleHeaderLabel, actionsHeaderLabel);
             }
-    
-            addActionButtonsToTable();
-    
+            
+            // Setup the ListView with custom cell factory
+            userList.setCellFactory(param -> new ListCell<User>() {
+                @Override
+                protected void updateItem(User user, boolean empty) {
+                    super.updateItem(user, empty);
+                    
+                    if (empty || user == null) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                        HBox container = new HBox();
+                        container.getStyleClass().add("user-list-cell");
+                                                
+                        Label nameLabel = new Label(user.getNom() + " " + user.getPrenom());
+                        nameLabel.setPrefWidth(150);
+                        
+                        Label emailLabel = new Label(user.getEmail());
+                        emailLabel.setPrefWidth(200);
+                        
+                        Label roleLabel = new Label(user.getRole());
+                        roleLabel.setPrefWidth(120);
+                        
+                        Button editButton = new Button("Modifier");
+                        editButton.setOnAction(e -> editUser(user));
+                        
+                        Button deleteButton = new Button("Supprimer");
+                        deleteButton.setOnAction(e -> {
+                            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                            confirm.setTitle("Confirm Delete");
+                            confirm.setHeaderText("Delete User: " + user.getNom() + " " + user.getPrenom());
+                            confirm.setContentText("Are you sure you want to delete this user?");
+                            
+                            confirm.showAndWait().ifPresent(response -> {
+                                if (response == ButtonType.OK) {
+                                    userService.deleteUser(user);
+                                    getUsersFromDB(); // Refresh the list after deletion
+                                }
+                            });
+                        });
+                        
+                        HBox buttonsBox = new HBox(10, editButton, deleteButton);
+                        buttonsBox.setPrefWidth(150);
+                        
+                        container.getChildren().addAll(nameLabel, emailLabel, roleLabel, buttonsBox);
+                        setGraphic(container);
+                    }
+                }
+            });
+            
+            // Initialize the search functionality
+            setupSearch();
+            
+            // Load users from database
+            getUsersFromDB();
         }
+    }
+
+    private void editUser(User selectedUser) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/addUser.fxml"));
+            Scene scene = new Scene(loader.load());
+            
+            UserController controller = loader.getController();
+            controller.initData(selectedUser.getId());
+            controller.setOnSaveCallback(() -> getUsersFromDB());
+    
+            Stage stage = (Stage) userList.getScene().getWindow();
+            stage.setTitle("Modifier User");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setupSearch() {
+        // Initialize the filtered list
+        filteredUserList = new FilteredList<>(UserList, p -> true);
+        
+        // Add listener to the search field
+        userSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredUserList.setPredicate(user -> {
+                // If search text is empty, show all users
+                if (newValue == null || newValue.isEmpty() || newValue.equals("Search...")) {
+                    return true;
+                }
+                
+                // Convert search text to lowercase for case-insensitive search
+                String lowerCaseFilter = newValue.toLowerCase();
+                
+                // Match against user properties
+                if (String.valueOf(user.getId()).contains(lowerCaseFilter)) {
+                    return true; // Filter matches ID
+                }
+                if (user.getNom().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches last name
+                }
+                if (user.getPrenom().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches first name
+                }
+                if (user.getEmail().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches email
+                }
+                if (user.getRole().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches role
+                }
+                
+                return false; // No match found
+            });
+            
+            // Update the ListView with filtered results
+            userList.setItems(filteredUserList);
+        });
+        
+        // Clear "Search..." text when field is focused
+        userSearch.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue && userSearch.getText().equals("Search...")) {
+                userSearch.setText("");
+            } else if (!newValue && (userSearch.getText() == null || userSearch.getText().isEmpty())) {
+                userSearch.setText("Search...");
+            }
+        });
     }
 
     private void getUsersFromDB() {
         UserList.clear();
         try {
-            Connection conn = MyDatabase.getInstance().getConnection();
-            User user = new User();
-            UserList = FXCollections.observableArrayList(user.getUsers(conn));
-            userTable.setItems(UserList);
+            UserList = FXCollections.observableArrayList(userService.getUsers());
+            
+            // Initialize filtered list if not already done
+            if (filteredUserList == null) {
+                filteredUserList = new FilteredList<>(UserList, p -> true);
+            } else {
+                // Update the source list
+                filteredUserList = new FilteredList<>(UserList, filteredUserList.getPredicate());
+            }
+            
+            if (userList != null) {
+                userList.setItems(filteredUserList);
+                
+                // Adjust the height of the ListView to fit all items without scrolling
+                double cellHeight = 50; // This should match the -fx-fixed-cell-size in CSS
+                double totalHeight = Math.min(300, cellHeight * filteredUserList.size());
+                userList.setPrefHeight(totalHeight);
+                userList.setMaxHeight(totalHeight);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -126,7 +275,7 @@ public class UserController {
 
     @FXML
     private void addUserOnAction(ActionEvent actionEvent) {
-        Stage stage = (Stage) userTable.getScene().getWindow();
+        Stage stage = (Stage) userList.getScene().getWindow();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/addUser.fxml"));
             Scene scene = new Scene(loader.load());
@@ -150,54 +299,6 @@ public class UserController {
         }
     }
 
-    private void addActionButtonsToTable() {
-        actionColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEdit = new Button("Edit");
-            private final Button btnDelete = new Button("Delete");
-            private final HBox pane = new HBox(10, btnEdit, btnDelete);
-
-            {
-                btnEdit.setOnAction(event -> {
-                    User selectedUser = getTableView().getItems().get(getIndex());
-                    
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/addUser.fxml"));
-                        Scene scene = new Scene(loader.load());
-                        
-                        UserController controller = loader.getController();
-                        controller.initData(selectedUser.getId());
-                        controller.setOnSaveCallback(() -> getUsersFromDB());
-
-                        Stage stage = (Stage) userTable.getScene().getWindow();
-                        stage.setTitle("Modifier User");
-                        stage.setScene(scene);
-                        stage.show();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-
-                btnDelete.setOnAction(event -> {
-                    User selectedUser = getTableView().getItems().get(getIndex());
-                    Connection conn = MyDatabase.getInstance().getConnection();
-                    selectedUser.deleteUser(selectedUser, conn);
-                    getUsersFromDB();
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(pane);
-                }
-            }
-        });
-    }
-
     public void setOnSaveCallback(Runnable callback) {
         this.onSaveCallback = callback;
     }
@@ -208,7 +309,6 @@ public class UserController {
             return;
         }
 
-        Connection conn = MyDatabase.getInstance().getConnection();
         User user = new User(
                 Integer.parseInt(addId.getText()),
                 addNom.getText(),
@@ -218,13 +318,16 @@ public class UserController {
                 true
         );
         boolean success;
-        if (addPassword.getText() != null) {
-            success = user.updateUser(user, conn);
+        if (addPassword.getText().isEmpty()) {
+            success = userService.updateUser(user);
         } else {
-            success = user.updateUser(user, conn, addPassword.getText());
+            success = userService.updateUser(user, addPassword.getText());
         }
-        
-        if(success) {
+        if (!success) {
+            addRoleError.setText("Probléme serveur");
+            return;
+        }
+
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/userPage.fxml"));
                 Scene scene = new Scene(loader.load());
@@ -234,14 +337,10 @@ public class UserController {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-        } else {
-            addRoleError.setText("Probléme serveur");
-        }
     }
 
     private void initData(int id) {
-        Connection conn = MyDatabase.getInstance().getConnection();
-        User user = User.getUserById(id, conn);
+        User user = userService.getUserById(id);
 
         registerButton.setOnAction(e -> {
             submitUserUpdate();
@@ -277,14 +376,15 @@ public class UserController {
                 true
         );
 
-        int id = user.addUser(user, conn);
+        user.setPassword(addPassword.getText());
+        int id = userService.addUser(user);
         if (id == -1) {
             addEmailError.setText("Email déjà utilisé");
             return;
+        } else if (id == 0) {
+            addRoleError.setText("Probléme serveur");
+            return;
         }
-        user.setId(id);
-        Boolean success = user.updateUserPassword(addPassword.getText(), conn);
-        if(success) {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/userPage.fxml"));
                 Scene scene = new Scene(loader.load());
@@ -294,7 +394,6 @@ public class UserController {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-        }
     }
 
     private String convertRole() {
@@ -414,7 +513,7 @@ public class UserController {
 
                 // Style content cells
                 com.itextpdf.text.Font contentFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 11);
-                ObservableList<User> items = userTable.getItems();
+                ObservableList<User> items = userList.getItems();
                 boolean alternateRow = false;
                 for (User u : items) {
                     com.itextpdf.text.BaseColor bgColor = alternateRow ? 
@@ -465,4 +564,6 @@ public class UserController {
         cell.setPadding(6);
         table.addCell(cell);
     }
+
+
 }

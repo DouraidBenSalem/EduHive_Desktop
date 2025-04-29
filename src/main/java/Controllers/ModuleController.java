@@ -19,8 +19,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import services.ModuleService;
-import services.ModuleServiceImpl;
+import Services.ModuleService;
+import Services.ModuleServiceImpl;
 
 public class ModuleController {
 

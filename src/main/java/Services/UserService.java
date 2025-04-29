@@ -3,14 +3,16 @@ package Services;
 import Entities.User;
 
 import java.util.List;
-import java.sql.Connection;
 
 
 public interface UserService {
-    List<User> getUsers(Connection connection);
-    int addUser(User user, Connection connection);
-    void deleteUser(User user, Connection connection);
-    Boolean updateUser(User user, Connection connection);
-    Boolean updateUser(User user, Connection connection, String password);
-    Boolean updateUserPassword(String password, Connection connection);
+    List<User> getUsers();
+    int addUser(User user);
+    Boolean deleteUser(User user);
+    Boolean updateUser(User user);
+    Boolean updateUser(User user, String password);
+    Boolean updateUserPassword(String password, int userId);
+    User getUserById(int userId);
+    Boolean loginUser(String email, String password);
+    String passwordForgotten(String email);
 }
