@@ -45,7 +45,13 @@
                      </children>
                   </VBox>
                   <ListView fx:id="resultTable" layoutX="14.0" layoutY="127.0" prefHeight="364.0" prefWidth="655.0" />
-                  <Button fx:id="exporterBtn" layoutX="555.0" layoutY="515.0" mnemonicParsing="false" onAction="#exporterTable" prefHeight="35.0" prefWidth="95.0" text="Exporter" />
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" layoutX="450.0" layoutY="515.0">
+               <children>
+                  <Button fx:id="quizPageBtn" mnemonicParsing="false" onAction="#navigateToQuiz" style="-fx-background-color: #3f51b5; -fx-text-fill: white;" text="Quiz" />
+                  <Button fx:id="exporterBtn" mnemonicParsing="false" onAction="#exporterTable" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Exporter PDF" />
+                  <Button fx:id="statistiqueBtn" mnemonicParsing="false" onAction="#navigateToStatistique" style="-fx-background-color: #FF9800; -fx-text-fill: white;" text="Statistiques" />
+               </children>
+            </HBox>
                </children>
             </Pane>
          </children>
