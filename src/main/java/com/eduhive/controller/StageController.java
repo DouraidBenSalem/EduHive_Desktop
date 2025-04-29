@@ -6,6 +6,10 @@ import java.util.ResourceBundle;
 
 import com.eduhive.entity.Stage;
 import com.eduhive.service.StageService;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,12 +20,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 public class StageController implements Initializable {
     @FXML private FlowPane cardsContainer;
+    @FXML private TextField searchField;
     @FXML private VBox formPopup;
     @FXML private TextField titreField;
     @FXML private TextField entrepriseField;
@@ -41,6 +49,11 @@ public class StageController implements Initializable {
         closeFormButton.setOnAction(e -> hideForm());
         cancelButton.setOnAction(e -> hideForm());
         saveButton.setOnAction(e -> handleSave());
+        
+        // Add search functionality
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            loadStages();
+        });
         
         // Add listeners for real-time validation
         titreField.textProperty().addListener((obs, oldVal, newVal) -> validateField(titreField, validateTitre(newVal)));
@@ -89,24 +102,18 @@ public class StageController implements Initializable {
         }
 
         try {
+            Stage stage = new Stage();
+            if (currentStage != null) {
+                stage.setId(currentStage.getId());
+            }
+            stage.setTitre(titreField.getText().trim());
+            stage.setEntreprise(entrepriseField.getText().trim());
+            stage.setDescription(descriptionArea.getText().trim());
+            stage.setDuree(dureeField.getText().trim());
+
             if (currentStage == null) {
-                // Create new stage
-                Stage stage = new Stage(null,
-                    titreField.getText().trim(),
-                    entrepriseField.getText().trim(),
-                    descriptionArea.getText().trim(),
-                    dureeField.getText().trim()
-                );
                 stageService.create(stage);
             } else {
-                // Update existing stage
-                Stage stage = new Stage(
-                    currentStage.getId(),
-                    titreField.getText().trim(),
-                    entrepriseField.getText().trim(),
-                    descriptionArea.getText().trim(),
-                    dureeField.getText().trim()
-                );
                 stageService.update(stage);
             }
             hideForm();
@@ -187,12 +194,40 @@ public class StageController implements Initializable {
     private void loadStages() {
         try {
             cardsContainer.getChildren().clear();
-            for (Stage stage : stageService.readAll()) {
-                cardsContainer.getChildren().add(createStageCard(stage));
-            }
+            String searchText = searchField.getText().toLowerCase();
+            
+            stageService.readAll().stream()
+                .filter(stage -> 
+                    searchText == null || 
+                    searchText.isEmpty() || 
+                    stage.getEntreprise().toLowerCase().contains(searchText)
+                )
+                .forEach(stage -> {
+                    Node card = createStageCard(stage);
+                    cardsContainer.getChildren().add(card);
+                });
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", 
                 "Erreur lors du chargement des stages: " + e.getMessage());
+        }
+    }
+
+    private WritableImage generateQRCode(String text, int width, int height) {
+        try {
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+            
+            WritableImage qrImage = new WritableImage(width, height);
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    qrImage.getPixelWriter().setColor(x, y, 
+                        bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+                }
+            }
+            return qrImage;
+        } catch (WriterException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -230,7 +265,23 @@ public class StageController implements Initializable {
 
         buttons.getChildren().addAll(editButton, deleteButton);
 
-        card.getChildren().addAll(titre, entreprise, description, duree, buttons);
+        // Generate and add QR code
+        String email = stage.getEntreprise().toLowerCase() + "@gmail.com";
+        WritableImage qrCode = generateQRCode(email, 100, 100);
+        if (qrCode != null) {
+            ImageView qrView = new ImageView(qrCode);
+            qrView.setFitWidth(100);
+            qrView.setFitHeight(100);
+            
+            VBox qrContainer = new VBox(5);
+            qrContainer.setStyle("-fx-padding: 10 0 0 0; -fx-alignment: center;");
+            qrContainer.getChildren().add(qrView);
+            
+            card.getChildren().addAll(titre, entreprise, description, duree, buttons, qrContainer);
+        } else {
+            card.getChildren().addAll(titre, entreprise, description, duree, buttons);
+        }
+
         return card;
     }
 

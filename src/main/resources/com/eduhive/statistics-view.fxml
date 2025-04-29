@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.chart.PieChart?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17"
+      fx:controller="com.eduhive.controller.StatisticsController"
+      spacing="20" style="-fx-padding: 20;">
+    
+    <Text text="Statistiques des Annonces par Catégorie" 
+          style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+    
+    <PieChart fx:id="categoryChart"/>
+    
+    <VBox fx:id="statsContainer" spacing="10">
+        <!-- Statistics will be added here dynamically -->
+    </VBox>
+    
+    <Button text="Fermer" onAction="#handleClose"
+            style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+</VBox> 

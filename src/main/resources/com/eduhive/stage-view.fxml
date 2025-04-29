@@ -8,14 +8,22 @@
 <StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17"
          fx:controller="com.eduhive.controller.StageController">
     
-    <!-- Main Content -->
-    <ScrollPane fitToWidth="true" style="-fx-background-color: #f4f4f4;">
-        <FlowPane fx:id="cardsContainer" hgap="20" vgap="20" style="-fx-background-color: #f4f4f4;">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-        </FlowPane>
-    </ScrollPane>
+    <VBox spacing="0">
+        <!-- Search Bar -->
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10; -fx-background-color: #f4f4f4;">
+            <Label text="Rechercher:" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="searchField" promptText="Rechercher par entreprise..." style="-fx-pref-width: 300;"/>
+        </HBox>
+
+        <!-- Main Content -->
+        <ScrollPane fitToWidth="true" style="-fx-background-color: #f4f4f4;">
+            <FlowPane fx:id="cardsContainer" hgap="20" vgap="20" style="-fx-background-color: #f4f4f4;">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+            </FlowPane>
+        </ScrollPane>
+    </VBox>
 
     <!-- Add Button (Floating Action Button) -->
     <Button fx:id="addButton" text="+" 

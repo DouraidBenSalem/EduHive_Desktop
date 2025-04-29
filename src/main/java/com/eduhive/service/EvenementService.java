@@ -30,14 +30,13 @@ public class EvenementService {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                Evenement evenement = Evenement.builder()
-                    .id(rs.getInt("id"))
-                    .nom(rs.getString("nom"))
-                    .description(rs.getString("description"))
-                    .lieu(rs.getString("lieu"))
-                    .date(rs.getString("date"))
-                    .organisateur(rs.getString("organiseur"))
-                    .build();
+                Evenement evenement = new Evenement();
+                evenement.setId(rs.getInt("id"));
+                evenement.setNom(rs.getString("nom"));
+                evenement.setDescription(rs.getString("description"));
+                evenement.setLieu(rs.getString("lieu"));
+                evenement.setDate(rs.getString("date"));
+                evenement.setOrganisateur(rs.getString("organiseur"));
                 evenements.add(evenement);
             }
         }
@@ -51,14 +50,14 @@ public class EvenementService {
             pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return Evenement.builder()
-                        .id(rs.getInt("id"))
-                        .nom(rs.getString("nom"))
-                        .description(rs.getString("description"))
-                        .lieu(rs.getString("lieu"))
-                        .date(rs.getString("date"))
-                        .organisateur(rs.getString("organiseur"))
-                        .build();
+                    Evenement evenement = new Evenement();
+                    evenement.setId(rs.getInt("id"));
+                    evenement.setNom(rs.getString("nom"));
+                    evenement.setDescription(rs.getString("description"));
+                    evenement.setLieu(rs.getString("lieu"));
+                    evenement.setDate(rs.getString("date"));
+                    evenement.setOrganisateur(rs.getString("organiseur"));
+                    return evenement;
                 }
             }
         }

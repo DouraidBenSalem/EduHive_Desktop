@@ -1,61 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17"
-         fx:controller="com.eduhive.controller.EvenementController">
-    
-    <!-- Main Content -->
-    <ScrollPane fitToWidth="true" style="-fx-background-color: #f4f4f4;">
-        <FlowPane fx:id="cardsContainer" hgap="20" vgap="20" style="-fx-background-color: #f4f4f4;">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-        </FlowPane>
-    </ScrollPane>
-
-    <!-- Add Button (Floating Action Button) -->
-    <Button fx:id="addButton" text="+" 
-            style="-fx-background-radius: 30; -fx-min-width: 60; -fx-min-height: 60; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 24;"
-            StackPane.alignment="BOTTOM_RIGHT">
-        <StackPane.margin>
-            <Insets right="30" bottom="30"/>
-        </StackPane.margin>
-    </Button>
-
-    <!-- Popup Form Dialog -->
-    <VBox fx:id="formPopup" style="-fx-background-color: white; -fx-padding: 20; -fx-spacing: 10; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);"
-          maxWidth="400" maxHeight="500" visible="false">
-        
-        <HBox alignment="CENTER_RIGHT" spacing="10">
-            <Text style="-fx-font-size: 18;" text="Nouvel Événement"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button fx:id="closeFormButton" text="×" 
-                    style="-fx-background-color: transparent; -fx-font-size: 18;"/>
+<StackPane xmlns="http://javafx.com/javafx/21.0.7" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eduhive.controller.EvenementController">
+    <VBox spacing="0">
+        <!-- Search Bar -->
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10; -fx-background-color: #f4f4f4;">
+            <Label text="Rechercher:" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="searchField" promptText="Rechercher par titre..." style="-fx-pref-width: 300;"/>
         </HBox>
 
-        <Label text="Nom:"/>
-        <TextField fx:id="nomField"/>
+        <!-- Main Content -->
+        <ScrollPane fitToWidth="true" style="-fx-background-color: #f4f4f4;">
+            <FlowPane fx:id="cardsContainer" hgap="20" style="-fx-background-color: #f4f4f4;" vgap="20">
+                <padding>
+                    <Insets bottom="20" left="20" right="20" top="20" />
+                </padding>
+            </FlowPane>
+        </ScrollPane>
 
-        <Label text="Description:"/>
-        <TextArea fx:id="descriptionArea" wrapText="true"/>
+        <!-- Action Buttons (Floating Action Buttons) -->
+        <HBox alignment="BOTTOM_CENTER" spacing="10" StackPane.alignment="BOTTOM_RIGHT">
+            <Button fx:id="addButton" style="-fx-background-radius: 30; -fx-min-width: 60; -fx-min-height: 60; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 24;" text="+">
+                <HBox.margin>
+                    <Insets bottom="30" right="30" />
+                </HBox.margin>
+            </Button>
+            <Button fx:id="calendarButton" onAction="#showCalendar" style="-fx-background-radius: 30; -fx-min-width: 120; -fx-min-height: 60; -fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-size: 16;" text="Calendrier">
+                <HBox.margin>
+                    <Insets bottom="30" right="10" />
+                </HBox.margin>
+            </Button>
+        </HBox>
+    </VBox>
 
-        <Label text="Lieu:"/>
-        <TextField fx:id="lieuField"/>
+    <!-- Popup Form Dialog -->
+    <VBox fx:id="formPopup" maxHeight="500" maxWidth="400" style="-fx-background-color: white; -fx-padding: 20; -fx-spacing: 10; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);" visible="false">
+        
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <Text style="-fx-font-size: 18;" text="Nouvel Événement" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="closeFormButton" style="-fx-background-color: transparent; -fx-font-size: 18;" text="×" />
+        </HBox>
 
-        <Label text="Date:"/>
-        <TextField fx:id="dateField"/>
+        <Label text="Nom:" />
+        <TextField fx:id="nomField" />
 
-        <Label text="Organisateur:"/>
-        <TextField fx:id="organisateurField"/>
+        <Label text="Description:" />
+        <TextArea fx:id="descriptionArea" prefRowCount="3" promptText="Description" style="-fx-background-color: white; -fx-border-color: #2196F3; -fx-border-radius: 5;" wrapText="true" />
 
-        <HBox spacing="10" alignment="CENTER_RIGHT">
-            <Button fx:id="saveButton" text="Enregistrer"
-                    style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-            <Button fx:id="cancelButton" text="Annuler"/>
+        <Label text="Lieu:" />
+        <TextField fx:id="lieuField" />
+
+        <Label text="Date (AAAA-MM-JJ):" />
+        <TextField fx:id="dateField" />
+
+        <Label text="Organisateur:" />
+        <TextField fx:id="organisateurField" />
+
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <Button fx:id="saveButton" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Enregistrer" />
+            <Button fx:id="cancelButton" text="Annuler" />
         </HBox>
     </VBox>
 </StackPane> 

@@ -1,20 +1,28 @@
 package com.eduhive.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ResourceBundle;
+import java.security.GeneralSecurityException;
 
 import com.eduhive.entity.Evenement;
 import com.eduhive.service.EvenementService;
-
+import com.eduhive.service.GoogleCalendarService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -22,9 +30,11 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class EvenementController implements Initializable {
     @FXML private FlowPane cardsContainer;
+    @FXML private TextField searchField;
     @FXML private VBox formPopup;
     @FXML private TextField nomField;
     @FXML private TextArea descriptionArea;
@@ -37,7 +47,16 @@ public class EvenementController implements Initializable {
     @FXML private Button cancelButton;
 
     private final EvenementService evenementService = new EvenementService();
+    private final GoogleCalendarService googleCalendarService;
     private Evenement currentEvenement = null;
+
+    public EvenementController() {
+        try {
+            googleCalendarService = new GoogleCalendarService();
+        } catch (IOException | GeneralSecurityException e) {
+            throw new RuntimeException("Failed to initialize Google Calendar service", e);
+        }
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -45,6 +64,11 @@ public class EvenementController implements Initializable {
         closeFormButton.setOnAction(e -> hideForm());
         cancelButton.setOnAction(e -> hideForm());
         saveButton.setOnAction(e -> handleSave());
+        
+        // Add search functionality
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            loadEvenements();
+        });
         
         // Add listeners for real-time validation
         nomField.textProperty().addListener((obs, oldVal, newVal) -> validateField(nomField, validateNom(newVal)));
@@ -64,8 +88,10 @@ public class EvenementController implements Initializable {
             lieuField.setText(evenement.getLieu());
             dateField.setText(evenement.getDate());
             organisateurField.setText(evenement.getOrganisateur());
+            saveButton.setText("Modifier");
         } else {
             clearFields();
+            saveButton.setText("Ajouter");
         }
         formPopup.setVisible(true);
     }
@@ -122,25 +148,25 @@ public class EvenementController implements Initializable {
         try {
             if (currentEvenement == null) {
                 // Create new evenement
-                Evenement evenement = Evenement.builder()
-                    .nom(nomField.getText().trim())
-                    .description(descriptionArea.getText().trim())
-                    .lieu(lieuField.getText().trim())
-                    .date(dateField.getText().trim())
-                    .organisateur(organisateurField.getText().trim())
-                    .build();
+                Evenement evenement = new Evenement();
+                evenement.setNom(nomField.getText().trim());
+                evenement.setDescription(descriptionArea.getText().trim());
+                evenement.setLieu(lieuField.getText().trim());
+                evenement.setDate(dateField.getText().trim());
+                evenement.setOrganisateur(organisateurField.getText().trim());
                 evenementService.create(evenement);
+                googleCalendarService.createEvent(evenement);
             } else {
                 // Update existing evenement
-                Evenement evenement = Evenement.builder()
-                    .id(currentEvenement.getId())
-                    .nom(nomField.getText().trim())
-                    .description(descriptionArea.getText().trim())
-                    .lieu(lieuField.getText().trim())
-                    .date(dateField.getText().trim())
-                    .organisateur(organisateurField.getText().trim())
-                    .build();
+                Evenement evenement = new Evenement();
+                evenement.setId(currentEvenement.getId());
+                evenement.setNom(nomField.getText().trim());
+                evenement.setDescription(descriptionArea.getText().trim());
+                evenement.setLieu(lieuField.getText().trim());
+                evenement.setDate(dateField.getText().trim());
+                evenement.setOrganisateur(organisateurField.getText().trim());
                 evenementService.update(evenement);
+                googleCalendarService.updateEvent(evenement);
             }
             hideForm();
             loadEvenements();
@@ -149,6 +175,9 @@ public class EvenementController implements Initializable {
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", 
                 "Erreur lors de l'opération: " + e.getMessage());
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", 
+                "Erreur lors de la synchronisation avec Google Calendar: " + e.getMessage());
         }
     }
 
@@ -202,22 +231,44 @@ public class EvenementController implements Initializable {
     }
 
     private void handleDelete(Evenement evenement) {
-        try {
-            evenementService.delete(evenement.getId());
-            loadEvenements();
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement supprimé avec succès!");
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", 
-                "Erreur lors de la suppression: " + e.getMessage());
-        }
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Confirmation de suppression");
+        confirmAlert.setHeaderText("Voulez-vous vraiment supprimer cet événement ?");
+        confirmAlert.setContentText("Cette action est irréversible.");
+
+        confirmAlert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    evenementService.delete(evenement.getId());
+                    googleCalendarService.deleteEvent(evenement.getId().toString());
+                    loadEvenements();
+                    showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement supprimé avec succès!");
+                } catch (SQLException e) {
+                    showAlert(Alert.AlertType.ERROR, "Erreur", 
+                        "Erreur lors de la suppression: " + e.getMessage());
+                } catch (IOException e) {
+                    showAlert(Alert.AlertType.ERROR, "Erreur", 
+                        "Erreur lors de la suppression dans Google Calendar: " + e.getMessage());
+                }
+            }
+        });
     }
 
     private void loadEvenements() {
         try {
             cardsContainer.getChildren().clear();
-            for (Evenement evenement : evenementService.readAll()) {
-                cardsContainer.getChildren().add(createEvenementCard(evenement));
-            }
+            String searchText = searchField.getText().toLowerCase();
+            
+            evenementService.readAll().stream()
+                .filter(evenement -> 
+                    searchText == null || 
+                    searchText.isEmpty() || 
+                    evenement.getNom().toLowerCase().contains(searchText)
+                )
+                .forEach(evenement -> {
+                    Node card = createEvenementCard(evenement);
+                    cardsContainer.getChildren().add(card);
+                });
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", 
                 "Erreur lors du chargement des événements: " + e.getMessage());
@@ -280,5 +331,20 @@ public class EvenementController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void showCalendar() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/eduhive/view/calendar.fxml"));
+            Parent root = loader.load();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Calendrier des Événements");
+            stage.show();
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", 
+                "Erreur lors de l'ouverture du calendrier: " + e.getMessage());
+        }
     }
 } 

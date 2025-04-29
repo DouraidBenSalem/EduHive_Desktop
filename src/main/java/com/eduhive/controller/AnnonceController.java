@@ -1,16 +1,30 @@
 package com.eduhive.controller;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import com.eduhive.entity.Annonce;
 import com.eduhive.service.AnnonceService;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -21,6 +35,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class AnnonceController implements Initializable {
     @FXML private FlowPane cardsContainer;
@@ -32,9 +48,12 @@ public class AnnonceController implements Initializable {
     @FXML private Button closeFormButton;
     @FXML private Button saveButton;
     @FXML private Button cancelButton;
+    @FXML private Button exportButton;
+    @FXML private TextField searchField;
 
     private final AnnonceService annonceService = new AnnonceService();
     private Annonce currentAnnonce = null;
+    private List<Annonce> allAnnonces;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -55,7 +74,37 @@ public class AnnonceController implements Initializable {
         descriptionArea.textProperty().addListener((obs, oldVal, newVal) -> validateField(descriptionArea, validateDescription(newVal)));
         categorieField.valueProperty().addListener((obs, oldVal, newVal) -> validateField(categorieField, validateCategorie(newVal)));
         
+        // Add search functionality
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> filterAnnonces(newVal));
+        
         loadAnnonces();
+    }
+
+    private void filterAnnonces(String searchText) {
+        if (allAnnonces == null) return;
+        
+        List<Annonce> filteredAnnonces = allAnnonces.stream()
+            .filter(annonce -> annonce.getTitre().toLowerCase().contains(searchText.toLowerCase()))
+            .collect(Collectors.toList());
+        
+        displayAnnonces(filteredAnnonces);
+    }
+
+    private void displayAnnonces(List<Annonce> annonces) {
+        cardsContainer.getChildren().clear();
+        for (Annonce annonce : annonces) {
+            cardsContainer.getChildren().add(createAnnonceCard(annonce));
+        }
+    }
+
+    private void loadAnnonces() {
+        try {
+            allAnnonces = annonceService.readAll();
+            displayAnnonces(allAnnonces);
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", 
+                "Erreur lors du chargement des annonces: " + e.getMessage());
+        }
     }
 
     private void handleSave() {
@@ -92,7 +141,8 @@ public class AnnonceController implements Initializable {
         try {
             if (currentAnnonce == null) {
                 // Create new annonce
-                Annonce annonce = new Annonce(null,
+                Annonce annonce = new Annonce(
+                    null,
                     titreField.getText().trim(),
                     descriptionArea.getText().trim(),
                     categorieField.getValue()
@@ -150,14 +200,24 @@ public class AnnonceController implements Initializable {
 
     private void showForm(Annonce annonce) {
         currentAnnonce = annonce;
+        formPopup.setVisible(true);
+        
         if (annonce != null) {
+            // Update form title and button text for edit mode
+            saveButton.setText("Mettre à jour");
             titreField.setText(annonce.getTitre());
             descriptionArea.setText(annonce.getDescription());
             categorieField.setValue(annonce.getCategorie());
+            
+            // Validate fields immediately
+            validateField(titreField, validateTitre(titreField.getText()));
+            validateField(descriptionArea, validateDescription(descriptionArea.getText()));
+            validateField(categorieField, validateCategorie(categorieField.getValue()));
         } else {
+            // Reset form for add mode
+            saveButton.setText("Ajouter");
             clearFields();
         }
-        formPopup.setVisible(true);
     }
 
     private void hideForm() {
@@ -174,18 +234,6 @@ public class AnnonceController implements Initializable {
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", 
                 "Erreur lors de la suppression: " + e.getMessage());
-        }
-    }
-
-    private void loadAnnonces() {
-        try {
-            cardsContainer.getChildren().clear();
-            for (Annonce annonce : annonceService.readAll()) {
-                cardsContainer.getChildren().add(createAnnonceCard(annonce));
-            }
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", 
-                "Erreur lors du chargement des annonces: " + e.getMessage());
         }
     }
 
@@ -236,5 +284,91 @@ public class AnnonceController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void handleExportPDF() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Enregistrer le PDF");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("PDF Files", "*.pdf")
+            );
+            
+            // Set default file name with timestamp
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            fileChooser.setInitialFileName("annonces_" + timestamp + ".pdf");
+            
+            java.io.File file = fileChooser.showSaveDialog(exportButton.getScene().getWindow());
+            
+            if (file != null) {
+                Document document = new Document();
+                PdfWriter.getInstance(document, new FileOutputStream(file));
+                document.open();
+                
+                // Add title
+                Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
+                Paragraph title = new Paragraph("Liste des Annonces", titleFont);
+                title.setAlignment(Element.ALIGN_CENTER);
+                title.setSpacingAfter(20);
+                document.add(title);
+                
+                // Add timestamp
+                Font normalFont = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
+                Paragraph timestamp_p = new Paragraph("Généré le: " + 
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")), 
+                    normalFont);
+                timestamp_p.setSpacingAfter(20);
+                document.add(timestamp_p);
+                
+                // Add announcements
+                Font headerFont = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD);
+                for (Annonce annonce : annonceService.readAll()) {
+                    // Add title
+                    Paragraph annonceTitle = new Paragraph(annonce.getTitre(), headerFont);
+                    annonceTitle.setSpacingBefore(15);
+                    document.add(annonceTitle);
+                    
+                    // Add category
+                    Paragraph category = new Paragraph("Catégorie: " + annonce.getCategorie(), normalFont);
+                    category.setIndentationLeft(20);
+                    document.add(category);
+                    
+                    // Add description
+                    Paragraph description = new Paragraph(annonce.getDescription(), normalFont);
+                    description.setIndentationLeft(20);
+                    description.setSpacingAfter(10);
+                    document.add(description);
+                    
+                    // Add separator
+                    document.add(new Paragraph("----------------------------------------"));
+                }
+                
+                document.close();
+                showAlert(Alert.AlertType.INFORMATION, "Succès", 
+                    "Le PDF a été généré avec succès!\nEmplacement: " + file.getAbsolutePath());
+            }
+        } catch (DocumentException | IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", 
+                "Erreur lors de la génération du PDF: " + e.getMessage());
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", 
+                "Erreur lors de la récupération des données: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void showStatistics() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/eduhive/statistics-view.fxml"));
+            Scene scene = new Scene(loader.load());
+            stage.setScene(scene);
+            stage.setTitle("Statistiques des Annonces");
+            stage.show();
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", 
+                "Erreur lors de l'affichage des statistiques: " + e.getMessage());
+        }
     }
 } 

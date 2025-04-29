@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.eduhive.controller.CalendarController"
+      spacing="10"
+      style="-fx-padding: 10;">
+    
+    <Label text="Calendrier des Événements" 
+           style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Sélectionnez une date:"/>
+        <DatePicker fx:id="datePicker"/>
+        <Button fx:id="syncButton" text="Synchroniser avec Google Calendar" 
+                style="-fx-background-color: #4285F4; -fx-text-fill: white;"/>
+    </HBox>
+    
+    <Label fx:id="selectedDateLabel" 
+           style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+    
+    <ListView fx:id="eventsList" 
+              VBox.vgrow="ALWAYS"
+              style="-fx-pref-height: 400px;">
+        <placeholder>
+            <Label text="Aucun événement pour cette date"/>
+        </placeholder>
+    </ListView>
+    
+</VBox> 
