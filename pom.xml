@@ -18,6 +18,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.sendinblue</groupId>
+      <artifactId>sib-api-v3-sdk</artifactId>
+      <version>6.0.0</version>
+    </dependency>
+    <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>itextpdf</artifactId>
       <version>5.5.13</version>

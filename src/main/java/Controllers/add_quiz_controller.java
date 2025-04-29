@@ -54,7 +54,7 @@ public class add_quiz_controller {
 
         try {
             if (isEditMode && quizToEdit != null) {
-                // Update existing quiz using the service
+
                 quiz updatedQuiz = new quiz(
                     quizToEdit.getId(),
                     t,
@@ -66,9 +66,9 @@ public class add_quiz_controller {
                 quizService.updateQuiz(updatedQuiz);
                 showAlert("Quiz modifié avec succès !");
             } else {
-                // Create new quiz using the service
+
                 quiz newQuiz = new quiz(
-                    0, // ID will be set by the database
+                    0,
                     t,
                     q,
                     r,
@@ -81,7 +81,7 @@ public class add_quiz_controller {
 
             if (onSaveCallback != null) onSaveCallback.run();
 
-            // Fermer la fenêtre
+
             Stage stage = (Stage) ajouter.getScene().getWindow();
             stage.close();
 

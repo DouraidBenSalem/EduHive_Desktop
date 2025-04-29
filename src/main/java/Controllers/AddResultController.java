@@ -12,6 +12,7 @@ import services.QuizService;
 import services.QuizServiceImpl;
 import services.ResultService;
 import services.ResultServiceImpl;
+import utils.MyDatabase;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,7 +20,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import utils.MyDatabase;
 
 public class AddResultController {
 
@@ -63,7 +63,7 @@ public class AddResultController {
         loadUsers();
         loadQuizzes();
         
-        // Add numeric validation to fields
+
         noteField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 noteField.setText(newValue.replaceAll("[^\\d]", ""));
