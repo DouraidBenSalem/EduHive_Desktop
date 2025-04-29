@@ -349,6 +349,24 @@ public class ResultController {
             alert.showAndWait();
         }
     }
+    @FXML
+    void navigateToStatistique(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("statistique.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            Stage currentStage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            currentStage.setTitle("Statistiques des Résultats");
+            currentStage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur de Navigation");
+            alert.setHeaderText(null);
+            alert.setContentText("Impossible de naviguer vers la page Statistiques: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
 
 
 }
