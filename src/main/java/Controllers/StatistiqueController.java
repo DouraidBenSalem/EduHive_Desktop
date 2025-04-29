@@ -12,8 +12,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import services.ResultService;
-import services.ResultServiceImpl;
+import Services.ResultService;
+import Services.ResultServiceImpl;
 
 import java.io.IOException;
 import java.util.HashMap;

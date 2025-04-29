@@ -13,8 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import services.ResultService;
-import services.ResultServiceImpl;
+import Services.ResultService;
+import Services.ResultServiceImpl;
 
 import java.io.IOException;
 import java.util.Comparator;

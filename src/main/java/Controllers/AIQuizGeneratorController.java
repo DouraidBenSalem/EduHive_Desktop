@@ -12,8 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import services.QuizService;
-import services.QuizServiceImpl;
+import Services.QuizService;
+import Services.QuizServiceImpl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
