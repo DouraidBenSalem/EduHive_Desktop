@@ -2,24 +2,50 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="900.0" styleClass="screen" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ResultController">
+<AnchorPane prefHeight="650.0" prefWidth="900.0" styleClass="screen" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ResultController">
    <children>
       <fx:include fx:id="navbar" source="navBar.fxml" />
       <AnchorPane layoutX="189.0" prefHeight="650.0" prefWidth="711.0">
          <children>
-            <Pane layoutY="44.0" prefHeight="600.0" prefWidth="710.0">
+            <Pane prefHeight="644.0" prefWidth="710.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#ajouterResult" layoutX="583.0" layoutY="75.0" text="Ajouter" />
-                  <Button fx:id="exporterBtn" mnemonicParsing="false" onAction="#exporterTable" layoutX="487.0" layoutY="75.0" prefHeight="25.0" prefWidth="56.0" text="Print" />
-                  <Button fx:id="quizPageBtn" mnemonicParsing="false" onAction="#navigateToQuiz" layoutX="16.0" layoutY="75.0" text="Quiz" />
-                  <ListView fx:id="resultTable" layoutX="14.0" layoutY="140.0" prefHeight="264.0" prefWidth="655.0" />
+                  <VBox layoutX="14.0" layoutY="64.0" prefHeight="51.0" prefWidth="655.0" spacing="15.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="84.0" prefWidth="655.0" spacing="10.0">
+                           <children>
+                              <Label styleClass="search-label" text="Rechercher:">
+                                 <font>
+                                    <Font name="System Bold" size="17.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="searchField" prefHeight="35.0" prefWidth="166.0" promptText="Rechercher un résultat..." />
+                              <Label styleClass="sort-label" text="Trier par:">
+                                 <font>
+                                    <Font name="System Bold" size="17.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="20.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <ComboBox fx:id="sortComboBox" prefWidth="150.0" />
+                              <Button mnemonicParsing="false" onAction="#ajouterResult" prefHeight="38.0" prefWidth="90.0" text="Ajouter" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="10.0" />
+                     </children>
+                  </VBox>
+                  <ListView fx:id="resultTable" layoutX="14.0" layoutY="127.0" prefHeight="364.0" prefWidth="655.0" />
+                  <Button fx:id="exporterBtn" layoutX="555.0" layoutY="515.0" mnemonicParsing="false" onAction="#exporterTable" prefHeight="35.0" prefWidth="95.0" text="Exporter" />
                </children>
             </Pane>
          </children>
