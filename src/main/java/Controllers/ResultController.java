@@ -55,15 +55,12 @@ public class ResultController {
             "Réponses Correctes (Décroissant)"
         );
         
-        // Set default sort option
         sortComboBox.getSelectionModel().selectFirst();
         
-        // Initialize search and sort functionality
         initializeSearchAndSort();
 
         loadResultsFromDB();
 
-        // Configure ListView cell factory to display result information with card layout
         resultTable.setCellFactory(new Callback<ListView<Result>, ListCell<Result>>() {
             @Override
             public ListCell<Result> call(ListView<Result> param) {

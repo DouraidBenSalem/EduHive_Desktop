@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
@@ -34,5 +36,17 @@
             <Font name="System Bold" size="18.0" />
         </font>
     </Button>
+      <Button fx:id="faceIdLogin" defaultButton="true" layoutX="350.0" layoutY="425.0" mnemonicParsing="false" onAction="#handleFaceIdLoginOnAction" prefHeight="56.0" prefWidth="71.0" style="-fx-background-color: #0d47a1;" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+         <graphic>
+            <ImageView fitHeight="36.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../style_css/images/faceid-svgrepo-com%20(1).png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
 </children>
 </AnchorPane>

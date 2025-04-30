@@ -17,7 +17,7 @@ public class User {
     private String prenom;
     private String email;
     private String password;
-    private String profilePicture;
+    private String profilePicture = null;
     private String phone;
     private LocalDateTime createdAt;
     private String googleAuthenticatorSecret;

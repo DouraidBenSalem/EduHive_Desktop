@@ -11,10 +11,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import utils.MyDatabase;
 import javafx.collections.transformation.FilteredList;
+
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 
 public class UserController {
@@ -91,6 +96,13 @@ public class UserController {
     private HBox userListHeader;
 
     @FXML
+    private Button addProfilePicture;
+
+    private String selectedImagePath;
+    private static final String PROFILE_PICTURES_DIR = "src/main/resources/public/profile_pictures/";
+
+
+    @FXML
     void initialize() {
         if (addRole != null) {
             addRole.getItems().addAll("Etudiant", "Enseignant", "Admin");
@@ -98,7 +110,6 @@ public class UserController {
         }
 
         if (userList != null) {
-            // Setup the header labels using the existing HBox in the FXML
             if (userListHeader != null) {
                 userListHeader.getStyleClass().add("user-list-header");
                 userListHeader.getChildren().clear();
@@ -122,7 +133,6 @@ public class UserController {
                 userListHeader.getChildren().addAll(nomHeaderLabel, emailHeaderLabel, roleHeaderLabel, actionsHeaderLabel);
             }
             
-            // Setup the ListView with custom cell factory
             userList.setCellFactory(param -> new ListCell<User>() {
                 @Override
                 protected void updateItem(User user, boolean empty) {
@@ -171,11 +181,43 @@ public class UserController {
                 }
             });
             
-            // Initialize the search functionality
             setupSearch();
             
-            // Load users from database
             getUsersFromDB();
+        }
+    }
+
+    @FXML
+    private void handleProfilePictureSelection(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Profile Picture");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+        );
+
+        File selectedFile = fileChooser.showOpenDialog(addProfilePicture.getScene().getWindow());
+        if (selectedFile != null) {
+            try {
+                File directory = new File(PROFILE_PICTURES_DIR);
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+
+                String uniqueFileName = System.currentTimeMillis() + "_" + selectedFile.getName();
+                File destinationFile = new File(PROFILE_PICTURES_DIR + uniqueFileName);
+
+                Files.copy(selectedFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                selectedImagePath = uniqueFileName;
+
+                addProfilePicture.setText("Picture Selected");
+            } catch (IOException e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Failed to save profile picture.");
+                alert.showAndWait();
+            }
         }
     }
 
@@ -198,45 +240,38 @@ public class UserController {
     }
 
     private void setupSearch() {
-        // Initialize the filtered list
         filteredUserList = new FilteredList<>(UserList, p -> true);
         
-        // Add listener to the search field
         userSearch.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredUserList.setPredicate(user -> {
-                // If search text is empty, show all users
                 if (newValue == null || newValue.isEmpty() || newValue.equals("Search...")) {
                     return true;
                 }
                 
-                // Convert search text to lowercase for case-insensitive search
                 String lowerCaseFilter = newValue.toLowerCase();
                 
-                // Match against user properties
                 if (String.valueOf(user.getId()).contains(lowerCaseFilter)) {
-                    return true; // Filter matches ID
+                    return true;
                 }
                 if (user.getNom().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches last name
+                    return true;
                 }
                 if (user.getPrenom().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches first name
+                    return true;
                 }
                 if (user.getEmail().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches email
+                    return true;
                 }
                 if (user.getRole().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches role
+                    return true;
                 }
                 
-                return false; // No match found
+                return false;
             });
             
-            // Update the ListView with filtered results
             userList.setItems(filteredUserList);
         });
         
-        // Clear "Search..." text when field is focused
         userSearch.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue && userSearch.getText().equals("Search...")) {
                 userSearch.setText("");
@@ -251,19 +286,16 @@ public class UserController {
         try {
             UserList = FXCollections.observableArrayList(userService.getUsers());
             
-            // Initialize filtered list if not already done
             if (filteredUserList == null) {
                 filteredUserList = new FilteredList<>(UserList, p -> true);
             } else {
-                // Update the source list
                 filteredUserList = new FilteredList<>(UserList, filteredUserList.getPredicate());
             }
             
             if (userList != null) {
                 userList.setItems(filteredUserList);
                 
-                // Adjust the height of the ListView to fit all items without scrolling
-                double cellHeight = 50; // This should match the -fx-fixed-cell-size in CSS
+                double cellHeight = 50;
                 double totalHeight = Math.min(300, cellHeight * filteredUserList.size());
                 userList.setPrefHeight(totalHeight);
                 userList.setMaxHeight(totalHeight);
@@ -286,6 +318,19 @@ public class UserController {
         }
     }
 
+    @FXML
+    private void onStatistiqueButton(ActionEvent actionEvent) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/userStatistique.fxml"));
+        try {
+            Scene scene = new Scene(loader.load());
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     @FXML 
     private void onCancelButton(ActionEvent e) {
         try {
@@ -318,6 +363,10 @@ public class UserController {
                 true
         );
         boolean success;
+        if (selectedImagePath != null) {
+            user.setProfilePicture(selectedImagePath);
+        }
+
         if (addPassword.getText().isEmpty()) {
             success = userService.updateUser(user);
         } else {
@@ -377,6 +426,9 @@ public class UserController {
         );
 
         user.setPassword(addPassword.getText());
+        if (selectedImagePath != null) {
+            user.setProfilePicture(selectedImagePath);
+        }
         int id = userService.addUser(user);
         if (id == -1) {
             addEmailError.setText("Email déjà utilisé");
@@ -470,12 +522,10 @@ public class UserController {
             java.io.File file = fileChooser.showSaveDialog(source.getScene().getWindow());
 
             if (file != null) {
-                // Set up document with margins
                 com.itextpdf.text.Document document = new com.itextpdf.text.Document(com.itextpdf.text.PageSize.A4, 36, 36, 54, 36);
                 com.itextpdf.text.pdf.PdfWriter.getInstance(document, new java.io.FileOutputStream(file));
                 document.open();
 
-                // Add styled header with logo
                 com.itextpdf.text.Font titleFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 24, com.itextpdf.text.Font.BOLD, new com.itextpdf.text.BaseColor(44, 62, 80));
                 com.itextpdf.text.Paragraph title = new com.itextpdf.text.Paragraph("User List", titleFont);
                 title.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
@@ -492,7 +542,6 @@ public class UserController {
                 timestamp.setSpacingAfter(20);
                 document.add(timestamp);
 
-                // Create and style table
                 com.itextpdf.text.pdf.PdfPTable pdfTable = new com.itextpdf.text.pdf.PdfPTable(5);
                 pdfTable.setWidthPercentage(100);
                 pdfTable.setSpacingBefore(10f);
@@ -500,7 +549,6 @@ public class UserController {
                 float[] columnWidths = {0.1f, 0.2f, 0.2f, 0.3f, 0.2f};
                 pdfTable.setWidths(columnWidths);
 
-                // Style headers
                 com.itextpdf.text.Font headerFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 12, com.itextpdf.text.Font.BOLD, new com.itextpdf.text.BaseColor(255, 255, 255));
                 String[] headers = {"ID", "Nom", "Prénom", "Email", "Role"};
                 for (String header : headers) {
@@ -511,7 +559,6 @@ public class UserController {
                     pdfTable.addCell(cell);
                 }
 
-                // Style content cells
                 com.itextpdf.text.Font contentFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 11);
                 ObservableList<User> items = userList.getItems();
                 boolean alternateRow = false;
@@ -531,7 +578,6 @@ public class UserController {
 
                 document.add(pdfTable);
 
-                // Add footer
                 com.itextpdf.text.Font footerFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 8);
                 com.itextpdf.text.Paragraph footer = new com.itextpdf.text.Paragraph("Généré par EduHive System", footerFont);
                 footer.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
@@ -556,7 +602,6 @@ public class UserController {
         }
     }
 
-    // Helper method to add styled cells to the PDF table
     private void addStyledCell(com.itextpdf.text.pdf.PdfPTable table, String content, com.itextpdf.text.Font font, com.itextpdf.text.BaseColor bgColor) {
         com.itextpdf.text.pdf.PdfPCell cell = new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(content, font));
         cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);

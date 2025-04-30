@@ -13,6 +13,8 @@ public interface UserService {
     Boolean updateUser(User user, String password);
     Boolean updateUserPassword(String password, int userId);
     User getUserById(int userId);
+    User getUserByEmail(String email);
     Boolean loginUser(String email, String password);
     String passwordForgotten(String email);
+    Boolean compareFaces(String email, String userPicturePath);
 }

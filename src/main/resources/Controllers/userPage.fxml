@@ -26,6 +26,7 @@
                   <ListView fx:id="userList" layoutX="14.0" layoutY="200.0" prefHeight="425.0" prefWidth="683.0" styleClass="user-list-view" />
                   <TextField fx:id="userSearch" layoutX="14.0" layoutY="114.0" prefHeight="25.0" prefWidth="249.0" text="Search..." />
                   <HBox fx:id="userListHeader" layoutX="14.0" layoutY="152.0" prefHeight="47.0" prefWidth="683.0" />
+                  <Button fx:id="userStat" layoutX="463.0" layoutY="114.0" mnemonicParsing="false" onAction="#onStatistiqueButton" text="Statistique" textFill="WHITE" />
                </children>
             </Pane>
          </children>

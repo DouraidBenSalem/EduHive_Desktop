@@ -55,5 +55,6 @@
       <Label fx:id="registerNameError" layoutX="111.0" layoutY="334.0" prefHeight="17.0" prefWidth="348.0" textFill="RED" />
       <Label fx:id="registerRoleError" layoutX="111.0" layoutY="388.0" prefHeight="17.0" prefWidth="348.0" textFill="RED" />
       <ComboBox fx:id="registerRoleComboBox" layoutX="111.0" layoutY="357.0" prefHeight="33.0" prefWidth="348.0" promptText="Choisir un role" />
+      <Button fx:id="addProfilePicture" layoutX="111.0" layoutY="40.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="348.0" style="-fx-background-color: #0D47A1FF;" text="Ajouter Photo de profile" textFill="#eeeeee" />
    </children>
 </AnchorPane>

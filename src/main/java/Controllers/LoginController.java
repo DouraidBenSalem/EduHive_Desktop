@@ -11,11 +11,20 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import Services.UserServiceImplementation;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import utils.MyDatabase;
+import org.apache.http.entity.ContentType;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ResourceBundle;
+import java.awt.image.BufferedImage;
+import java.awt.Dimension;
+import javax.imageio.ImageIO;
+import com.github.sarxos.webcam.Webcam;
 
 
 public class LoginController implements Initializable {
@@ -93,11 +102,62 @@ public class LoginController implements Initializable {
     @FXML
     private Label resetTokenError;
 
+    @FXML
+    private Button addProfilePicture;
+
+    private String selectedImagePath;
+    private static final String PROFILE_PICTURES_DIR = "src/main/resources/public/profile_pictures/";
+
+    @FXML
+    private Button faceIdLogin;
+
+    @FXML
+    private void handleProfilePictureSelection(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Profile Picture");
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+        );
+        
+        File selectedFile = fileChooser.showOpenDialog(addProfilePicture.getScene().getWindow());
+        if (selectedFile != null) {
+            try {
+                // Create profile pictures directory if it doesn't exist
+                File directory = new File(PROFILE_PICTURES_DIR);
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+
+                // Generate unique filename
+                String uniqueFileName = System.currentTimeMillis() + "_" + selectedFile.getName();
+                File destinationFile = new File(PROFILE_PICTURES_DIR + uniqueFileName);
+
+                // Copy file to profile pictures directory
+                Files.copy(selectedFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                selectedImagePath = uniqueFileName;
+
+                // Update button text to show selected
+                addProfilePicture.setText("Picture Selected");
+            } catch (IOException e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Failed to save profile picture.");
+                alert.showAndWait();
+            }
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         if (registerRoleComboBox != null) {
             registerRoleComboBox.getItems().addAll("Etudiant", "Enseignant");
             registerRoleComboBox.setValue("Etudiant");
+        }
+        
+        if (addProfilePicture != null) {
+            addProfilePicture.setOnAction(this::handleProfilePictureSelection);
         }
     }
 
@@ -145,6 +205,9 @@ public class LoginController implements Initializable {
 
         User user = new User(surname, name, email, role, true);
         user.setPassword(password);
+        if (selectedImagePath != null) {
+            user.setProfilePicture(selectedImagePath);
+        }
 
         int addError = userService.addUser(user);
 
@@ -355,4 +418,68 @@ public class LoginController implements Initializable {
         return isValid;
     }
 
+    @FXML
+    public Boolean validateEmail() {
+        Boolean isValid = true;
+        String email = loginEmailField.getText();
+        if (email.isEmpty()) {
+            isValid = false;
+            loginEmailError.setText("Email requis");
+        } else if (!email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
+            isValid = false;
+            loginEmailError.setText("Email valide requis");
+        } else {
+            loginEmailError.setText("");
+        }
+        return isValid;
+    }
+
+    @FXML
+    private void handleFaceIdLoginOnAction(ActionEvent event) {
+
+        if (!validateEmail()) {
+            return;
+        }
+
+        try {
+            Webcam webcam = Webcam.getDefault();
+            if (webcam == null) {
+                loginPasswordError.setText("Aucune camera detectée");
+                return;
+            }
+
+            webcam.setViewSize(new Dimension(640, 480));
+            webcam.open();
+
+            // Capture image
+            BufferedImage image = webcam.getImage();
+            webcam.close();
+
+            if (image == null) {
+                loginPasswordError.setText("Identification image echouée");
+                return;
+            }
+
+            File tempDir = new File("src/main/resources/temp/");
+            if (!tempDir.exists()) {
+                tempDir.mkdir();
+            }
+            File tempFile = new File(tempDir, "temp_capture.jpg");
+            ImageIO.write(image, "JPG", tempFile);
+
+
+            Boolean res = userService.compareFaces(loginEmailField.getText(), tempFile.getPath());
+            tempFile.delete();
+
+            if (res) {
+                successLogin();
+            } else {
+                loginPasswordError.setText("identification faciale echouée");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            loginPasswordError.setText("une erreur s'est produite");
+        }
+    }
 }

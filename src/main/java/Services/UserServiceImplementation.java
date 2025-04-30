@@ -1,6 +1,8 @@
 package Services;
 
 import Entities.User;
+
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,8 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 import org.mindrot.jbcrypt.BCrypt;
 import java.util.Properties;
+import org.apache.http.entity.ContentType;
 import javax.mail.*;
 import javax.mail.internet.*;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+import org.json.JSONException;
+import java.io.IOException;
 
 
 public class UserServiceImplementation implements UserService {
@@ -19,6 +32,11 @@ public class UserServiceImplementation implements UserService {
     private static final String PASSWORD = "a92955d27b9fef";
     private static final String HOST = "sandbox.smtp.mailtrap.io";
     private static final int PORT = 2525;
+    private static final String API_URL = "https://api-us.faceplusplus.com/facepp/v3/compare";
+    private static final String API_KEY = "hIfoMnQlKfQFwQhoYE3UnIXeeHainkLh";
+    private static final String API_SECRET = "2jOA2o1-nVKZy9WkMRnVsj4rXlcH1M3i";
+    private static final String PROFILE_PICTURES_DIR = "src/main/resources/public/profile_pictures/";
+
 
     public UserServiceImplementation(Connection connection) {
         this.connection = connection;
@@ -55,13 +73,14 @@ public class UserServiceImplementation implements UserService {
         String password = user.getPassword();
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-        String query = "INSERT INTO user (nom, prenom, role, email, password) VALUES (?, ?, ?, ?,?)";
+        String query = "INSERT INTO user (nom, prenom, role, email, password, profile_picture) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, user.getNom());
             statement.setString(2, user.getPrenom());
             statement.setString(3, user.getRole());
             statement.setString(4, user.getEmail());
             statement.setString(5, hashedPassword);
+            statement.setString(6, user.getProfilePicture());
             statement.executeUpdate();
 
             return 1;
@@ -91,14 +110,25 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public Boolean updateUser(User user) {
-        String query = "UPDATE user SET nom = ?, prenom = ?, role = ?, email = ? WHERE id = ?";
+        String query = null;
+        if (user.getProfilePicture() == null) {
+            query = "UPDATE user SET nom = ?, prenom = ?, role = ?, email = ? WHERE id = ?";
+        } else {
+            query = "UPDATE user SET nom = ?, prenom = ?, role = ?, email = ?, profile_picture = ? WHERE id = ?";
+        }
+
 
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, user.getNom());
             statement.setString(2, user.getPrenom());
             statement.setString(3, user.getRole());
             statement.setString(4, user.getEmail());
-            statement.setInt(5, user.getId());
+            if (user.getProfilePicture() != null) {
+                statement.setString(5, user.getProfilePicture());
+                statement.setInt(6, user.getId());
+            } else {
+                statement.setInt(5, user.getId());
+            }
 
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
@@ -116,8 +146,12 @@ public class UserServiceImplementation implements UserService {
     public Boolean updateUser(User user, String password) {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         user.setPassword(hashedPassword);
-
-        String query = "UPDATE user SET nom = ?, prenom = ?, role = ?, email = ?, password = ? WHERE id = ?";
+        String query = null;
+        if (user.getProfilePicture() == null) {
+            query = "UPDATE user SET nom = ?, prenom = ?, role = ?, email = ?, password = ? WHERE id = ?";
+        } else {
+            query = "UPDATE user SET nom = ?, prenom = ?, role = ?, email = ?, password = ?, profile_picture = ? WHERE id = ?";
+        }
 
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, user.getNom());
@@ -125,7 +159,12 @@ public class UserServiceImplementation implements UserService {
             statement.setString(3, user.getRole());
             statement.setString(4, user.getEmail());
             statement.setString(5, user.getPassword());
-            statement.setInt(6, user.getId());
+            if (user.getProfilePicture() != null) {
+                statement.setString(6, user.getProfilePicture());
+                statement.setInt(7, user.getId());
+            } else {
+                statement.setInt(6, user.getId());
+            }
 
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
@@ -304,4 +343,85 @@ public class UserServiceImplementation implements UserService {
             return false;
         }
     }
+
+    @Override
+    public User getUserByEmail(String email) {
+        String query = "SELECT * FROM user WHERE email = ?";
+        User user = null;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(1, email);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setNom(resultSet.getString("nom"));
+                user.setPrenom(resultSet.getString("prenom"));
+                user.setRole(resultSet.getString("role"));
+                user.setEmail(resultSet.getString("email"));
+                user.setProfilePicture(resultSet.getString("profile_picture"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    @Override
+    public Boolean compareFaces(String email, String userPicturePath) {
+        User user = getUserByEmail(email);
+        if (user == null || user.getProfilePicture() == null) {
+            return false;
+        }
+        String profilePicturePath = user.getProfilePicture();
+
+        File profilePicFile = new File(PROFILE_PICTURES_DIR + profilePicturePath);
+        File userPicFile = new File(userPicturePath);
+
+        if (!profilePicFile.exists() || !userPicFile.exists()) {
+            return false;
+        }
+
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost(API_URL);
+
+            MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
+            entityBuilder.addTextBody("api_key", API_KEY);
+            entityBuilder.addTextBody("api_secret", API_SECRET);
+            entityBuilder.addBinaryBody("image_file1", profilePicFile, ContentType.IMAGE_JPEG, profilePicFile.getName());
+            entityBuilder.addBinaryBody("image_file2", userPicFile, ContentType.IMAGE_JPEG, userPicFile.getName());
+
+            HttpEntity entity = entityBuilder.build();
+            httpPost.setEntity(entity);
+
+            try (CloseableHttpResponse response = client.execute(httpPost)) {
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode != 200) {
+                    System.err.println(response.toString());
+                    System.err.println("Face comparison API returned status code: " + statusCode);
+                    
+                    return false;
+                }
+
+                String responseString = EntityUtils.toString(response.getEntity());
+                JSONObject responseJson = new JSONObject(responseString);
+
+                if (!responseJson.has("confidence")) {
+                    System.err.println("Face comparison API response missing confidence value");
+                    return false;
+                }
+
+                double similarity = responseJson.getDouble("confidence");
+                return similarity > 80.0;
+            } catch (IOException | JSONException e) {
+                System.err.println("Error processing API response: " + e.getMessage());
+                return false;
+            }
+        } catch (IOException e) {
+            System.err.println("Error executing HTTP request: " + e.getMessage());
+            return false;
+        }
+    }
+
 }
