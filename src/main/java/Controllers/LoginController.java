@@ -276,28 +276,24 @@ public class LoginController implements Initializable {
     public Boolean validateRegister() {
         boolean isValid = true;
 
-        // Clear previous errors
         registerNameError.setText("");
         registerSurnameError.setText("");
         registerEmailError.setText("");
         registerPasswordError.setText("");
         registerRoleError.setText("");
 
-        // Validate Name
         String name = registerNameField.getText().trim();
         if (name.isEmpty()) {
             registerNameError.setText("Prenom requis.");
             isValid = false;
         }
 
-        // Validate Surname
         String surname = registerSurnameField.getText().trim();
         if (surname.isEmpty()) {
             registerSurnameError.setText("Nom requis.");
             isValid = false;
         }
 
-        // Validate Email
         String email = registerEmailField.getText().trim();
         if (email.isEmpty()) {
             registerEmailError.setText("Email requis.");
@@ -307,7 +303,6 @@ public class LoginController implements Initializable {
             isValid = false;
         }
 
-        // Validate Password
         String password = registerPasswordField.getText();
         if (password.isEmpty()) {
             registerPasswordError.setText("mot de passe requis.");
@@ -317,7 +312,6 @@ public class LoginController implements Initializable {
             isValid = false;
         }
 
-        // Validate Role (assuming the text of selected MenuItem is used)
         if ((!(registerRoleComboBox.getValue().equals("Enseignant")) && !(registerRoleComboBox.getValue().equals("Etudiant"))) || registerRoleComboBox.getValue().isEmpty()) {
             registerRoleError.setText("Selectionné un role.");
             isValid = false;
@@ -451,7 +445,6 @@ public class LoginController implements Initializable {
             webcam.setViewSize(new Dimension(640, 480));
             webcam.open();
 
-            // Capture image
             BufferedImage image = webcam.getImage();
             webcam.close();
 
