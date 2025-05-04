@@ -13,4 +13,6 @@ public interface CoursService {
     Cours getCoursById(int id);
 
     List<Cours> getAllCours();
+
+    List<Cours> getCoursByMatiereId(Integer matiereId);
 }

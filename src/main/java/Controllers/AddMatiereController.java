@@ -16,6 +16,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import Services.ImageSearchService;
 
 public class AddMatiereController {
 
@@ -302,6 +303,7 @@ public class AddMatiereController {
 
             if (isEditMode && matiereToEdit != null) {
 
+                String imageUrl = ImageSearchService.searchImageForMatiere(nom);
                 Matiere updatedMatiere = new Matiere(
                         matiereToEdit.getId(),
                         moduleIdValue,
@@ -309,18 +311,21 @@ public class AddMatiereController {
                         nom,
                         description,
                         prerequisValue,
-                        objectif);
+                        objectif,
+                        imageUrl);
                 matiereService.updateMatiere(updatedMatiere);
                 showAlert("Matière modifiée avec succès !");
             } else {
 
+                String imageUrl = ImageSearchService.searchImageForMatiere(nom);
                 Matiere newMatiere = new Matiere(
                         moduleIdValue,
                         enseignantIdValue,
                         nom,
                         description,
                         prerequisValue,
-                        objectif);
+                        objectif,
+                        imageUrl);
                 matiereService.addMatiere(newMatiere);
                 showAlert("Matière ajoutée avec succès !");
             }

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="700.0" prefWidth="900.0" stylesheets="@../style_css/ai_resume_style.css"
+            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="Controllers.AIResumeController">
+    
+    <!-- En-tête -->
+    <top>
+        <VBox styleClass="header-container">
+            <padding>
+                <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+            </padding>
+            <Label text="Résumé AI de PDF" styleClass="title-label"/>
+            <Label text="Extraire et générer des résumés éducatifs à partir de fichiers PDF" styleClass="subtitle-label"/>
+        </VBox>
+    </top>
+    
+    <!-- Contenu principal -->
+    <center>
+        <VBox spacing="20.0" styleClass="main-container">
+            <padding>
+                <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+            </padding>
+            
+            <!-- Section 1: Sélection de fichier -->
+            <VBox spacing="10.0" styleClass="section-container">
+                <Label text="1. Sélectionner un fichier PDF" styleClass="section-title"/>
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                    <Button text="Parcourir..." styleClass="primary-button" fx:id="btnSelectFile"/>
+                    <Label text="Aucun fichier sélectionné" fx:id="fileNameLabel" styleClass="file-label"/>
+                </HBox>
+            </VBox>
+            
+            <!-- Section 2: Extraction de texte -->
+            <VBox spacing="10.0" styleClass="section-container" VBox.vgrow="ALWAYS">
+                <Label text="2. Extraire le texte du PDF" styleClass="section-title"/>
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                    <Button text="Extraire le texte" styleClass="primary-button" fx:id="btnExtractText"/>
+                </HBox>
+                <TextArea fx:id="inputTextArea" promptText="Le texte extrait apparaîtra ici..." wrapText="true" VBox.vgrow="ALWAYS"/>
+            </VBox>
+            
+            <!-- Section 3: Génération de résumé -->
+            <VBox spacing="10.0" styleClass="section-container" VBox.vgrow="ALWAYS">
+                <Label text="3. Générer un résumé éducatif" styleClass="section-title"/>
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                    <Label text="Type de résumé:" />
+                    <ComboBox fx:id="resumeTypeComboBox" prefWidth="200.0" />
+                    <Button text="Générer un résumé" styleClass="primary-button" fx:id="btnGenerateResume"/>
+                </HBox>
+                <TextArea fx:id="outputTextArea" promptText="Le résumé généré apparaîtra ici..." wrapText="true" VBox.vgrow="ALWAYS"/>
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button text="Sauvegarder le résumé" styleClass="save-button" fx:id="btnSaveResume"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+    
+    <!-- Pied de page -->
+    <bottom>
+        <HBox styleClass="footer-container" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="10.0" right="20.0" bottom="10.0" left="20.0"/>
+            </padding>
+            <Label fx:id="statusLabel" text="Prêt" styleClass="status-label"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <ProgressIndicator fx:id="progressIndicator" prefHeight="20.0" prefWidth="20.0" />
+        </HBox>
+    </bottom>
+</BorderPane>

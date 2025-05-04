@@ -84,10 +84,21 @@ public class CoursServiceImpl implements CoursService {
 
     @Override
     public List<Cours> getAllCours() {
+        return getCoursByMatiereId(null);
+    }
+
+    @Override
+    public List<Cours> getCoursByMatiereId(Integer matiereId) {
         List<Cours> list = new ArrayList<>();
         String sql = "SELECT * FROM cours";
-        try (Statement st = conn.createStatement()) {
-            ResultSet rs = st.executeQuery(sql);
+        if (matiereId != null) {
+            sql += " WHERE matiere_id = ?";
+        }
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            if (matiereId != null) {
+                ps.setInt(1, matiereId);
+            }
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 list.add(mapResultSetToCours(rs));
             }

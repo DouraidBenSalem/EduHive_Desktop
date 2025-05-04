@@ -32,6 +32,11 @@
       <VBox spacing="6.0" style="-fx-padding: 0 0 0 0;">
          <children>
             <Label text="Description :" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;"/>
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+               <Button fx:id="btnGenerateDescription" text="Générer Description" 
+                       style="-fx-background-color: linear-gradient(to right, #4CAF50, #8BC34A); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-font-size: 14px; -fx-padding: 8 15 8 15; -fx-effect: dropshadow(gaussian, #b0d0ff, 6, 0.2, 0, 2);"/>
+               <Label text="Utilise l'IA pour générer une description basée sur le nom du cours" style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
+            </HBox>
             <TextArea fx:id="descriptionCours" prefWidth="500.0" prefHeight="210.0" wrapText="true" promptText="Entrez la description du cours" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;"/>
          </children>
       </VBox>

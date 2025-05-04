@@ -1,0 +1,275 @@
+/* Variables de couleurs */
+* {
+    -fx-primary: #2196f3;
+    -fx-primary-light: #64b5f6;
+    -fx-primary-dark: #1976d2;
+    -fx-secondary: #ff7043;
+    -fx-secondary-light: #ffa270;
+    -fx-secondary-dark: #c63f17;
+    -fx-accent: #e3f2fd;
+    -fx-grey: #757575;
+    -fx-light-grey: #eeeeee;
+    -fx-dark-grey: #424242;
+}
+
+/* Styles racine */
+.cours-detail-root {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 4);
+    -fx-padding: 20;
+}
+
+.cours-detail-container {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-padding: 30;
+    -fx-spacing: 20;
+    -fx-max-width: 900;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 4);
+}
+
+/* En-tête */
+.cours-detail-header {
+    -fx-padding: 15;
+    -fx-background-color: -fx-accent;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+}
+
+.cours-detail-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a237e;
+}
+
+.info-card {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+}
+
+/* Description */
+.cours-detail-description {
+    -fx-font-size: 14px;
+    -fx-text-fill: #424242;
+    -fx-wrap-text: true;
+    -fx-padding: 15;
+    -fx-background-color: -fx-accent;
+    -fx-background-radius: 8;
+}
+
+.description-area {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-font-size: 14px;
+    -fx-text-fill: #424242;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.description-area .content {
+    -fx-background-color: white;
+}
+
+.description-area:focused {
+    -fx-border-color: #2196f3;
+}
+
+/* Conteneur PDF */
+.cours-detail-pdf-container {
+    -fx-padding: 15;
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: -fx-light-grey;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+}
+
+.pdf-section {
+    -fx-background-color: #fafafa;
+    -fx-background-radius: 10;
+    -fx-border-color: #eeeeee;
+    -fx-border-radius: 10;
+}
+
+/* Styles des boutons d'action */
+.action-button {
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 24;
+    -fx-background-radius: 25;
+    -fx-cursor: hand;
+    -fx-min-width: 130px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0, 0, 2);
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.translate-button {
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: white;
+    -fx-graphic-text-gap: 8;
+    -fx-border-width: 0;
+}
+
+.translate-button:hover {
+    -fx-background-color: -fx-secondary-dark;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.translate-button:pressed {
+    -fx-background-color: -fx-secondary-light;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+.close-button {
+    -fx-background-color: white;
+    -fx-text-fill: -fx-dark-grey;
+    -fx-border-color: -fx-grey;
+    -fx-border-width: 2;
+    -fx-border-radius: 25;
+    -fx-background-radius: 25;
+}
+
+.close-button:hover {
+    -fx-background-color: -fx-light-grey;
+    -fx-border-color: -fx-dark-grey;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.close-button:pressed {
+    -fx-background-color: -fx-grey;
+    -fx-text-fill: white;
+    -fx-border-color: -fx-dark-grey;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* Container des boutons */
+.button-container {
+    -fx-spacing: 15;
+    -fx-padding: 20 0 0 0;
+    -fx-alignment: center-right;
+}
+
+.language-menu {
+    -fx-background-color: -fx-primary-light;
+    -fx-text-fill: white;
+    -fx-padding: 12 24;
+    -fx-background-radius: 25;
+}
+
+.language-menu:hover {
+    -fx-background-color: -fx-primary-dark;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.language-menu .context-menu {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: -fx-light-grey;
+    -fx-border-radius: 8;
+    -fx-padding: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0, 0, 2);
+}
+
+.language-menu .menu-item {
+    -fx-padding: 8 20;
+    -fx-background-radius: 6;
+}
+
+.language-menu .menu-item:hover {
+    -fx-background-color: -fx-accent;
+}
+
+.language-menu .menu-item .label {
+    -fx-font-size: 14px;
+    -fx-text-fill: -fx-dark-grey;
+}
+
+
+/* Style pour le bouton de prérequis */
+.prerequis-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 10px 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0, 0, 1);
+    -fx-cursor: hand;
+}
+
+.prerequis-button:hover {
+    -fx-background-color: #2980b9;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0, 0, 2);
+    -fx-translate-y: -1px;
+    -fx-transition: all 0.2s ease;
+}
+
+.prerequis-button:pressed {
+    -fx-background-color: #1c6ea4;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 1, 0, 0, 0);
+    -fx-translate-y: 1px;
+}
+
+/* Style pour la boîte de message */
+.message-box {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 1);
+}
+
+/* Amélioration du style pour la boîte de dialogue de prérequis */
+.error-dialog {
+    -fx-background-color: white;
+    -fx-border-color: #3498db;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+    -fx-min-width: 450px;
+}
+
+.error-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3498db;
+    -fx-padding: 0 0 5 0;
+}
+
+.error-message {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+    -fx-padding: 5px 0;
+    -fx-font-weight: normal;
+}
+
+.error-button {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 10px 15px;
+    -fx-cursor: hand;
+}
+
+.error-button:hover {
+    -fx-background-color: #c0392b;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 3, 0, 0, 1);
+}

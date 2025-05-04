@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import Entities.Cours;
 import Services.CoursService;
 import Services.CoursServiceImpl;
+import Services.GeminiService;
 import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -44,6 +45,8 @@ public class AddCoursController {
     private TextField prerequisCoursId;
     @FXML
     private TextArea descriptionCours;
+    @FXML
+    private Button btnGenerateDescription;
 
     private Label nomError;
     private Label descriptionError;
@@ -74,6 +77,11 @@ public class AddCoursController {
         setupValidationListeners();
 
         btnImportPdf.setOnAction(e -> importPdfFile());
+
+        // Configuration du bouton de génération de description
+        if (btnGenerateDescription != null) {
+            btnGenerateDescription.setOnAction(e -> generateDescription());
+        }
 
         // Configuration du TextArea pour la description
         descriptionCours.setWrapText(true);
@@ -441,10 +449,83 @@ public class AddCoursController {
     }
 
     private void showError(String msg) {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                javafx.scene.control.Alert.AlertType.ERROR);
         alert.setTitle("Erreur");
         alert.setHeaderText(null);
         alert.setContentText(msg);
         alert.showAndWait();
+    }
+
+    /**
+     * Génère une description pour le cours en utilisant l'API Gemini
+     * basée sur le nom du cours et son niveau
+     */
+    private void generateDescription() {
+        String nom = nomCours.getText().trim();
+        String niveauValue = niveau.getText().trim();
+
+        if (nom.isEmpty()) {
+            nomCours.setStyle(INVALID_STYLE);
+            nomError.setText("Le nom est obligatoire pour générer une description");
+            nomError.setVisible(true);
+            return;
+        }
+
+        // Afficher un indicateur de chargement
+        descriptionCours.setDisable(true);
+        btnGenerateDescription.setDisable(true);
+        btnGenerateDescription.setText("Génération en cours...");
+
+        // Utiliser un thread séparé pour ne pas bloquer l'interface utilisateur
+        new Thread(() -> {
+            try {
+                GeminiService geminiService = new GeminiService();
+                String description = geminiService.generateCourseDescription(nom, niveauValue);
+
+                // Si la génération échoue, utiliser la méthode hors ligne
+                if (description.startsWith("Erreur")) {
+                    System.out.println("INFO: Erreur détectée, passage au mode hors ligne: " + description);
+                    // Afficher l'erreur dans une alerte
+                    final String errorMessage = description; // Rendre la variable finale pour l'utiliser dans la lambda
+                    javafx.application.Platform.runLater(() -> {
+                        showError("Problème avec l'API Gemini: " + errorMessage
+                                + "\n\nUtilisation du mode hors ligne à la place.");
+                    });
+                    description = geminiService.generateDescriptionOffline(nom, niveauValue);
+                }
+
+                // Mettre à jour l'interface utilisateur dans le thread JavaFX
+                String finalDescription = description;
+                javafx.application.Platform.runLater(() -> {
+                    descriptionCours.setText(finalDescription);
+                    descriptionCours.setDisable(false);
+                    btnGenerateDescription.setDisable(false);
+                    btnGenerateDescription.setText("Générer Description");
+                    descriptionCours.setStyle(VALID_STYLE);
+                });
+            } catch (Exception ex) {
+                // Gérer les erreurs et mettre à jour l'interface utilisateur
+                System.err.println("EXCEPTION dans generateDescription: " + ex.getMessage());
+                ex.printStackTrace();
+                javafx.application.Platform.runLater(() -> {
+                    try {
+                        // Essayer de générer une description hors ligne en cas d'exception
+                        GeminiService geminiService = new GeminiService();
+                        String offlineDescription = geminiService.generateDescriptionOffline(nom, niveauValue);
+                        descriptionCours.setText(offlineDescription);
+                        showError("Erreur lors de la génération avec l'API: " + ex.getMessage()
+                                + "\n\nUtilisation du mode hors ligne à la place.");
+                    } catch (Exception e) {
+                        descriptionCours.setText(
+                                "Impossible de générer une description. Veuillez réessayer ou saisir manuellement.");
+                        showError("Erreur critique: " + ex.getMessage());
+                    }
+                    descriptionCours.setDisable(false);
+                    btnGenerateDescription.setDisable(false);
+                    btnGenerateDescription.setText("Générer Description");
+                });
+            }
+        }).start();
     }
 }

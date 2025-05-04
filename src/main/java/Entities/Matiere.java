@@ -8,6 +8,7 @@ public class Matiere {
     private String descriptionMatiere;
     private Integer prerequisMatiere; // Using Integer to allow null values
     private String objectifMatiere;
+    private String imageUrl; // URL de l'image associée à la matière
     
     // Constructeur par défaut
     public Matiere() {
@@ -15,7 +16,7 @@ public class Matiere {
     
     // Constructeur avec tous les champs
     public Matiere(int id, int moduleId, int enseignantId, String nomMatiere, String descriptionMatiere, 
-                  Integer prerequisMatiere, String objectifMatiere) {
+                  Integer prerequisMatiere, String objectifMatiere, String imageUrl) {
         this.id = id;
         this.moduleId = moduleId;
         this.enseignantId = enseignantId;
@@ -23,17 +24,19 @@ public class Matiere {
         this.descriptionMatiere = descriptionMatiere;
         this.prerequisMatiere = prerequisMatiere;
         this.objectifMatiere = objectifMatiere;
+        this.imageUrl = imageUrl;
     }
     
     // Constructeur sans ID pour les nouvelles matières
     public Matiere(int moduleId, int enseignantId, String nomMatiere, String descriptionMatiere, 
-                  Integer prerequisMatiere, String objectifMatiere) {
+                  Integer prerequisMatiere, String objectifMatiere, String imageUrl) {
         this.moduleId = moduleId;
         this.enseignantId = enseignantId;
         this.nomMatiere = nomMatiere;
         this.descriptionMatiere = descriptionMatiere;
         this.prerequisMatiere = prerequisMatiere;
         this.objectifMatiere = objectifMatiere;
+        this.imageUrl = imageUrl;
     }
     
     // Getters et Setters
@@ -91,5 +94,13 @@ public class Matiere {
     
     public void setObjectifMatiere(String objectifMatiere) {
         this.objectifMatiere = objectifMatiere;
+    }
+    
+    public String getImageUrl() {
+        return imageUrl;
+    }
+    
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

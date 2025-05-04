@@ -9,12 +9,21 @@ import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,7 +32,7 @@ import java.util.ResourceBundle;
 public class MatiereListController implements Initializable {
 
     @FXML
-    private ListView<Matiere> listMatiere;
+    private GridPane matiereGrid;
 
     @FXML
     private TextField searchField;
@@ -44,16 +53,18 @@ public class MatiereListController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         matiereService = new MatiereServiceImpl();
+        matiereGrid.getStyleClass().add("matiere-grid");
+        searchField.getStyleClass().add("search-field");
         loadMatieres();
         setupListeners();
-        setupListView();
+        updateMatiereGrid();
     }
 
     private void loadMatieres() {
         // Charger les matières depuis le service
         matiereList = FXCollections.observableArrayList(matiereService.getAllMatieres());
         filteredMatieres = new FilteredList<>(matiereList, p -> true);
-        listMatiere.setItems(filteredMatieres);
+        updateMatiereGrid();
     }
 
     private void setupListeners() {
@@ -61,20 +72,22 @@ public class MatiereListController implements Initializable {
         btnAddMatiere.setOnAction(event -> openAddMatiereForm());
 
         // Configuration de la recherche
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            String lower = newVal.toLowerCase();
             filteredMatieres.setPredicate(matiere -> {
-                if (newValue == null || newValue.isEmpty()) {
+                if (lower.isEmpty())
                     return true;
-                }
-
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (matiere.getNomMatiere().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-
-                return false;
+                return (matiere.getNomMatiere() != null && matiere.getNomMatiere().toLowerCase().contains(lower))
+                        || (matiere.getDescriptionMatiere() != null
+                                && matiere.getDescriptionMatiere().toLowerCase().contains(lower))
+                        || (matiere.getObjectifMatiere() != null
+                                && matiere.getObjectifMatiere().toLowerCase().contains(lower))
+                        || (String.valueOf(matiere.getModuleId()).contains(lower))
+                        || (String.valueOf(matiere.getEnseignantId()).contains(lower))
+                        || (matiere.getPrerequisMatiere() != null
+                                && String.valueOf(matiere.getPrerequisMatiere()).contains(lower));
             });
+            updateMatiereGrid();
         });
 
         // Configuration du bouton pour effacer la recherche
@@ -91,43 +104,102 @@ public class MatiereListController implements Initializable {
         });
     }
 
-    private void setupListView() {
-        // Configuration de la cellule personnalisée pour le ListView
-        listMatiere.setCellFactory(param -> new ListCell<Matiere>() {
-            @Override
-            protected void updateItem(Matiere matiere, boolean empty) {
-                super.updateItem(matiere, empty);
+    private void updateMatiereGrid() {
+        matiereGrid.getChildren().clear();
+        int column = 0;
+        int row = 0;
+        int maxColumns = 2; // Nombre de colonnes dans la grille
 
-                if (empty || matiere == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    try {
-                        // Créer une cellule personnalisée pour chaque matière
-                        HBox cell = new HBox(10);
-                        Label nomLabel = new Label(matiere.getNomMatiere());
-                        nomLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        for (Matiere matiere : filteredMatieres) {
+            VBox card = createMatiereCard(matiere);
+            matiereGrid.add(card, column, row);
 
-                        Button viewButton = new Button("Voir");
-                        viewButton.setStyle("-fx-background-color: #58c7fa; -fx-text-fill: white;");
-                        viewButton.setOnAction(event -> viewMatiere(matiere));
-
-                        Button editButton = new Button("Modifier");
-                        editButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-                        editButton.setOnAction(event -> editMatiere(matiere));
-
-                        Button deleteButton = new Button("Supprimer");
-                        deleteButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
-                        deleteButton.setOnAction(event -> deleteMatiere(matiere));
-
-                        cell.getChildren().addAll(nomLabel, viewButton, editButton, deleteButton);
-                        setGraphic(cell);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+            column++;
+            if (column == maxColumns) {
+                column = 0;
+                row++;
             }
-        });
+        }
+    }
+
+    private VBox createMatiereCard(Matiere matiere) {
+        VBox card = new VBox(10);
+        card.getStyleClass().add("matiere-card");
+
+        // Création du conteneur pour l'image
+        StackPane imageContainer = new StackPane();
+        imageContainer.getStyleClass().add("matiere-image-container");
+        
+        // Création de l'ImageView
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(280);
+        imageView.setFitHeight(160);
+        imageView.setPreserveRatio(true);
+        imageView.getStyleClass().add("matiere-image");
+        
+        // Chargement de l'image avec gestion des erreurs
+        try {
+            String imageUrl = matiere.getImageUrl();
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                Image image = new Image(imageUrl, true);
+                imageView.setImage(image);
+            } else {
+                // Image par défaut si aucune URL n'est disponible
+                imageView.setImage(new Image(getClass().getResourceAsStream("/images/default_matiere.png")));
+            }
+        } catch (Exception e) {
+            // En cas d'erreur, utiliser l'image par défaut
+            try {
+                imageView.setImage(new Image(getClass().getResourceAsStream("/images/default_matiere.png")));
+            } catch (Exception ex) {
+                // Si l'image par défaut ne peut pas être chargée, ne rien afficher
+                System.err.println("Impossible de charger l'image par défaut: " + ex.getMessage());
+            }
+        }
+        
+        imageContainer.getChildren().add(imageView);
+
+        // Titre de la matière
+        Label titleLabel = new Label(matiere.getNomMatiere());
+        titleLabel.getStyleClass().add("matiere-title");
+
+        // Description de la matière
+        Label descriptionLabel = new Label(
+                matiere.getDescriptionMatiere() != null
+                        ? (matiere.getDescriptionMatiere().length() > 100
+                                ? matiere.getDescriptionMatiere().substring(0, 100) + "..."
+                                : matiere.getDescriptionMatiere())
+                        : "Aucune description");
+        descriptionLabel.getStyleClass().add("matiere-description");
+
+        // Détails de la matière
+        Label detailsLabel = new Label(String.format("Module ID: %d | Enseignant ID: %d",
+                matiere.getModuleId(), matiere.getEnseignantId()));
+        detailsLabel.getStyleClass().add("matiere-details");
+
+        // Conteneur pour les boutons d'action
+        HBox actionButtons = new HBox(10);
+        actionButtons.getStyleClass().add("matiere-actions");
+
+        // Boutons d'action
+        Button editButton = new Button("Modifier");
+        editButton.getStyleClass().addAll("matiere-button", "matiere-button-edit");
+        editButton.setOnAction(e -> editMatiere(matiere));
+
+        Button deleteButton = new Button("Supprimer");
+        deleteButton.getStyleClass().addAll("matiere-button", "matiere-button-delete");
+        deleteButton.setOnAction(e -> deleteMatiere(matiere.getId()));
+
+        Button detailsButton = new Button("Détails");
+        detailsButton.getStyleClass().addAll("matiere-button", "matiere-button-details");
+        detailsButton.setOnAction(e -> showDescriptionModal(matiere));
+
+        actionButtons.getChildren().addAll(editButton, deleteButton, detailsButton);
+
+        // Ajouter tous les éléments à la carte
+        card.getChildren().addAll(imageContainer, titleLabel, descriptionLabel, detailsLabel, actionButtons);
+
+        return card;
     }
 
     private void openAddMatiereForm() {
@@ -178,7 +250,7 @@ public class MatiereListController implements Initializable {
         }
     }
 
-    private void deleteMatiere(Matiere matiere) {
+    private void deleteMatiere(int id) {
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDialog.setTitle("Confirmation de suppression");
         confirmDialog.setHeaderText(null);
@@ -186,11 +258,50 @@ public class MatiereListController implements Initializable {
 
         confirmDialog.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                matiereService.deleteMatiere(matiere.getId());
+                matiereService.deleteMatiere(id);
                 loadMatieres();
                 showAlert("Succès", "La matière a été supprimée avec succès.");
             }
         });
+    }
+
+    private void showDescriptionModal(Matiere matiere) {
+        // Create modal components
+        Stage modalStage = new Stage();
+        modalStage.initModality(Modality.APPLICATION_MODAL);
+        modalStage.initStyle(StageStyle.TRANSPARENT);
+
+        // Create modal content
+        Label titleLabel = new Label(matiere.getNomMatiere());
+        titleLabel.getStyleClass().add("modal-title");
+
+        TextArea descriptionText = new TextArea(matiere.getDescriptionMatiere());
+        descriptionText.setEditable(false);
+        descriptionText.setWrapText(true);
+        descriptionText.getStyleClass().add("modal-content");
+        descriptionText.setPrefHeight(200);
+        descriptionText.setPrefWidth(400);
+
+        Button closeButton = new Button("Fermer");
+        closeButton.getStyleClass().add("modal-close-button");
+        closeButton.setOnAction(e -> modalStage.close());
+
+        VBox modalContent = new VBox(10, titleLabel, descriptionText, closeButton);
+        modalContent.setAlignment(Pos.CENTER);
+        modalContent.getStyleClass().add("modal-dialog");
+        modalContent.setPrefWidth(450);
+
+        // Create backdrop
+        StackPane modalRoot = new StackPane(modalContent);
+        modalRoot.getStyleClass().add("modal-backdrop");
+
+        // Set scene and show modal
+        Scene modalScene = new Scene(modalRoot, 500, 350);
+        modalScene.setFill(null);
+        modalScene.getStylesheets().add(getClass().getResource("/style_css/modal_style.css").toExternalForm());
+
+        modalStage.setScene(modalScene);
+        modalStage.show();
     }
 
     private void showAlert(String title, String content) {

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<HBox prefHeight="600.0" prefWidth="1000.0" stylesheets="@../style_css/statistiques_style.css"
+      xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="Controllers.StatistiquesController">
+    
+    <!-- Barre de navigation latérale toujours visible -->
+    <VBox fx:id="sideNavBar" prefWidth="200.0" styleClass="side-navbar">
+        <padding>
+            <Insets top="20.0" right="10.0" bottom="20.0" left="10.0"/>
+        </padding>
+        <!-- Les boutons de navigation seront ajoutés dynamiquement dans le contrôleur -->
+    </VBox>
+    
+    <!-- Contenu principal -->
+    <BorderPane fx:id="mainContainer" HBox.hgrow="ALWAYS">
+        <!-- Le contenu sera généré dynamiquement dans le contrôleur -->
+        <bottom>
+            <HBox alignment="CENTER" prefHeight="60.0" prefWidth="800.0" styleClass="back-button-container">
+                <children>
+                    <Button fx:id="btnRetourMain" mnemonicParsing="false" prefHeight="45.0" prefWidth="200.0" 
+                            styleClass="back-button" text="Retour au Menu Principal" onAction="#handleRetourMainClick" />
+                </children>
+                <padding>
+                    <Insets bottom="20.0" left="20.0" right="20.0" top="5.0" />
+                </padding>
+            </HBox>
+        </bottom>
+    </BorderPane>
+</HBox>

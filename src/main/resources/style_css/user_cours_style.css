@@ -1,0 +1,305 @@
+/* Styles pour l'interface des cours */
+
+/* Conteneur principal */
+.cours-container {
+    -fx-background-color: #f5f7fa;
+    -fx-padding: 20px;
+}
+
+/* En-tête amélioré */
+.header-stack {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 5);
+}
+
+.header-background {
+    -fx-fill: linear-gradient(to right, #3498db, #64b5f6);
+    -fx-arc-height: 20;
+    -fx-arc-width: 20;
+}
+
+.header-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 3, 0, 1, 1);
+}
+
+.header-subtitle {
+    -fx-font-size: 16px;
+    -fx-font-style: italic;
+    -fx-text-fill: white;
+    -fx-opacity: 0.9;
+}
+
+/* Barre de recherche */
+.search-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, 4);
+    -fx-padding: 15px;
+}
+
+.search-icon {
+    -fx-font-size: 18px;
+    -fx-text-fill: #3498db;
+}
+
+.search-field-user {
+    -fx-background-color: #f0f8ff;
+    -fx-background-radius: 8px;
+    -fx-border-color: #b0d0ff;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 8px 15px;
+    -fx-font-size: 14px;
+}
+
+.search-field-user:focused {
+    -fx-border-color: #3498db;
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.2), 5, 0, 0, 0);
+}
+
+.clear-button {
+    -fx-background-color: #e3f0ff;
+    -fx-text-fill: #3498db;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-color: #b0d0ff;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+    -fx-transition: -fx-background-color 0.2s ease-in-out;
+}
+
+.clear-button:hover {
+    -fx-background-color: #d0e6ff;
+    -fx-border-color: #3498db;
+}
+
+/* Grille de cours */
+.cours-grid {
+    -fx-background-color: transparent;
+}
+
+/* Carte de cours */
+.cours-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
+    -fx-transition: -fx-effect 0.3s ease-in-out,
+        -fx-background-color 0.3s ease-in-out,
+        -fx-scale-x 0.3s ease-in-out,
+        -fx-scale-y 0.3s ease-in-out;
+}
+
+.cours-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1976d2;
+    -fx-alignment: center;
+    -fx-padding: 0 0 10 0;
+    -fx-border-color: #2196f3;
+    -fx-border-width: 0 0 2 0;
+    -fx-max-width: 280px;
+}
+
+.cours-info {
+    -fx-font-size: 14px;
+    -fx-text-fill: #546e7a;
+    -fx-padding: 5px 10px;
+    -fx-background-radius: 15px;
+    -fx-background-color: #f5f5f5;
+}
+
+.niveau-debutant {
+    -fx-background-color: #e8f5e9;
+    -fx-text-fill: #2e7d32;
+}
+
+.niveau-intermediaire {
+    -fx-background-color: #fff8e1;
+    -fx-text-fill: #f57f17;
+}
+
+.niveau-avance {
+    -fx-background-color: #ffebee;
+    -fx-text-fill: #c62828;
+}
+
+.cours-description {
+    -fx-font-size: 14px;
+    -fx-text-fill: #34495e;
+    -fx-wrap-text: true;
+    -fx-line-spacing: 1.4;
+}
+
+.cours-button {
+    -fx-background-color: #2196f3;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+    -fx-min-width: 150px;
+    -fx-effect: dropshadow(gaussian, rgba(33, 150, 243, 0.2), 5, 0, 0, 2);
+    -fx-transition: -fx-background-color 0.2s ease-in-out;
+}
+
+.cours-button:hover {
+    -fx-background-color: #1976d2;
+    -fx-effect: dropshadow(gaussian, rgba(33, 150, 243, 0.4), 8, 0, 0, 3);
+}
+
+.cours-button:pressed {
+    -fx-background-color: #1565c0;
+    -fx-effect: dropshadow(gaussian, rgba(33, 150, 243, 0.3), 3, 0, 0, 1);
+}
+
+.cours-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(33, 150, 243, 0.3), 15, 0, 0, 8);
+    -fx-background-color: linear-gradient(to bottom right, #ffffff, #e3f2fd);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+/* ScrollPane amélioré */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane>.viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane>.scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 0 5;
+}
+
+.scroll-pane>.scroll-bar:vertical>.thumb {
+    -fx-background-color: #b0d0ff;
+    -fx-background-radius: 5;
+}
+
+.scroll-pane>.scroll-bar:vertical>.thumb:hover {
+    -fx-background-color: #3498db;
+}
+
+.cours-content {
+    -fx-background-color: white;
+    -fx-padding: 20px;
+    -fx-spacing: 15px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, 4);
+    -fx-margin-top: 20px;
+}
+
+.cours-section {
+    -fx-background-color: #f8f9fa;
+    -fx-padding: 15px;
+    -fx-background-radius: 8px;
+    -fx-border-color: #e9ecef;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 5, 0, 0, 2);
+}
+
+.cours-section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 0 0 10 0;
+    -fx-border-color: #3498db;
+    -fx-border-width: 0 0 2 0;
+}
+
+.cours-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #34495e;
+    -fx-wrap-text: true;
+    -fx-line-spacing: 1.4;
+}
+
+.cours-list {
+    -fx-spacing: 10px;
+    -fx-padding: 10px 0;
+}
+
+.cours-list-item {
+    -fx-background-color: white;
+    -fx-padding: 12px;
+    -fx-background-radius: 6px;
+    -fx-border-color: #e9ecef;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0, 0, 2);
+    -fx-cursor: hand;
+    -fx-transition: -fx-background-color 0.2s ease-in-out,
+        -fx-effect 0.2s ease-in-out;
+}
+
+.cours-list-item:hover {
+    -fx-background-color: #f0f9ff;
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.2), 6, 0, 0, 3);
+}
+
+.cours-navigation {
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+}
+
+.cours-button {
+    -fx-background-color: #2196f3;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+    -fx-min-width: 150px;
+    -fx-effect: dropshadow(gaussian, rgba(33, 150, 243, 0.2), 5, 0, 0, 2);
+    -fx-transition: -fx-background-color 0.2s ease-in-out;
+}
+
+.cours-button:hover {
+    -fx-background-color: #1976d2;
+    -fx-effect: dropshadow(gaussian, rgba(33, 150, 243, 0.4), 8, 0, 0, 3);
+}
+
+.cours-button:pressed {
+    -fx-background-color: #1565c0;
+    -fx-effect: dropshadow(gaussian, rgba(33, 150, 243, 0.3), 3, 0, 0, 1);
+}
+
+.cours-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(33, 150, 243, 0.3), 15, 0, 0, 8);
+    -fx-background-color: linear-gradient(to bottom right, #ffffff, #e3f2fd);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.cours-progress {
+    -fx-padding: 10px;
+    -fx-spacing: 5px;
+}
+
+.cours-progress-bar {
+    -fx-pref-height: 8px;
+    -fx-background-color: #e9ecef;
+    -fx-background-radius: 4px;
+}
+
+.cours-progress-bar .bar {
+    -fx-background-color: #3498db;
+    -fx-background-radius: 4px;
+}
+
+.cours-progress-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+    -fx-font-style: italic;
+}

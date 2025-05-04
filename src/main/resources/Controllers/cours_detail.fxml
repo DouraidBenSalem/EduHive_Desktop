@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+<?import org.kordamp.ikonli.javafx.*?>
+
+<AnchorPane fx:id="courseDetailRoot" styleClass="cours-detail-root" stylesheets="@../style_css/cours_detail_style.css"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox spacing="20" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" 
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" styleClass="cours-detail-container">
+            
+            <!-- En-tête avec titre et bouton de fermeture -->
+            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="cours-detail-header">
+                <padding>
+                    <Insets top="15" right="25" bottom="15" left="25"/>
+                </padding>
+                <VBox spacing="5">
+                    <Label fx:id="courseTitle" styleClass="cours-detail-title" text="Titre du cours" />
+                    <Label fx:id="courseDescription" styleClass="cours-detail-subtitle" 
+                           text="Description du cours" wrapText="true" />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="aiSummaryButton" styleClass="icon-button" onAction="#onAISummaryClick">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-robot" iconSize="20"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%aiSummary"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="closeButton" styleClass="cours-detail-close-button">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-times" styleClass="cours-detail-close-icon" />
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Fermer" />
+                    </tooltip>
+                </Button>
+            </HBox>
+
+            <!-- Carte d'informations du cours -->
+            <VBox spacing="15" styleClass="cours-detail-info-card">
+                <padding>
+                    <Insets top="20" right="25" bottom="20" left="25"/>
+                </padding>
+                <HBox spacing="30" alignment="CENTER_LEFT">
+                    <!-- Info Niveau -->
+                    <VBox spacing="8" styleClass="cours-detail-info-item">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <FontIcon iconLiteral="fas-graduation-cap" styleClass="cours-detail-icon" />
+                            <Label text="Niveau" styleClass="cours-detail-label" />
+                        </HBox>
+                        <Label fx:id="courseLevel" styleClass="cours-detail-value" text="Niveau du cours" />
+                    </VBox>
+                    <!-- Info Matière -->
+                    <VBox spacing="8" styleClass="cours-detail-info-item">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <FontIcon iconLiteral="fas-book" styleClass="cours-detail-icon" />
+                            <Label text="Matière" styleClass="cours-detail-label" />
+                        </HBox>
+                        <Label fx:id="courseSubject" styleClass="cours-detail-value" text="Nom de la matière" />
+                    </VBox>
+                    <!-- Info Status -->
+                    <VBox spacing="8" styleClass="cours-detail-info-item">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <FontIcon iconLiteral="fas-info-circle" styleClass="cours-detail-icon" />
+                            <Label text="Status" styleClass="cours-detail-label" />
+                        </HBox>
+                        <Label fx:id="courseStatus" styleClass="cours-detail-value" text="Status du cours" />
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Conteneur du PDF avec barre d'outils -->
+            <VBox spacing="15" styleClass="cours-detail-pdf-container" VBox.vgrow="ALWAYS">
+                <padding>
+                    <Insets top="10" right="25" bottom="25" left="25"/>
+                </padding>
+                <!-- En-tête PDF -->
+                <HBox spacing="15" alignment="CENTER_LEFT" styleClass="cours-detail-pdf-header">
+                    <FontIcon iconLiteral="fas-file-pdf" styleClass="cours-detail-pdf-icon" />
+                    <Label text="Document du cours" styleClass="cours-detail-section-title" />
+                </HBox>
+                
+                <!-- Barre d'outils PDF -->
+                <HBox spacing="15" styleClass="cours-detail-toolbar" alignment="CENTER_LEFT">
+                    <HBox spacing="8" styleClass="cours-detail-toolbar-group">
+                        <Button fx:id="zoomOutButton" styleClass="cours-detail-tool-button">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-search-minus" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Zoom arrière" />
+                            </tooltip>
+                        </Button>
+                        <Button fx:id="zoomInButton" styleClass="cours-detail-tool-button">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-search-plus" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Zoom avant" />
+                            </tooltip>
+                        </Button>
+                    </HBox>
+
+                    <Separator orientation="VERTICAL" styleClass="cours-detail-toolbar-separator" />
+
+                    <HBox spacing="8" styleClass="cours-detail-toolbar-group">
+                        <Button fx:id="previousPageButton" styleClass="cours-detail-tool-button">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-chevron-left" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Page précédente" />
+                            </tooltip>
+                        </Button>
+                        <Label fx:id="pageLabel" styleClass="cours-detail-page-label" text="Page 1 / 1" />
+                        <Button fx:id="nextPageButton" styleClass="cours-detail-tool-button">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-chevron-right" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Page suivante" />
+                            </tooltip>
+                        </Button>
+                    </HBox>
+
+                    <Region HBox.hgrow="ALWAYS" />
+
+                    <Button fx:id="downloadButton" styleClass="cours-detail-download-button">
+                        <graphic>
+                            <HBox spacing="8" alignment="CENTER">
+                                <FontIcon iconLiteral="fas-download" />
+                                <Label text="Télécharger" />
+                            </HBox>
+                        </graphic>
+                    </Button>
+                </HBox>
+
+                <!-- Visualiseur PDF -->
+                <StackPane VBox.vgrow="ALWAYS" styleClass="cours-detail-pdf-viewer">
+                    <WebView fx:id="pdfViewer" VBox.vgrow="ALWAYS" />
+                    <ProgressIndicator fx:id="loadingIndicator" styleClass="cours-detail-loading" />
+                </StackPane>
+            </VBox>
+        </VBox>
+    </children>
+</AnchorPane>

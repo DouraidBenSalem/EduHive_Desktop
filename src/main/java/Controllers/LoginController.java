@@ -26,7 +26,6 @@ import java.awt.Dimension;
 import javax.imageio.ImageIO;
 import com.github.sarxos.webcam.Webcam;
 
-
 public class LoginController implements Initializable {
 
     private final UserServiceImplementation userService = new UserServiceImplementation(MyDatabase.getInstance().getConnection());
@@ -163,10 +162,10 @@ public class LoginController implements Initializable {
 
     @FXML
     private void successLogin() throws IOException {
-            Stage currentStage = (Stage) loginEmailField.getScene().getWindow();
-            currentStage.close();
-            Main mainApp = new Main();
-            mainApp.start(new Stage());
+        Stage currentStage = (Stage) loginEmailField.getScene().getWindow();
+        currentStage.close();
+        Main mainApp = new Main();
+        mainApp.start(new Stage());
     }
 
     public void loginButtonOnAction(ActionEvent event) {
@@ -197,7 +196,7 @@ public class LoginController implements Initializable {
         String email = registerEmailField.getText().trim();
         String password = registerPasswordField.getText();
         String role = "";
-        if(registerRoleComboBox.getValue().equals("Etudiant")) {
+        if (registerRoleComboBox.getValue().equals("Etudiant")) {
             role = "ROLE_STUDENT";
         } else if (registerRoleComboBox.getValue().equals("Enseignant")) {
             role = "ROLE_TEACHER";
@@ -243,7 +242,8 @@ public class LoginController implements Initializable {
     public void goToLogin() throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Controllers/login.fxml"));
 
-        Stage stage = (Stage) registerCancelButton.getScene().getWindow(); // or use any other node in the registration form
+        Stage stage = (Stage) registerCancelButton.getScene().getWindow(); // or use any other node in the registration
+                                                                           // form
         stage.setScene(new Scene(root));
         stage.show();
     }
