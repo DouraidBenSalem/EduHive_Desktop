@@ -22,7 +22,6 @@ import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 
-
 public class LoginController implements Initializable {
     @FXML
     private TextField loginEmailField;
@@ -72,7 +71,6 @@ public class LoginController implements Initializable {
     @FXML
     private TextField registerSurnameField;
 
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         if (registerRoleComboBox != null) {
@@ -83,18 +81,18 @@ public class LoginController implements Initializable {
 
     @FXML
     private void successLogin() throws IOException {
-            Stage currentStage = (Stage) loginEmailField.getScene().getWindow();
-            currentStage.close();
-            Main mainApp = new Main();
-            mainApp.start(new Stage());
+        Stage currentStage = (Stage) loginEmailField.getScene().getWindow();
+        currentStage.close();
+        Main mainApp = new Main();
+        mainApp.start(new Stage());
     }
 
     public void loginButtonOnAction(ActionEvent event) {
         if (!validateLogin()) {
             return;
         }
-            String email = loginEmailField.getText();
-            String password = loginPasswordField.getText();
+        String email = loginEmailField.getText();
+        String password = loginPasswordField.getText();
 
         MyDatabase connectNow = MyDatabase.getInstance();
         Connection con = connectNow.getConnection();
@@ -136,7 +134,7 @@ public class LoginController implements Initializable {
         String email = registerEmailField.getText().trim();
         String password = registerPasswordField.getText();
         String role = "";
-        if(registerRoleComboBox.getValue().equals("Etudiant")) {
+        if (registerRoleComboBox.getValue().equals("Etudiant")) {
             role = "ROLE_STUDENT";
         } else if (registerRoleComboBox.getValue().equals("Enseignant")) {
             role = "ROLE_TEACHER";
@@ -161,12 +159,12 @@ public class LoginController implements Initializable {
             stmt.executeUpdate();
             goToLogin();
 
-        }catch (SQLIntegrityConstraintViolationException ex) {
+        } catch (SQLIntegrityConstraintViolationException ex) {
             // Specific exception for duplicate key
             if (ex.getMessage().contains("UNIQ_8D93D649E7927C74")) {
                 registerEmailError.setText("cet email existe deja.");
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -189,7 +187,8 @@ public class LoginController implements Initializable {
     public void goToLogin() throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Controllers/login.fxml"));
 
-        Stage stage = (Stage) registerCancelButton.getScene().getWindow(); // or use any other node in the registration form
+        Stage stage = (Stage) registerCancelButton.getScene().getWindow(); // or use any other node in the registration
+                                                                           // form
         stage.setScene(new Scene(root));
         stage.show();
     }
@@ -264,7 +263,9 @@ public class LoginController implements Initializable {
         }
 
         // Validate Role (assuming the text of selected MenuItem is used)
-        if ((!(registerRoleComboBox.getValue().equals("Enseignant")) && !(registerRoleComboBox.getValue().equals("Etudiant"))) || registerRoleComboBox.getValue().isEmpty()) {
+        if ((!(registerRoleComboBox.getValue().equals("Enseignant"))
+                && !(registerRoleComboBox.getValue().equals("Etudiant")))
+                || registerRoleComboBox.getValue().isEmpty()) {
             registerRoleError.setText("Selectionné un role.");
             isValid = false;
         }

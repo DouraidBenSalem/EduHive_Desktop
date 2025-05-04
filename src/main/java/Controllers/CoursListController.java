@@ -1,53 +1,38 @@
 package Controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.Button;
-import Entities.Cours;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.scene.control.*;
+import javafx.scene.web.WebView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Orientation;
 import javafx.stage.Stage;
+import javafx.stage.Modality;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import Services.CoursService;
-import Services.CoursServiceImpl;
-import java.util.List;
-import javafx.scene.control.TableCell;
-import javafx.util.Callback;
-import javafx.scene.layout.HBox;
-import javafx.geometry.Insets;
-import java.awt.Desktop;
-import java.io.File;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.web.WebView;
-import javafx.stage.Modality;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.stage.FileChooser;
+import javafx.scene.input.KeyCode;
+import javafx.application.Platform;
+import javafx.print.PrinterJob;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import javafx.print.PrinterJob;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
-import javafx.scene.control.Alert;
-import javafx.scene.web.WebEngine;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.application.Platform;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ListCell;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+import Entities.Cours;
+import Services.CoursService;
+import Services.CoursServiceImpl;
 
 public class CoursListController {
     @FXML
     private ListView<Cours> listCours;
-    // Nous n'avons plus besoin des colonnes car nous utilisons ListView
     @FXML
     private Button btnAddCours;
     @FXML
@@ -74,16 +59,15 @@ public class CoursListController {
         VBox.setVgrow(listCours, javafx.scene.layout.Priority.ALWAYS);
 
         // Configuration des cellules personnalisées
-        listCours.setCellFactory(lv -> new ListCell<Cours>() {
-            private final HBox container = new HBox(10);
-            private final VBox infoContainer = new VBox(5);
+        listCours.setCellFactory(_ -> new ListCell<>() {
             private final Label nomLabel = new Label();
             private final Label descriptionLabel = new Label();
             private final Label detailsLabel = new Label();
             private final Button btnEdit = new Button("Modifier");
             private final Button btnDelete = new Button("Supprimer");
             private final Button btnViewPdf = new Button("Voir PDF");
-            private final HBox actionsContainer = new HBox(10, btnEdit, btnDelete, btnViewPdf);
+            private final Button btnToggleStatus = new Button("Marquer comme lu");
+            private final HBox container = new HBox(10);
 
             {
                 // Style des éléments
@@ -98,20 +82,11 @@ public class CoursListController {
                         "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
                 btnViewPdf.setStyle(
                         "-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
-
-                // Organisation des conteneurs
-                infoContainer.getChildren().addAll(nomLabel, descriptionLabel, detailsLabel);
-                infoContainer.setPrefWidth(600);
-                actionsContainer.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
-                container.getChildren().addAll(infoContainer, actionsContainer);
-                container.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-                container.setPadding(new Insets(10));
-                container
-                        .setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;");
-
-                // Limiter la largeur de la description
-                descriptionLabel.setMaxWidth(580);
-                descriptionLabel.setWrapText(true);
+                btnToggleStatus.setStyle("-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
+                container.getChildren().addAll(
+                    new VBox(5, nomLabel, descriptionLabel, detailsLabel),
+                    new HBox(10, btnEdit, btnDelete, btnViewPdf, btnToggleStatus)
+                );
             }
 
             @Override
@@ -131,20 +106,22 @@ public class CoursListController {
                     btnDelete.setOnAction(e -> deleteCours(cours));
                     btnViewPdf.setOnAction(e -> openPdf(cours));
                     btnViewPdf.setVisible(cours.getPdfCours() != null && !cours.getPdfCours().isEmpty());
-
+                    btnToggleStatus.setText("Non lu".equalsIgnoreCase(cours.getStatusCours()) ? "Marquer comme lu" : "Marquer comme non lu");
+                    btnToggleStatus.setOnAction(e -> toggleCoursStatus(cours));
+                    updateCoursItemStyle(this, cours);
                     setGraphic(container);
                 }
             }
         });
 
         loadCours();
-        btnAddCours.setOnAction(e -> openAddCoursWindow());
+        btnAddCours.setOnAction(_ -> openAddCoursWindow());
 
         // Initialisation de la recherche avancée
-        filteredCoursList = new FilteredList<>(coursList, p -> true);
+        filteredCoursList = new FilteredList<>(coursList, _ -> true);
         listCours.setItems(filteredCoursList);
 
-        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+        searchField.textProperty().addListener((_, _, newVal) -> {
             String lower = newVal.toLowerCase();
             filteredCoursList.setPredicate(cours -> {
                 if (lower.isEmpty())
@@ -161,7 +138,7 @@ public class CoursListController {
             });
         });
 
-        btnClearSearch.setOnAction(e -> searchField.clear());
+        btnClearSearch.setOnAction(_ -> searchField.clear());
         searchField.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ESCAPE)
                 searchField.clear();
@@ -234,29 +211,137 @@ public class CoursListController {
 
     private void openPdf(Cours cours) {
         if (cours != null && cours.getPdfCours() != null && !cours.getPdfCours().isEmpty()) {
-            openPdfFile(cours.getPdfCours());
+            showPdfModal(cours);
         } else {
             showError("Ce cours n'a pas de PDF associé.");
         }
     }
 
-    private void openPdfFile(String pdfFileName) {
-        if (pdfFileName == null || pdfFileName.isEmpty()) {
+    private void showPdfModal(Cours cours) {
+        if (cours == null || cours.getPdfCours() == null || cours.getPdfCours().isEmpty()) {
+            showError("Ce cours n'a pas de PDF associé.");
             return;
         }
-        try {
-            // Ouvre le PDF depuis le dossier pdfs/
-            File pdfFile = new File("pdfs/" + pdfFileName);
-            if (pdfFile.exists()) {
-                if (Desktop.isDesktopSupported()) {
-                    Desktop.getDesktop().open(pdfFile);
+
+        Stage modalStage = new Stage();
+        modalStage.initModality(Modality.APPLICATION_MODAL);
+        modalStage.setTitle("Cours - " + cours.getNomCours());
+
+        // Création du conteneur principal avec un style moderne
+        VBox mainContainer = new VBox(15);
+        mainContainer.setStyle("-fx-background-color: white; -fx-padding: 25;");
+
+        // En-tête amélioré
+        VBox header = new VBox(8);
+        Label titleLabel = new Label(cours.getNomCours());
+        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-family: 'Segoe UI Semibold'; -fx-text-fill: #2196f3;");
+
+        Label descriptionLabel = new Label(cours.getDescriptionCours());
+        descriptionLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #666; -fx-wrap-text: true;");
+        
+        Label infoLabel = new Label(String.format("Niveau: %s | Status: %s", cours.getNiveau(), cours.getStatusCours()));
+        infoLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888; -fx-padding: 0 0 10 0;");
+        
+        header.getChildren().addAll(titleLabel, descriptionLabel, infoLabel);
+        header.setStyle("-fx-padding: 0 0 15 0; -fx-border-color: transparent transparent #e3f0ff transparent; -fx-border-width: 0 0 2 0;");
+
+        // Barre d'outils moderne
+        HBox toolbar = new HBox(15);
+        toolbar.setAlignment(Pos.CENTER);
+        toolbar.setStyle("-fx-padding: 15; -fx-background-color: #f7fbff; -fx-border-color: #e3f0ff; -fx-border-width: 1; -fx-background-radius: 8; -fx-border-radius: 8;");
+
+        // Boutons de navigation stylés
+        Button previousBtn = new Button("←");
+        Button nextBtn = new Button("→");
+        Label pageLabel = new Label("Page: 1");
+        Button zoomInBtn = new Button("Zoom +");
+        Button zoomOutBtn = new Button("Zoom -");
+
+        String buttonStyle = "-fx-background-color: #e3f0ff; -fx-text-fill: #2196f3; -fx-font-weight: bold; " +
+                            "-fx-background-radius: 6; -fx-padding: 8 16; -fx-cursor: hand;";
+        String buttonHoverStyle = "-fx-background-color: #2196f3; -fx-text-fill: white;";
+
+        previousBtn.setStyle(buttonStyle);
+        nextBtn.setStyle(buttonStyle);
+        zoomInBtn.setStyle(buttonStyle);
+        zoomOutBtn.setStyle(buttonStyle);
+
+        // Ajout des effets hover
+        previousBtn.setOnMouseEntered(_ -> previousBtn.setStyle(buttonHoverStyle));
+        previousBtn.setOnMouseExited(_ -> previousBtn.setStyle(buttonStyle));
+        nextBtn.setOnMouseEntered(_ -> nextBtn.setStyle(buttonHoverStyle));
+        nextBtn.setOnMouseExited(_ -> nextBtn.setStyle(buttonStyle));
+        zoomInBtn.setOnMouseEntered(_ -> zoomInBtn.setStyle(buttonHoverStyle));
+        zoomInBtn.setOnMouseExited(_ -> zoomInBtn.setStyle(buttonStyle));
+        zoomOutBtn.setOnMouseEntered(_ -> zoomOutBtn.setStyle(buttonHoverStyle));
+        zoomOutBtn.setOnMouseExited(_ -> zoomOutBtn.setStyle(buttonStyle));
+
+        pageLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #666; -fx-padding: 0 10;");
+
+        Separator sep = new Separator(Orientation.VERTICAL);
+        sep.setStyle("-fx-background-color: #e3f0ff;");
+        
+        toolbar.getChildren().addAll(previousBtn, pageLabel, nextBtn, sep, zoomInBtn, zoomOutBtn);
+
+        // Zone d'affichage du PDF avec WebView
+        WebView webView = new WebView();
+        webView.setPrefSize(900, 700);
+        String pdfPath = new File("pdfs/" + cours.getPdfCours()).toURI().toString();
+        webView.getEngine().load(pdfPath);
+
+        // Boutons d'action en bas
+        HBox actionButtons = new HBox(15);
+        actionButtons.setAlignment(Pos.CENTER_RIGHT);
+        actionButtons.setStyle("-fx-padding: 15 0 0 0;");
+
+        Button downloadBtn = new Button("Télécharger");
+        downloadBtn.setStyle("-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-weight: bold; " +
+                            "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;");
+        
+        Button closeBtn = new Button("Fermer");
+        closeBtn.setStyle("-fx-background-color: #f5f5f5; -fx-text-fill: #666; -fx-font-weight: bold; " +
+                          "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;");
+
+        // Effets hover pour les boutons d'action
+        downloadBtn.setOnMouseEntered(_ -> downloadBtn.setStyle("-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-weight: bold; " +
+                                                              "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;"));
+        downloadBtn.setOnMouseExited(_ -> downloadBtn.setStyle("-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-weight: bold; " +
+                                                             "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;"));
+        closeBtn.setOnMouseEntered(_ -> closeBtn.setStyle("-fx-background-color: #eeeeee; -fx-text-fill: #666; -fx-font-weight: bold; " +
+                                                         "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;"));
+        closeBtn.setOnMouseExited(_ -> closeBtn.setStyle("-fx-background-color: #f5f5f5; -fx-text-fill: #666; -fx-font-weight: bold; " +
+                                                        "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;"));
+
+        actionButtons.getChildren().addAll(downloadBtn, closeBtn);
+
+        // Assemblage de l'interface avec espacement amélioré
+        mainContainer.getChildren().addAll(header, toolbar, webView, actionButtons);
+        
+        // Configuration des actions des boutons
+        closeBtn.setOnAction(e -> modalStage.close());
+        downloadBtn.setOnAction(e -> {
+            try {
+                File sourceFile = new File("pdfs/" + cours.getPdfCours());
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Enregistrer le PDF");
+                fileChooser.setInitialFileName(cours.getPdfCours());
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+                File destFile = fileChooser.showSaveDialog(modalStage);
+                if (destFile != null) {
+                    Files.copy(sourceFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    showAlert("Le PDF a été téléchargé avec succès !");
                 }
-            } else {
-                showError("Fichier PDF introuvable : " + pdfFile.getAbsolutePath());
+            } catch (Exception ex) {
+                showError("Erreur lors du téléchargement : " + ex.getMessage());
             }
-        } catch (Exception e) {
-            showError("Impossible d'ouvrir le PDF : " + e.getMessage());
-        }
+        });
+
+        // Configuration finale de la fenêtre modale
+        Scene scene = new Scene(mainContainer);
+        modalStage.setScene(scene);
+        modalStage.setMinWidth(950);
+        modalStage.setMinHeight(850);
+        modalStage.show();
     }
 
     private void showError(String msg) {
@@ -560,5 +645,57 @@ public class CoursListController {
                 }
             });
         });
+    }
+
+    private boolean isPrerequisCompleted(Cours cours) {
+        if (cours.getPrerequisCoursId() == null) {
+            return true;
+        }
+        
+        // Check if prerequisite course exists and is marked as read
+        boolean found = false;
+        for (Cours c : coursList) {
+            if (c.getId() == cours.getPrerequisCoursId()) {
+                found = true;
+                return "Lu".equalsIgnoreCase(c.getStatusCours());
+            }
+        }
+        // If prerequisite course wasn't found, consider it as not completed
+        return !found;
+    }
+
+    private void updateCoursItemStyle(ListCell<Cours> cell, Cours cours) {
+        if (!isPrerequisCompleted(cours)) {
+            cell.setStyle("-fx-background-color: #ffebee; -fx-opacity: 0.8;");
+            cell.setDisable(true);
+            String prerequisCoursName = "";
+            for (Cours c : coursList) {
+                if (c.getId() == cours.getPrerequisCoursId()) {
+                    prerequisCoursName = c.getNomCours();
+                    break;
+                }
+            }
+            String tooltipText = prerequisCoursName.isEmpty() ? 
+                "Le cours prérequis n'est pas disponible" :
+                String.format("Vous devez d'abord compléter le cours '%s'", prerequisCoursName);
+            cell.setTooltip(new Tooltip(tooltipText));
+        } else {
+            cell.setStyle("");
+            cell.setDisable(false);
+            cell.setTooltip(null);
+        }
+    }
+
+    private void toggleCoursStatus(Cours cours) {
+        // Don't allow toggling if prerequisites are not met
+        if (!isPrerequisCompleted(cours)) {
+            showError("Vous devez d'abord compléter les prérequis de ce cours.");
+            return;
+        }
+        
+        String newStatus = "Non lu".equalsIgnoreCase(cours.getStatusCours()) ? "Lu" : "Non lu";
+        cours.setStatusCours(newStatus);
+        coursService.updateCours(cours);
+        loadCours();
     }
 }

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Pagination?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1000.0" styleClass="main-container" stylesheets="@../style_css/user_matiere_style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.UserMatiereController">
+   <children>
+      <VBox layoutX="10.0" layoutY="10.0" prefHeight="700.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <StackPane styleClass="header-stack">
+               <children>
+                  <Rectangle styleClass="header-background" width="1000.0" height="120.0"/>
+                  <VBox alignment="CENTER" spacing="5">
+                     <children>
+                        <Label styleClass="header-title" text="Catalogue des Matières">
+                           <font>
+                              <Font name="System Bold" size="32.0" />
+                           </font>
+                        </Label>
+                        <Label styleClass="header-subtitle" text="Découvrez notre sélection de cours et matières" />
+                     </children>
+                  </VBox>
+               </children>
+            </StackPane>
+            <HBox alignment="CENTER" prefHeight="70.0" prefWidth="200.0" spacing="15.0" styleClass="search-container">
+               <children>
+                  <Label styleClass="search-icon" text="🔍" />
+                  <TextField fx:id="searchField" prefHeight="45.0" prefWidth="450.0" promptText="Rechercher une matière par nom, description ou objectif..." styleClass="search-field-user" />
+                  <Button fx:id="btnClearSearch" mnemonicParsing="false" prefHeight="45.0" styleClass="clear-button" text="Effacer" />
+               </children>
+               <padding>
+                  <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+               </padding>
+            </HBox>
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="450.0" prefWidth="1000.0" styleClass="scroll-pane">
+               <content>
+                  <GridPane fx:id="matiereGrid" alignment="CENTER" hgap="20.0" prefWidth="980.0" styleClass="matiere-grid-user" vgap="20.0">
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <children>
+                        <VBox alignment="CENTER" spacing="10.0" styleClass="matiere-card">
+                           <children>
+                              <Label styleClass="matiere-title" text="Nom de la matière" />
+                              <Button fx:id="btnVoirCours" mnemonicParsing="false" styleClass="voir-cours-button" text="Voir les cours" />
+                           </children>
+                           <padding>
+                              <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </GridPane>
+               </content>
+            </ScrollPane>
+            <!-- Contrôle de pagination -->
+            <HBox alignment="CENTER" prefHeight="60.0" prefWidth="1000.0" styleClass="pagination-container">
+               <children>
+                  <Pagination fx:id="pagination" prefHeight="60.0" prefWidth="400.0" styleClass="pagination-control" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="5.0" />
+               </padding>
+            </HBox>
+            
+            <!-- Bouton de retour au menu principal -->
+            <HBox alignment="CENTER" prefHeight="60.0" prefWidth="1000.0" styleClass="back-button-container">
+               <children>
+                  <Button fx:id="btnRetourMain" mnemonicParsing="false" prefHeight="45.0" prefWidth="200.0" styleClass="back-button" text="Retour au Menu Principal" onAction="#handleRetourMainClick" />
+               </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="5.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

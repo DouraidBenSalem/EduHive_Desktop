@@ -1,7 +1,7 @@
 package Controllers;
 
-import Main.Main;
 import Main.LoginApplication;
+import Main.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,7 +36,6 @@ public class NavBarController {
         this.parent = parent;
     }
 
-
     private void navigateToPage(String fxmlPath, ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/Controllers/" + fxmlPath));
         Stage stage;
@@ -53,14 +52,14 @@ public class NavBarController {
     public void handleLogoutButton(ActionEvent event) throws IOException {
         // Close the current window
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        
+
         // Close all other open windows from the application
         for (Stage openStage : javafx.stage.Window.getWindows().filtered(window -> window instanceof Stage).stream()
                 .map(window -> (Stage) window)
                 .toList()) {
             openStage.close();
         }
-        
+
         // Start the login application in a new stage
         LoginApplication mainApp = new LoginApplication();
         mainApp.start(new Stage());
@@ -70,7 +69,7 @@ public class NavBarController {
     public void handleHomeButton(ActionEvent event) throws IOException {
         navigateToPage("resultatpage.fxml", event);
     }
-    
+
     @FXML
     public void navigateToQuiz(ActionEvent event) throws IOException {
         navigateToPage("quizpage.fxml", event);
@@ -85,19 +84,46 @@ public class NavBarController {
     public void navigateToModule(ActionEvent event) throws IOException {
         navigateToPage("modulepage.fxml", event);
     }
+
     @FXML
     public void navigateToAnnouncement(ActionEvent event) throws IOException {
         navigateToPage("announcementpage.fxml", event);
     }
+
     @FXML
     public void navigateToMatiere(ActionEvent event) throws IOException {
         navigateToPage("MatierePage.fxml", event);
     }
+
     public void navigateToCours(ActionEvent event) throws IOException {
         navigateToPage("cours_list.fxml", event);
     }
+
+    @FXML
+    public void navigateToAIResume(ActionEvent event) throws IOException {
+        // Charger la vue AI Resume
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/ai_resume_view.fxml"));
+        Parent root = loader.load();
+
+        // Créer une nouvelle fenêtre pour l'outil de résumé AI
+        Stage stage = new Stage();
+        stage.setTitle("Résumé AI de PDF");
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
     @FXML
     public void navigateToClasse(ActionEvent event) throws IOException {
         navigateToPage("classepage.fxml", event);
+    }
+
+    @FXML
+    public void navigateToMatiereFront(ActionEvent event) throws IOException {
+        navigateToPage("user_matiere.fxml", event);
+    }
+
+    @FXML
+    public void navigateToStatistiques(ActionEvent event) throws IOException {
+        navigateToPage("statistiques_view.fxml", event);
     }
 }

@@ -1,0 +1,101 @@
+/* Styles pour la fenêtre modale des détails de matière - interface utilisateur */
+
+.modal-backdrop-user {
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+    -fx-transition: -fx-background-color 0.3s ease-in-out;
+}
+
+.modal-dialog-user {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-padding: 25px;
+    -fx-spacing: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 20, 0, 0, 10);
+    -fx-max-width: 500px;
+    -fx-min-width: 400px;
+}
+
+.modal-title-user {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-alignment: center;
+    -fx-padding: 0 0 10 0;
+    -fx-border-color: #3498db;
+    -fx-border-width: 0 0 2 0;
+    -fx-min-width: 400px;
+}
+
+.modal-section-title-user {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3498db;
+    -fx-padding: 5 0 5 0;
+}
+
+.modal-content-user {
+    -fx-font-size: 14px;
+    -fx-text-fill: #34495e;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-border-color: #e8e8e8;
+    -fx-border-radius: 8px;
+    -fx-padding: 15px;
+    -fx-line-spacing: 1.4;
+    -fx-effect: innershadow(gaussian, #f8f9fa, 5, 0, 0, 0);
+}
+
+.modal-content-user .content {
+    -fx-background-color: transparent;
+}
+
+.modal-content-user .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.modal-content-user .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.modal-close-button-user {
+    -fx-background-color: linear-gradient(to right, #3498db, #2980b9);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 25px;
+    -fx-padding: 10px 25px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 2);
+    -fx-transition: -fx-background-color 0.3s ease-in-out,
+        -fx-effect 0.3s ease-in-out,
+        -fx-translate-y 0.3s ease-in-out;
+}
+
+.modal-close-button-user:hover {
+    -fx-background-color: linear-gradient(to right, #2980b9, #2472a4);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 4);
+    -fx-translate-y: -2px;
+}
+
+.modal-close-button-user:hover {
+    -fx-background-color: #2980b9;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 2);
+}
+
+.modal-view-courses-button-user {
+    -fx-background-color: linear-gradient(to right, #27ae60, #2ecc71);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 25px;
+    -fx-padding: 10px 25px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 2);
+    -fx-transition: -fx-background-color 0.3s ease-in-out,
+        -fx-effect 0.3s ease-in-out,
+        -fx-translate-y 0.3s ease-in-out;
+}
+
+.modal-view-courses-button-user:hover {
+    -fx-background-color: linear-gradient(to right, #219a52, #25a25a);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 4);
+    -fx-translate-y: -2px;
+}

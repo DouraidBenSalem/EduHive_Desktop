@@ -53,9 +53,9 @@ public class MatiereServiceImpl implements MatiereService {
     @Override
     public void addMatiere(Matiere matiere) {
         try {
-            String query = "INSERT INTO matiere (module_id, enseignant_id, nom_matiere, description_matiere, prerequis_matiere, objectif_matiere) "
+            String query = "INSERT INTO matiere (module_id, enseignant_id, nom_matiere, description_matiere, prerequis_matiere, objectif_matiere, image_url) "
                     +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, matiere.getModuleId());
             pstmt.setInt(2, matiere.getEnseignantId());
@@ -69,6 +69,7 @@ public class MatiereServiceImpl implements MatiereService {
             }
 
             pstmt.setString(6, matiere.getObjectifMatiere());
+            pstmt.setString(7, matiere.getImageUrl());
 
             int affectedRows = pstmt.executeUpdate();
 
@@ -89,7 +90,7 @@ public class MatiereServiceImpl implements MatiereService {
     public void updateMatiere(Matiere matiere) {
         try {
             String query = "UPDATE matiere SET module_id = ?, enseignant_id = ?, nom_matiere = ?, " +
-                    "description_matiere = ?, prerequis_matiere = ?, objectif_matiere = ? " +
+                    "description_matiere = ?, prerequis_matiere = ?, objectif_matiere = ?, image_url = ? " +
                     "WHERE id = ?";
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setInt(1, matiere.getModuleId());
@@ -104,7 +105,8 @@ public class MatiereServiceImpl implements MatiereService {
             }
 
             pstmt.setString(6, matiere.getObjectifMatiere());
-            pstmt.setInt(7, matiere.getId());
+            pstmt.setString(7, matiere.getImageUrl());
+            pstmt.setInt(8, matiere.getId());
 
             pstmt.executeUpdate();
             System.out.println("Matiere updated successfully");
@@ -177,8 +179,9 @@ public class MatiereServiceImpl implements MatiereService {
         }
 
         String objectifMatiere = rs.getString("objectif_matiere");
+        String imageUrl = rs.getString("image_url");
 
         return new Matiere(id, moduleId, enseignantId, nomMatiere, descriptionMatiere, prerequisMatiere,
-                objectifMatiere);
+                objectifMatiere, imageUrl);
     }
 }
