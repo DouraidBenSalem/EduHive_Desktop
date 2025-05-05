@@ -8,10 +8,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import services.QuizService;
-import services.QuizServiceImpl;
-import services.ResultService;
-import services.ResultServiceImpl;
+import Services.QuizService;
+import Services.QuizServiceImpl;
+import Services.ResultService;
+import Services.ResultServiceImpl;
 import utils.MyDatabase;
 
 import java.sql.Connection;
