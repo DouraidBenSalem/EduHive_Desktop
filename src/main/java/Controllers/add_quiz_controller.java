@@ -5,8 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import Entities.quiz;
-import services.QuizService;
-import services.QuizServiceImpl;
+import Services.QuizService;
+import Services.QuizServiceImpl;
 import javafx.stage.Stage;
 
 public class add_quiz_controller {

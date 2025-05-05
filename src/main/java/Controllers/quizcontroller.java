@@ -10,13 +10,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import services.QuizService;
-import services.QuizServiceImpl;
+import Services.QuizService;
+import Services.QuizServiceImpl;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import java.io.IOException;
+import javafx.scene.Parent;
+import javafx.scene.Node;
 import java.util.Comparator;
 
 public class quizcontroller {
@@ -346,23 +348,25 @@ public class quizcontroller {
             e.printStackTrace();
         }
     }
-    
+
     @FXML
-    void prendreQuiz(ActionEvent event) {
+    public void prendreQuiz(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/take_quiz.fxml"));
-            Scene scene = new Scene(loader.load());
-
+            Parent root = loader.load();
+            
+            // Optionally pass data to the TakeQuizController
             TakeQuizController controller = loader.getController();
-            controller.loadAllQuizzes();
-
-            Stage stage = new Stage();
-            stage.setTitle("Tous les Quiz");
+            // controller.setQuizData(...);
+            
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Impossible de charger la page des quiz.");
+            // Show error message to user
+            System.out.println("Error loading take_quiz.fxml: " + e.getMessage());
         }
     }
 

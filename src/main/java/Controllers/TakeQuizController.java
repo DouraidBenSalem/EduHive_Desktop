@@ -17,10 +17,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import services.QuizService;
-import services.QuizServiceImpl;
-import services.ResultService;
-import services.ResultServiceImpl;
+import Services.QuizService;
+import Services.QuizServiceImpl;
+import Services.ResultService;
+import Services.ResultServiceImpl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ import java.util.Map;
 public class TakeQuizController {
 
     @FXML
-    private NavBarController navbarController;
+    private frontnavcontrollers navbarController;
 
     @FXML
     private Label quizTitle;

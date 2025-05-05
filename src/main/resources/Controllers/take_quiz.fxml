@@ -14,12 +14,12 @@
 
 <AnchorPane prefHeight="650.0" prefWidth="900.0" styleClass="screen" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.TakeQuizController">
    <children>
-      <fx:include fx:id="navbar" source="navBar.fxml" />
-      <AnchorPane layoutX="189.0" prefHeight="650.0" prefWidth="711.0">
+      <fx:include fx:id="navbar" source="navbarfront.fxml" />
+      <AnchorPane layoutY="60.0" prefHeight="590.0" prefWidth="900.0">
          <children>
-            <ScrollPane fitToWidth="true" layoutX="14.0" layoutY="16.0" prefHeight="548.0" prefWidth="683.0" styleClass="quiz-container">
+            <ScrollPane fitToWidth="true" layoutX="14.0" layoutY="14.0" prefHeight="498.0" prefWidth="872.0" styleClass="quiz-container">
                <content>
-                  <VBox fx:id="quizContainer" prefWidth="665.0" spacing="25.0">
+                  <VBox fx:id="quizContainer" prefWidth="870.0" spacing="25.0">
                      <children>
                         <Label fx:id="quizTitle" styleClass="quiz-title" text="Titre du Quiz">
                            <font>
@@ -71,7 +71,7 @@
                </content>
             </ScrollPane>
             
-            <HBox alignment="CENTER" layoutX="150.0" layoutY="580.0" spacing="20.0">
+            <HBox alignment="CENTER" layoutX="283.0" layoutY="525.0" spacing="20.0">
                <children>
                   <Button fx:id="submitButton" mnemonicParsing="false" onAction="#handleSubmit" prefHeight="50.0" prefWidth="150.0" styleClass="submit-button" text="Soumettre">
                      <font>
@@ -87,9 +87,9 @@
             </HBox>
             
             <!-- Conteneur pour l'animation et l'affichage des résultats -->
-            <AnchorPane fx:id="resultContainer" layoutX="14.0" layoutY="14.0" prefHeight="550.0" prefWidth="683.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2; -fx-border-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 5);" visible="false">
+            <AnchorPane fx:id="resultContainer" layoutX="14.0" layoutY="14.0" prefHeight="550.0" prefWidth="872.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2; -fx-border-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 5);" visible="false">
                <children>
-                  <VBox alignment="CENTER" layoutX="141.0" layoutY="75.0" prefHeight="400.0" prefWidth="400.0" spacing="20.0">
+                  <VBox alignment="CENTER" layoutX="236.0" layoutY="75.0" prefHeight="400.0" prefWidth="400.0" spacing="20.0">
                      <children>
                         <Label fx:id="resultTitle" styleClass="result-title" text="Résultats du Quiz">
                            <font>

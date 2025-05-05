@@ -12,10 +12,10 @@
 
 <AnchorPane prefHeight="650.0" prefWidth="900.0" styleClass="screen" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.AIQuizGeneratorController">
    <children>
-      <fx:include fx:id="navbar" source="navBar.fxml" />
-      <AnchorPane layoutX="189.0" prefHeight="650.0" prefWidth="711.0">
+      <fx:include fx:id="navbar" source="navbarfront.fxml" />
+      <AnchorPane layoutX="0.0" layoutY="60.0" prefHeight="590.0" prefWidth="900.0">
          <children>
-            <VBox alignment="TOP_CENTER" layoutX="14.0" layoutY="16.0" prefHeight="618.0" prefWidth="683.0" spacing="5.0">
+            <VBox alignment="TOP_CENTER" layoutX="14.0" layoutY="16.0" prefHeight="558.0" prefWidth="872.0" spacing="5.0">
                <children>
                   <Label styleClass="quiz-title" text="Générateur de Quiz IA">
                      <font>
@@ -59,9 +59,9 @@
                      </VBox.margin>
                   </Label>
                   
-                  <ScrollPane fitToWidth="true" prefHeight="400.0" prefWidth="683.0" styleClass="quiz-container">
+                  <ScrollPane fitToWidth="true" prefHeight="400.0" prefWidth="872.0" styleClass="quiz-container">
                      <content>
-                        <VBox fx:id="quizResultContainer" prefWidth="665.0" spacing="15.0">
+                        <VBox fx:id="quizResultContainer" prefWidth="870.0" spacing="15.0">
                            <padding>
                               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                            </padding>

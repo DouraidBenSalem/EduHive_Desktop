@@ -12,8 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import services.QuizService;
-import services.QuizServiceImpl;
+import Services.QuizService;
+import Services.QuizServiceImpl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 public class AIQuizGeneratorController {
 
     @FXML
-    private NavBarController navbarController;
+    private frontnavcontrollers navbarController;
 
     @FXML
     private TextField topicInput;
