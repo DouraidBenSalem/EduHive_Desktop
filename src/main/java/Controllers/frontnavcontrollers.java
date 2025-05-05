@@ -15,9 +15,7 @@ public class frontnavcontrollers {
     
     @FXML
     private Button quizButton;
-    
-    @FXML
-    private Button aiQuizButton;
+
     
     @FXML
     private Button matiereButton;
@@ -38,10 +36,7 @@ public class frontnavcontrollers {
         navigateTo("/Controllers/quizpage.fxml");
     }
     
-    @FXML
-    void handleAIQuizButton(ActionEvent event) {
-        navigateTo("/Controllers/ai_quiz_generator.fxml");
-    }
+
     
     @FXML
     void handleMatiereButton(ActionEvent event) {
