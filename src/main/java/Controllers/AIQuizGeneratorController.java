@@ -28,8 +28,9 @@ import java.util.regex.Pattern;
 
 public class AIQuizGeneratorController {
 
+
     @FXML
-    private NavBarController navbarController;
+    private frontnavcontrollers navbarController;
 
     @FXML
     private TextField topicInput;

@@ -31,7 +31,7 @@ import java.util.Map;
 public class TakeQuizController {
 
     @FXML
-    private NavBarController navbarController;
+    private frontnavcontrollers navbarController;
 
     @FXML
     private Label quizTitle;
