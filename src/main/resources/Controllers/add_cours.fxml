@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox
+    prefHeight="750.0" prefWidth="600.0" spacing="18.0"
+    xmlns="http://javafx.com/javafx/8.0.171"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="Controllers.AddCoursController"
+    style="-fx-background-radius: 18; -fx-background-insets: 0; -fx-background-color: linear-gradient(to bottom right, #e3f0ff, #b0d0ff 80%, #f7fbff); -fx-padding: 36; -fx-effect: dropshadow(gaussian, #b0b0b0, 18, 0.2, 0, 4);"
+>
+   <children>
+      <HBox alignment="CENTER" prefHeight="60.0" prefWidth="400.0">
+         <children>
+            <Label text="Formulaire Cours"
+                   style="-fx-font-size: 28px; -fx-font-family: 'Segoe UI Semibold'; -fx-text-fill: #2196f3; -fx-effect: dropshadow(gaussian, #b0d0ff, 6, 0.2, 0, 2);" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="30.0">
+         <children>
+            <Label text="Nom:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
+            <TextField fx:id="nomCours" prefWidth="320.0" promptText="Entrez le nom du cours"
+                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
+         </children>
+      </HBox>
+      <VBox spacing="6.0" style="-fx-padding: 0 0 0 0;">
+         <children>
+            <Label text="Description :" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;"/>
+            <TextArea fx:id="descriptionCours" prefWidth="500.0" prefHeight="210.0" wrapText="true" promptText="Entrez la description du cours" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;"/>
+         </children>
+      </VBox>
+      <HBox alignment="CENTER_LEFT" spacing="30.0">
+         <children>
+            <Label text="Ordre:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
+            <TextField fx:id="ordre" prefWidth="320.0" promptText="Entrez l'ordre"
+                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="30.0">
+         <children>
+            <Label text="Status:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
+            <TextField fx:id="statusCours" prefWidth="320.0" promptText="Statut du cours"
+                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="30.0">
+         <children>
+            <Label text="Niveau:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
+            <TextField fx:id="niveau" prefWidth="320.0" promptText="Débutant, Intermédiaire, ..."
+                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="30.0">
+         <children>
+            <Label text="PDF:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
+            <Button fx:id="btnImportPdf" text="Importer PDF"
+                    style="-fx-background-radius: 8; -fx-background-color: #e3f0ff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;"/>
+            <Label fx:id="pdfFileName" text="" style="-fx-font-size: 13px; -fx-text-fill: #2196f3;"/>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="30.0">
+         <children>
+            <Label text="Matière ID:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
+            <TextField fx:id="matiereId" prefWidth="320.0" promptText="ID de la matière"
+                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="30.0">
+         <children>
+            <Label text="Prérequis Cours ID:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
+            <TextField fx:id="prerequisCoursId" prefWidth="320.0" promptText="Optionnel - ID du cours prérequis"
+                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="80.0" prefWidth="400.0" spacing="40.0">
+         <children>
+            <Button fx:id="btnSave" mnemonicParsing="false" onAction="#saveCours"
+                    style="-fx-background-color: linear-gradient(to right, #2196f3, #64b5f6); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-font-size: 16px; -fx-padding: 10 30 10 30; -fx-effect: dropshadow(gaussian, #b0d0ff, 6, 0.2, 0, 2);"
+                    text="Enregistrer" />
+            <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#cancelCours"
+                    style="-fx-background-color: linear-gradient(to right, #f44336, #ff7961); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-font-size: 16px; -fx-padding: 10 30 10 30; -fx-effect: dropshadow(gaussian, #ffbdbd, 6, 0.2, 0, 2);"
+                    text="Annuler" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

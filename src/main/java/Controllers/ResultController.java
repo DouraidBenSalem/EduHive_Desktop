@@ -3,18 +3,21 @@ package Controllers;
 import Entities.Result;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import services.ResultService;
-import services.ResultServiceImpl;
+import javafx.util.Callback;
+import Services.ResultService;
+import Services.ResultServiceImpl;
 
 import java.io.IOException;
+import java.util.Comparator;
 
 public class ResultController {
 
@@ -23,69 +26,240 @@ public class ResultController {
 
     @FXML
     private Button exporterBtn;
+    
+    @FXML
+    private TextField searchField;
+    
+    @FXML
+    private ComboBox<String> sortComboBox;
 
     @FXML
-    private Button quizPageBtn;
-
-    @FXML
-    private TableColumn<Result, Integer> idColumn;
-
-    @FXML
-    private TableColumn<Result, Integer> userIdColumn;
-
-    @FXML
-    private TableColumn<Result, Integer> noteColumn;
-
-    @FXML
-    private TableColumn<Result, String> commentaireColumn;
-
-    @FXML
-    private TableColumn<Result, Integer> nbRepCorrectColumn;
-
-    @FXML
-    private TableColumn<Result, Integer> nbRepIncorrectColumn;
-
-    @FXML
-    private TableColumn<Result, Integer> quizIdColumn;
-
-    @FXML
-    private TableView<Result> resultTable;
-
-    @FXML
-    private TableColumn<Result, Void> actionColumn;
+    private ListView<Result> resultTable;
 
     private ObservableList<Result> resultList = FXCollections.observableArrayList();
-    
+    private FilteredList<Result> filteredList;
+
     private ResultService resultService = new ResultServiceImpl();
-    
+
     @FXML
     void initialize() {
         if (navbarController != null) {
 
         }
         
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        userIdColumn.setCellValueFactory(new PropertyValueFactory<>("userId"));
-        noteColumn.setCellValueFactory(new PropertyValueFactory<>("note"));
-        commentaireColumn.setCellValueFactory(new PropertyValueFactory<>("commentaire"));
-        nbRepCorrectColumn.setCellValueFactory(new PropertyValueFactory<>("nbRepCorrect"));
-        nbRepIncorrectColumn.setCellValueFactory(new PropertyValueFactory<>("nbRepIncorrect"));
-        quizIdColumn.setCellValueFactory(new PropertyValueFactory<>("quizId"));
+        // Initialize sort options
+        sortComboBox.getItems().addAll(
+            "Note (Croissant)",
+            "Note (Décroissant)",
+            "Réponses Correctes (Croissant)",
+            "Réponses Correctes (Décroissant)"
+        );
+        
+        // Set default sort option
+        sortComboBox.getSelectionModel().selectFirst();
+        
+        // Initialize search and sort functionality
+        initializeSearchAndSort();
 
         loadResultsFromDB();
 
-        if (actionColumn == null) {
-            actionColumn = new TableColumn<>("Actions");
-            resultTable.getColumns().add(actionColumn);
-        }
+        // Configure ListView cell factory to display result information with card layout
+        resultTable.setCellFactory(new Callback<ListView<Result>, ListCell<Result>>() {
+            @Override
+            public ListCell<Result> call(ListView<Result> param) {
+                return new ListCell<Result>() {
+                    private final Button btnEdit = new Button("Edit");
+                    private final Button btnDelete = new Button("Delete");
+                    private final HBox buttons = new HBox(10, btnEdit, btnDelete);
 
-        addActionButtonsToTable();
+                    @Override
+                    protected void updateItem(Result item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (empty || item == null) {
+                            setText(null);
+                            setGraphic(null);
+                        } else {
+                            // Create a card layout for the result
+                            javafx.scene.layout.VBox cardLayout = new javafx.scene.layout.VBox(8);
+                            cardLayout.setPadding(new javafx.geometry.Insets(10));
+                            cardLayout.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 5px; -fx-background-radius: 5px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);");
+                            
+                            // User and Quiz info with styling
+                            Label userLabel = new Label("Utilisateur: " + (item.getUserName() != null ? item.getUserName() : "ID: " + item.getUserId()));
+                            userLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3f51b5;");
+                            
+                            Label quizLabel = new Label("Quiz: " + (item.getQuizTitle() != null ? item.getQuizTitle() : "ID: " + item.getQuizId()));
+                            quizLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #555555;");
+                            quizLabel.setWrapText(true);
+                            
+                            // Score with styling
+                            Label scoreLabel = new Label("Note: " + item.getNote() + "/20");
+                            scoreLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #009688; -fx-font-style: italic;");
+                            
+                            // Answers section
+                            HBox answersBox = new HBox(15);
+                            answersBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                            
+                            Label correctLabel = new Label("Réponses correctes: " + item.getNbRepCorrect());
+                            correctLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #4CAF50;");
+                            
+                            Label incorrectLabel = new Label("Réponses incorrectes: " + item.getNbRepIncorrect());
+                            incorrectLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #F44336;");
+                            
+                            answersBox.getChildren().addAll(correctLabel, incorrectLabel);
+                            
+                            // Comment section if available
+                            Label commentLabel = null;
+                            if (item.getCommentaire() != null && !item.getCommentaire().isEmpty()) {
+                                commentLabel = new Label("Commentaire: " + item.getCommentaire());
+                                commentLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666666; -fx-font-style: italic;");
+                                commentLabel.setWrapText(true);
+                            }
+                            
+                            // Style the buttons
+                            btnEdit.getStyleClass().add("table-edit-button");
+                            btnDelete.getStyleClass().add("table-delete-button");
+                            buttons.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+                            
+                            // Add all elements to the card
+                            cardLayout.getChildren().addAll(userLabel, quizLabel, scoreLabel, answersBox);
+                            if (commentLabel != null) {
+                                cardLayout.getChildren().add(commentLabel);
+                            }
+                            cardLayout.getChildren().add(buttons);
+                            
+                            // Configure edit button
+                            btnEdit.setOnAction(event -> {
+                                try {
+                                    FXMLLoader loader = new FXMLLoader(getClass().getResource("add_result.fxml"));
+                                    Scene scene = new Scene(loader.load());
+
+                                    AddResultController controller = loader.getController();
+                                    controller.initData(item);
+                                    controller.setOnSaveCallback(() -> loadResultsFromDB());
+
+                                    Stage stage = new Stage();
+                                    stage.setTitle("Modifier un Résultat");
+                                    stage.setScene(scene);
+                                    stage.show();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                            // Configure delete button
+                            btnDelete.setOnAction(event -> {
+                                Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+                                confirmDialog.setTitle("Confirmation de suppression");
+                                confirmDialog.setHeaderText("Supprimer le résultat");
+                                confirmDialog.setContentText("Êtes-vous sûr de vouloir supprimer ce résultat?");
+                                confirmDialog.showAndWait().ifPresent(response -> {
+                                    if (response == ButtonType.OK) {
+                                        deleteResult(item.getId());
+                                        loadResultsFromDB();
+                                    }
+                                });
+                            });
+
+                            setText(null); // Clear text as we're using a custom layout
+                            setGraphic(cardLayout);
+                        }
+                    }
+                };
+            }
+        });
     }
 
     private void loadResultsFromDB() {
         resultList.clear();
         resultList.addAll(resultService.getAllResults());
-        resultTable.setItems(resultList);
+        
+        // Initialize filtered list if not already done
+        if (filteredList == null) {
+            initializeSearchAndSort();
+        } else {
+            // Trigger filter refresh
+            searchField.setText(searchField.getText());
+        }
+    }
+    
+    private void initializeSearchAndSort() {
+        // Initialize filtered list
+        filteredList = new FilteredList<>(resultList, p -> true);
+        
+        // Configure search functionality
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredList.setPredicate(result -> {
+                // If search field is empty, show all results
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                
+                String lowerCaseFilter = newValue.toLowerCase();
+                
+                // Match against multiple fields
+                if (result.getUserName() != null && result.getUserName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches user name
+                } else if (String.valueOf(result.getUserId()).contains(lowerCaseFilter)) {
+                    return true; // Filter matches user ID
+                } else if (result.getQuizTitle() != null && result.getQuizTitle().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches quiz title
+                } else if (String.valueOf(result.getQuizId()).contains(lowerCaseFilter)) {
+                    return true; // Filter matches quiz ID
+                } else if (String.valueOf(result.getNote()).contains(lowerCaseFilter)) {
+                    return true; // Filter matches note
+                } else if (String.valueOf(result.getNbRepCorrect()).contains(lowerCaseFilter)) {
+                    return true; // Filter matches correct answers
+                } else if (String.valueOf(result.getNbRepIncorrect()).contains(lowerCaseFilter)) {
+                    return true; // Filter matches incorrect answers
+                } else if (result.getCommentaire() != null && result.getCommentaire().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches commentaire
+                }
+                return false; // Does not match
+            });
+            
+            // Apply current sort after filtering
+            applySorting();
+        });
+        
+        // Configure sort functionality
+        sortComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                applySorting();
+            }
+        });
+        
+        // Initial application of filtering and sorting
+        applySorting();
+    }
+    
+    private void applySorting() {
+        SortedList<Result> sortedList = new SortedList<>(filteredList);
+        
+        // Apply sort based on selected option
+        String sortOption = sortComboBox.getSelectionModel().getSelectedItem();
+        if (sortOption != null) {
+            switch (sortOption) {
+                case "Note (Croissant)":
+                    sortedList.setComparator(Comparator.comparing(Result::getNote));
+                    break;
+                case "Note (Décroissant)":
+                    sortedList.setComparator(Comparator.comparing(Result::getNote).reversed());
+                    break;
+                case "Réponses Correctes (Croissant)":
+                    sortedList.setComparator(Comparator.comparing(Result::getNbRepCorrect));
+                    break;
+                case "Réponses Correctes (Décroissant)":
+                    sortedList.setComparator(Comparator.comparing(Result::getNbRepCorrect).reversed());
+                    break;
+                default:
+                    sortedList.setComparator(null);
+                    break;
+            }
+        }
+        
+        // Update ListView with sorted and filtered items
+        resultTable.setItems(sortedList);
     }
 
     private void deleteResult(int id) {
@@ -93,62 +267,7 @@ public class ResultController {
         System.out.println("Résultat supprimé avec succès.");
     }
 
-    private void addActionButtonsToTable() {
-        actionColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEdit = new Button("Edit");
-            private final Button btnDelete = new Button("Delete");
-            private final HBox pane = new HBox(10, btnEdit, btnDelete);
-
-            {
-                btnEdit.setOnAction(event -> {
-                    Result selectedResult = getTableView().getItems().get(getIndex());
-
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("add_result.fxml"));
-                        Scene scene = new Scene(loader.load());
-
-                        AddResultController controller = loader.getController();
-                        controller.initData(selectedResult);
-                        controller.setOnSaveCallback(() -> loadResultsFromDB());
-                        
-                        Stage stage = new Stage();
-                        stage.setTitle("Modifier un Résultat");
-                        stage.setScene(scene);
-                        stage.show();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-
-                btnDelete.setOnAction(event -> {
-                    Result selectedResult = getTableView().getItems().get(getIndex());
-                    
-                    Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-                    confirmDialog.setTitle("Confirmation de suppression");
-                    confirmDialog.setHeaderText("Supprimer le résultat");
-                    confirmDialog.setContentText("Êtes-vous sûr de vouloir supprimer ce résultat?");
-                    
-                    confirmDialog.showAndWait().ifPresent(response -> {
-                        if (response == ButtonType.OK) {
-                            deleteResult(selectedResult.getId());
-                            loadResultsFromDB();
-                        }
-                    });
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(pane);
-                }
-            }
-        });
-    }
+    // Method removed as functionality is now integrated in ListView cell factory
 
     @FXML
     void ajouterResult(ActionEvent event) {
@@ -230,27 +349,24 @@ public class ResultController {
             alert.showAndWait();
         }
     }
-
     @FXML
-    void navigateToQuiz(ActionEvent event) {
+    void navigateToStatistique(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("quizpage.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("statistique.fxml"));
             Scene scene = new Scene(loader.load());
 
-            Stage newStage = new Stage();
-            newStage.setTitle("Quiz");
-            newStage.setScene(scene);
-            newStage.show();
-
             Stage currentStage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            currentStage.close();
+            currentStage.setTitle("Statistiques des Résultats");
+            currentStage.setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erreur de Navigation");
             alert.setHeaderText(null);
-            alert.setContentText("Impossible de naviguer vers la page Quiz: " + e.getMessage());
+            alert.setContentText("Impossible de naviguer vers la page Statistiques: " + e.getMessage());
             alert.showAndWait();
         }
     }
+
+
 }

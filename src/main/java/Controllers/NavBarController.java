@@ -1,5 +1,7 @@
 package Controllers;
 
+import Main.Main;
+import Main.LoginApplication;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -48,6 +50,23 @@ public class NavBarController {
     }
 
     @FXML
+    public void handleLogoutButton(ActionEvent event) throws IOException {
+        // Close the current window
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        
+        // Close all other open windows from the application
+        for (Stage openStage : javafx.stage.Window.getWindows().filtered(window -> window instanceof Stage).stream()
+                .map(window -> (Stage) window)
+                .toList()) {
+            openStage.close();
+        }
+        
+        // Start the login application in a new stage
+        LoginApplication mainApp = new LoginApplication();
+        mainApp.start(new Stage());
+    }
+
+    @FXML
     public void handleHomeButton(ActionEvent event) throws IOException {
         navigateToPage("resultatpage.fxml", event);
     }
@@ -59,16 +78,23 @@ public class NavBarController {
 
     @FXML
     public void navigateToUser(ActionEvent event) throws IOException {
-        navigateToPage("userpage.fxml", event);
+        navigateToPage("userPage.fxml", event);
     }
 
+    @FXML
+    public void navigateToModule(ActionEvent event) throws IOException {
+        navigateToPage("modulepage.fxml", event);
+    }
     @FXML
     public void navigateToAnnouncement(ActionEvent event) throws IOException {
         navigateToPage("announcementpage.fxml", event);
     }
     @FXML
-    public void navigateToModule(ActionEvent event) throws IOException {
-        navigateToPage("modulepage.fxml", event);
+    public void navigateToMatiere(ActionEvent event) throws IOException {
+        navigateToPage("MatierePage.fxml", event);
+    }
+    public void navigateToCours(ActionEvent event) throws IOException {
+        navigateToPage("cours_list.fxml", event);
     }
     @FXML
     public void navigateToClasse(ActionEvent event) throws IOException {

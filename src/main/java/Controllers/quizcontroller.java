@@ -3,17 +3,21 @@ package Controllers;
 import Entities.quiz;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import services.QuizService;
-import services.QuizServiceImpl;
+import javafx.scene.layout.VBox;
+import Services.QuizService;
+import Services.QuizServiceImpl;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import java.io.IOException;
+import java.util.Comparator;
 
 public class quizcontroller {
 
@@ -25,62 +29,208 @@ public class quizcontroller {
 
     @FXML
     private Button Resultatpage;
+    
+    @FXML
+    private TextField searchField;
+    
+    @FXML
+    private ComboBox<String> sortComboBox;
 
     @FXML
-    private TableColumn<quiz, Integer> id_quiz;
-
-    @FXML
-    private TableColumn<quiz, String> option_a;
-
-    @FXML
-    private TableColumn<quiz, String> option_b;
-
-    @FXML
-    private TableColumn<quiz, String> question;
-
-    @FXML
-    private TableView<quiz> quizztable;
-
-    @FXML
-    private TableColumn<quiz, String> rep_correct;
-
-    @FXML
-    private TableColumn<quiz, String> titre;
-
-    @FXML
-    private TableColumn<quiz, Void> actionColumn;
+    private ListView<quiz> quizztable;
 
     private ObservableList<quiz> quizList = FXCollections.observableArrayList();
-    
+    private FilteredList<quiz> filteredList;
+
     // Add the service
     // Update the service instantiation
     private QuizService quizService = new QuizServiceImpl();
-    
+
     @FXML
     void initialize() {
         navbarController.setParent(this);
-        id_quiz.setCellValueFactory(new PropertyValueFactory<>("id"));
-        titre.setCellValueFactory(new PropertyValueFactory<>("titre"));
-        question.setCellValueFactory(new PropertyValueFactory<>("question"));
-        rep_correct.setCellValueFactory(new PropertyValueFactory<>("repCorrect"));
-        option_a.setCellValueFactory(new PropertyValueFactory<>("optionA"));
-        option_b.setCellValueFactory(new PropertyValueFactory<>("optionB"));
-
+        
+        // Initialize sort options
+        sortComboBox.getItems().addAll(
+            "Titre (A-Z)",
+            "Titre (Z-A)"
+        );
+        
+        // Set default sort option
+        sortComboBox.getSelectionModel().selectFirst();
+        
+        // Initialize search and sort functionality
+        initializeSearchAndSort();
+        
         loadQuizFromDB();
 
-        if (actionColumn == null) {
-            actionColumn = new TableColumn<>("Actions");
-            quizztable.getColumns().add(actionColumn);
-        }
+        // Configure ListView cell factory to display quiz information with card layout
+        quizztable.setCellFactory(new Callback<ListView<quiz>, ListCell<quiz>>() {
+            @Override
+            public ListCell<quiz> call(ListView<quiz> param) {
+                return new ListCell<quiz>() {
+                    private final Button btnEdit = new Button("Edit");
+                    private final Button btnDelete = new Button("Delete");
+                    private final HBox buttons = new HBox(10, btnEdit, btnDelete);
 
-        addActionButtonsToTable();
+                    @Override
+                    protected void updateItem(quiz item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (empty || item == null) {
+                            setText(null);
+                            setGraphic(null);
+                        } else {
+                            // Create a card layout for the quiz
+                            VBox cardLayout = new VBox(8);
+                            cardLayout.setPadding(new javafx.geometry.Insets(10));
+                            cardLayout.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 5px; -fx-background-radius: 5px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);");
+                            
+                            // Title with styling
+                            Label titleLabel = new Label(item.getTitre());
+                            titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3f51b5;");
+                            
+                            // Question with styling
+                            Label questionLabel = new Label("Question: " + item.getQuestion());
+                            questionLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #555555;");
+                            questionLabel.setWrapText(true);
+                            
+                            // Correct answer with styling
+                            Label answerLabel = new Label("Réponse correcte: " + item.getRepCorrect());
+                            answerLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #009688; -fx-font-style: italic;");
+                            
+                            // Options section
+                            HBox optionsBox = new HBox(15);
+                            optionsBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                            
+                            Label optionALabel = new Label("Option A: " + item.getOptionA());
+                            optionALabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666666;");
+                            
+                            Label optionBLabel = new Label("Option B: " + item.getOptionB());
+                            optionBLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666666;");
+                            
+                            optionsBox.getChildren().addAll(optionALabel, optionBLabel);
+                            
+                            // Style the buttons
+                            btnEdit.getStyleClass().add("table-edit-button");
+                            btnDelete.getStyleClass().add("table-delete-button");
+                            buttons.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+                            
+                            // Add all elements to the card
+                            cardLayout.getChildren().addAll(titleLabel, questionLabel, answerLabel, optionsBox, buttons);
+                            
+                            // Configure edit button
+                            btnEdit.setOnAction(event -> {
+                                try {
+                                    FXMLLoader loader = new FXMLLoader(getClass().getResource("ajouterquiz.fxml"));
+                                    Scene scene = new Scene(loader.load());
+
+                                    add_quiz_controller controller = loader.getController();
+                                    controller.initData(item);
+                                    controller.setOnSaveCallback(() -> loadQuizFromDB());
+
+                                    Stage stage = new Stage();
+                                    stage.setTitle("Modifier un Quiz");
+                                    stage.setScene(scene);
+                                    stage.show();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                            // Configure delete button
+                            btnDelete.setOnAction(event -> {
+                                deleteQuiz(item.getId());
+                                loadQuizFromDB();
+                            });
+
+                            setText(null); // Clear text as we're using a custom layout
+                            setGraphic(cardLayout);
+                        }
+                    }
+                };
+            }
+        });
     }
 
     private void loadQuizFromDB() {
         quizList.clear();
         // Use the service instead of direct database access
         quizList.addAll(quizService.getAllQuizzes());
-        quizztable.setItems(quizList);
+        
+        // Initialize filtered list if not already done
+        if (filteredList == null) {
+            initializeSearchAndSort();
+        } else {
+            // Trigger filter refresh
+            searchField.setText(searchField.getText());
+        }
+    }
+    
+    private void initializeSearchAndSort() {
+        // Initialize filtered list
+        filteredList = new FilteredList<>(quizList, p -> true);
+        
+        // Configure search functionality
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredList.setPredicate(quiz -> {
+                // If search field is empty, show all quizzes
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                
+                String lowerCaseFilter = newValue.toLowerCase();
+                
+                // Match against multiple fields
+                if (quiz.getTitre().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches title
+                } else if (quiz.getQuestion().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches question
+                } else if (quiz.getRepCorrect().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches correct answer
+                } else if (quiz.getOptionA().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches option A
+                } else if (quiz.getOptionB().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches option B
+                }
+                return false; // Does not match
+            });
+            
+            // Apply current sort after filtering
+            applySorting();
+        });
+        
+        // Configure sort functionality
+        sortComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                applySorting();
+            }
+        });
+        
+        // Initial application of filtering and sorting
+        applySorting();
+    }
+    
+    private void applySorting() {
+        SortedList<quiz> sortedList = new SortedList<>(filteredList);
+        
+        // Apply sort based on selected option
+        String sortOption = sortComboBox.getSelectionModel().getSelectedItem();
+        if (sortOption != null) {
+            switch (sortOption) {
+                case "Titre (A-Z)":
+                    sortedList.setComparator(Comparator.comparing(quiz::getTitre));
+                    break;
+                case "Titre (Z-A)":
+                    sortedList.setComparator(Comparator.comparing(quiz::getTitre).reversed());
+                    break;
+                default:
+                    sortedList.setComparator(null);
+                    break;
+            }
+        }
+        
+        // Update ListView with sorted and filtered items
+        quizztable.setItems(sortedList);
     }
 
     private void deleteQuiz(int id) {
@@ -88,53 +238,16 @@ public class quizcontroller {
         quizService.deleteQuiz(id);
         System.out.println("Quiz supprimé avec succès.");
     }
-
-    private void addActionButtonsToTable() {
-        actionColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEdit = new Button("Edit");
-            private final Button btnDelete = new Button("Delete");
-            private final HBox pane = new HBox(10, btnEdit, btnDelete);
-
-            {
-                btnEdit.setOnAction(event -> {
-                    quiz selectedQuiz = getTableView().getItems().get(getIndex());
-
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("ajouterquiz.fxml"));
-                        Scene scene = new Scene(loader.load());
-
-
-                        add_quiz_controller controller = loader.getController();
-                        controller.initData(selectedQuiz);
-                        controller.setOnSaveCallback(() -> loadQuizFromDB());
-                        Stage stage = new Stage();
-                        stage.setTitle("Modifier un Quiz");
-                        stage.setScene(scene);
-                        stage.show();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-
-                btnDelete.setOnAction(event -> {
-                    quiz selectedQuiz = getTableView().getItems().get(getIndex());
-                    deleteQuiz(selectedQuiz.getId());
-                    loadQuizFromDB();
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(pane);
-                }
-            }
-        });
+    
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
+
+    // Method removed as functionality is now integrated in ListView cell factory
 
 
     @FXML
@@ -244,6 +357,26 @@ public class quizcontroller {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    @FXML
+    void prendreQuiz(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/take_quiz.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            TakeQuizController controller = loader.getController();
+            // Charger tous les quiz disponibles au lieu d'un quiz spécifique
+            controller.loadAllQuizzes();
+
+            Stage stage = new Stage();
+            stage.setTitle("Tous les Quiz");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible de charger la page des quiz.");
         }
     }
 

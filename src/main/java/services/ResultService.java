@@ -1,4 +1,4 @@
-package services;
+package Services;
 
 import Entities.Result;
 import java.util.List;
@@ -11,4 +11,6 @@ public interface ResultService {
     void deleteResult(int id);
     List<Result> getResultsByUserId(int userId);
     List<Result> getResultsByQuizId(int quizId);
+    double calculateStudentAverage(int userId);
+    double calculateClassAverage(List<Integer> studentIds);
 }

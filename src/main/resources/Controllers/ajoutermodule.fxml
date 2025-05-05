@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="screen" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.add_module_controller">
    <children>
-      <Pane layoutX="14.0" layoutY="14.0" prefHeight="372.0" prefWidth="572.0" styleClass="form-container">
-         <children>
-            <Label layoutX="193.0" layoutY="14.0" text="Ajouter un Module" textFill="#0d47a1">
-               <font>
-                  <Font name="System Bold" size="18.0" />
-               </font>
-            </Label>
-            <Label layoutX="50.0" layoutY="70.0" text="Nom du module:" />
-            <TextField fx:id="nom_module" layoutX="50.0" layoutY="90.0" prefHeight="25.0" prefWidth="472.0" promptText="Entrez le nom du module" />
-            <Label layoutX="50.0" layoutY="130.0" text="Description:" />
-            <TextArea fx:id="description_module" layoutX="50.0" layoutY="150.0" prefHeight="100.0" prefWidth="472.0" promptText="Entrez la description du module" wrapText="true" />
-            <Label layoutX="50.0" layoutY="260.0" text="Image:" />
-            <TextField fx:id="module_img" layoutX="50.0" layoutY="280.0" prefHeight="25.0" prefWidth="372.0" promptText="Chemin de l'image" />
-            <Button fx:id="chooseImageBtn" layoutX="430.0" layoutY="280.0" mnemonicParsing="false" onAction="#chooseImage" prefHeight="25.0" prefWidth="92.0" text="Parcourir..." />
-            <Label layoutX="50.0" layoutY="310.0" text="Moyenne:" />
-            <TextField fx:id="moy_module" layoutX="50.0" layoutY="330.0" prefHeight="25.0" prefWidth="150.0" promptText="Entrez la moyenne" />
-            <Button fx:id="ajouter" layoutX="50.0" layoutY="370.0" mnemonicParsing="false" onAction="#ajoutermodule" prefHeight="25.0" prefWidth="150.0" text="Ajouter" />
-            <Button fx:id="effacer" layoutX="210.0" layoutY="330.0" mnemonicParsing="false" onAction="#effacermodule" prefHeight="25.0" prefWidth="150.0" text="Effacer" />
-            <Button fx:id="exit" layoutX="370.0" layoutY="330.0" mnemonicParsing="false" onAction="#exitForm" prefHeight="25.0" prefWidth="150.0" text="Annuler" />
-         </children>
-      </Pane>
+      <VBox alignment="CENTER" spacing="20.0" layoutX="50.0" layoutY="30.0" prefWidth="500.0">
+         <Label text="Ajouter / Modifier un Module" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+         
+         <GridPane hgap="10" vgap="15">
+            <Label text="Nom du module:" style="-fx-font-size: 14px;" />
+            <TextField fx:id="nom_module" promptText="Entrez le nom du module" GridPane.columnIndex="1" />
+
+            <Label text="Description:" style="-fx-font-size: 14px;" GridPane.rowIndex="1" />
+            <TextArea fx:id="description_module" promptText="Entrez la description du module" wrapText="true" prefHeight="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label text="Image:" style="-fx-font-size: 14px;" GridPane.rowIndex="2" />
+            <VBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <HBox spacing="10">
+                  <TextField fx:id="module_img" promptText="Chemin de l'image" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="chooseImageBtn" text="Parcourir..." onAction="#chooseImage" />
+               </HBox>
+               <ImageView fx:id="moduleImageView" fitHeight="150.0" fitWidth="200.0" preserveRatio="true" />
+            </VBox>
+         </GridPane>
+
+         <HBox spacing="20" alignment="CENTER">
+            <Button fx:id="ajouter" text="Ajouter" styleClass="primary-button" onAction="#ajoutermodule" />
+            <Button fx:id="effacer" text="Effacer" styleClass="secondary-button" onAction="#effacermodule" />
+            <Button fx:id="exit" text="Annuler" styleClass="secondary-button" onAction="#exitForm" />
+         </HBox>
+      </VBox>
    </children>
 </AnchorPane>

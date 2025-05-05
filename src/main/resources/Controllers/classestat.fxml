@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="650.0" prefWidth="900.0" styleClass="screen" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ClasseStatController">
+    <children>
+        <fx:include fx:id="navbar" source="navBar.fxml" />
+        <AnchorPane layoutX="189.0" prefHeight="657.0" prefWidth="711.0">
+            <children>
+                <VBox alignment="TOP_CENTER" prefHeight="657.0" prefWidth="711.0" spacing="20">
+                    <Label styleClass="title-label" text="Analyse de Performance des Classes">
+                        <font>
+                            <Font name="System Bold" size="24.0" />
+                        </font>
+                    </Label>
+                    
+                    <BarChart fx:id="classChart" legendVisible="false" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white;">
+                        <xAxis>
+                            <CategoryAxis label="Classes" style="-fx-font-size: 12;" fx:id="xAxis" />
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis fx:id="yAxis" label="Moyenne de la Classe" style="-fx-font-size: 12;" />
+                        </yAxis>
+                    </BarChart>
+
+                    <VBox alignment="CENTER_LEFT" prefHeight="391.0" prefWidth="711.0" spacing="15" style="-fx-padding: 20; -fx-background-color: #f8f9fa; -fx-background-radius: 5;" styleClass="stats-info">
+                        <Label style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Résumé Analytique" />
+                        
+                        <VBox spacing="10">
+                            <Label fx:id="bestClassLabel" style="-fx-font-size: 14; -fx-text-fill: #27ae60;" styleClass="stat-label" />
+                            <Label fx:id="worstClassLabel" style="-fx-font-size: 14; -fx-text-fill: #c0392b;" styleClass="stat-label" />
+                            <Label fx:id="averageLabel" style="-fx-font-size: 14; -fx-text-fill: #2980b9;" styleClass="stat-label" />
+                            <Label fx:id="totalClassesLabel" style="-fx-font-size: 14; -fx-text-fill: #8e44ad;" styleClass="stat-label" />
+                        </VBox>
+                    </VBox>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </children>
+</AnchorPane>
