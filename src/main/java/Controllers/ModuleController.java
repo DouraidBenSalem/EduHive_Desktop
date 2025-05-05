@@ -18,15 +18,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
-<<<<<<< HEAD
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import Services.ModuleService;
-import Services.ModuleServiceImpl;
-=======
->>>>>>> wael
 
 public class ModuleController {
 
@@ -48,8 +39,6 @@ public class ModuleController {
     private ObservableList<Module> moduleList = FXCollections.observableArrayList();
     private Connection connection;
     
-
-    private ModuleService moduleService = new ModuleServiceImpl();
 
     private ModuleService moduleService = new ModuleServiceImpl();
 
@@ -79,20 +68,11 @@ public class ModuleController {
 
     private void loadModulesFromDB() {
         moduleList.clear();
-<<<<<<< HEAD
-      
-=======
->>>>>>> wael
         moduleList.addAll(moduleService.getAllModules());
         moduletable.setItems(moduleList);
     }
 
     private void deleteModule(int id) {
-<<<<<<< HEAD
-
-        moduleService.deleteModule(id);
-        System.out.println("Module supprimé avec succès.");
-=======
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDialog.setTitle("Confirmation de suppression");
         confirmDialog.setHeaderText(null);
@@ -105,7 +85,6 @@ public class ModuleController {
                 showInfoAlert("Succès", "Le module a été supprimé avec succès.");
             }
         });
->>>>>>> wael
     }
 
     private void setupListView() {
@@ -154,10 +133,6 @@ public class ModuleController {
             stage.setTitle("Modifier un Module");
             stage.setScene(new Scene(loader.load()));
 
-<<<<<<< HEAD
-    
-=======
->>>>>>> wael
             add_module_controller controller = loader.getController();
             controller.initData(module);
             controller.setOnSaveCallback(() -> loadModulesFromDB());
@@ -178,10 +153,6 @@ public class ModuleController {
             stage.setTitle("Ajouter un Module");
             stage.setScene(new Scene(loader.load()));
 
-<<<<<<< HEAD
-       
-=======
->>>>>>> wael
             add_module_controller controller = loader.getController();
             controller.setOnSaveCallback(() -> loadModulesFromDB());
 
@@ -210,15 +181,9 @@ public class ModuleController {
                 com.itextpdf.text.Paragraph title = new com.itextpdf.text.Paragraph("Modules List", new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 18, com.itextpdf.text.Font.BOLD));
                 title.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
                 document.add(title);
-<<<<<<< HEAD
-                document.add(new com.itextpdf.text.Paragraph(" ")); 
-
-                com.itextpdf.text.pdf.PdfPTable pdfTable = new com.itextpdf.text.pdf.PdfPTable(5); 
-=======
                 document.add(new com.itextpdf.text.Paragraph(" "));
 
                 com.itextpdf.text.pdf.PdfPTable pdfTable = new com.itextpdf.text.pdf.PdfPTable(3);
->>>>>>> wael
                 pdfTable.setWidthPercentage(100);
 
                 String[] headers = {"Nom du module", "Description", "Image"};
@@ -246,11 +211,6 @@ public class ModuleController {
         }
     }
 
-<<<<<<< HEAD
-    
-
-=======
->>>>>>> wael
     private void showInfoAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -267,14 +227,8 @@ public class ModuleController {
         alert.showAndWait();
     }
 
-<<<<<<< HEAD
-
-    public void setParent(ModuleController parent) {
-       
-=======
     public void setParent(ModuleController parent) {
         // Optional: for NavBarController communication
->>>>>>> wael
     }
 
     @FXML

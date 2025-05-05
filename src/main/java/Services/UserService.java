@@ -17,4 +17,5 @@ public interface UserService {
     Boolean loginUser(String email, String password);
     String passwordForgotten(String email);
     Boolean compareFaces(String email, String userPicturePath);
+    List<User> getUsersByClassId(int classeId);
 }

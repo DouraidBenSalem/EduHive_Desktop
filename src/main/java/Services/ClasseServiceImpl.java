@@ -19,7 +19,7 @@ public class ClasseServiceImpl implements ClasseService {
 
     public ClasseServiceImpl() {
         conn = MyDatabase.getInstance().getConnection();
-        userService = new UserServiceImplementation();
+        userService = new UserServiceImplementation(conn);
         resultService = new ResultServiceImpl();
     }
 

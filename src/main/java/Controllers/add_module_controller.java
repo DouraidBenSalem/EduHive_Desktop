@@ -152,10 +152,6 @@ public class add_module_controller {
 
             if (onSaveCallback != null) onSaveCallback.run();
 
-<<<<<<< HEAD
-       
-=======
->>>>>>> wael
             Stage stage = (Stage) ajouter.getScene().getWindow();
             stage.close();
 

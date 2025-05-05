@@ -424,4 +424,30 @@ public class UserServiceImplementation implements UserService {
         }
     }
 
+    @Override
+    public List<User> getUsersByClassId(int classeId) {
+        List<User> userList = new ArrayList<>();
+        String query = "SELECT id, nom, prenom, role, email FROM user WHERE classe_id = ?";
+
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setInt(1, classeId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                User user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setNom(resultSet.getString("nom"));
+                user.setPrenom(resultSet.getString("prenom"));
+                user.setRole(resultSet.getString("role"));
+                user.setEmail(resultSet.getString("email"));
+                user.setClasseId(classeId);
+
+                userList.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return userList;
+    }
 }

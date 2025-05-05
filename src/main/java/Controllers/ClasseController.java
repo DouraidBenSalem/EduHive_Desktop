@@ -20,10 +20,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-<<<<<<< HEAD
-import Services.ClasseService;
-import Services.ClasseServiceImpl;
-=======
 import java.util.List;
 import java.util.stream.Collectors;
 import Services.ClasseService;
@@ -32,7 +28,6 @@ import Services.UserService;
 import Services.UserServiceImplementation;
 import Services.ResultService;
 import Services.ResultServiceImpl;
->>>>>>> wael
 
 public class ClasseController {
 
@@ -71,15 +66,9 @@ public class ClasseController {
 
     private ObservableList<Classe> classeList = FXCollections.observableArrayList();
     private Connection connection;
-<<<<<<< HEAD
-    
-
     private ClasseService classeService = new ClasseServiceImpl();
-=======
-    private ClasseService classeService = new ClasseServiceImpl();
-    private UserService userService = new UserServiceImplementation();
+    private UserService userService = new UserServiceImplementation(connection);
     private ResultService resultService = new ResultServiceImpl();
->>>>>>> wael
 
     @FXML
     void initialize() {
@@ -106,10 +95,6 @@ public class ClasseController {
 
     private void loadClassesFromDB() {
         classeList.clear();
-<<<<<<< HEAD
-     
-        classeList.addAll(classeService.getAllClasses());
-=======
         classeList.addAll(classeService.getAllClasses());
         // Load users for each class
         for (Classe classe : classeList) {
@@ -125,22 +110,14 @@ public class ClasseController {
             classe.setClassemoy(classAverage);
             classeService.updateClasseAverage(classe.getId(), classAverage);
         }
->>>>>>> wael
         classetable.setItems(classeList);
     }
 
     private void deleteClasse(int id) {
-<<<<<<< HEAD
-    
-        classeService.deleteClasse(id);
-        System.out.println("Classe supprimée avec succès.");
-    }
-=======
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDialog.setTitle("Confirmation de suppression");
         confirmDialog.setHeaderText(null);
         confirmDialog.setContentText("Êtes-vous sûr de vouloir supprimer cette classe ? Les étudiants et enseignants seront désassociés de cette classe.");
->>>>>>> wael
 
         confirmDialog.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
@@ -239,10 +216,6 @@ public class ClasseController {
             stage.setTitle("Modifier une Classe");
             stage.setScene(new Scene(loader.load()));
 
-<<<<<<< HEAD
-    
-=======
->>>>>>> wael
             add_classe_controller controller = loader.getController();
             controller.initData(classe);
             controller.setOnSaveCallback(() -> loadClassesFromDB());
@@ -279,10 +252,6 @@ public class ClasseController {
             stage.setTitle("Ajouter une Classe");
             stage.setScene(new Scene(loader.load()));
 
-<<<<<<< HEAD
-       
-=======
->>>>>>> wael
             add_classe_controller controller = loader.getController();
             controller.setOnSaveCallback(() -> loadClassesFromDB());
 
@@ -344,28 +313,6 @@ public class ClasseController {
         }
     }
 
-<<<<<<< HEAD
-
-    private void showInfoAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-    private void showErrorAlert(String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-   
-    public void setParent(ClasseController parent) {
-        
-=======
     public void setParent(ClasseController parent) {
 
     }
@@ -405,6 +352,5 @@ public class ClasseController {
                 }
             }
         });
->>>>>>> wael
     }
 }
