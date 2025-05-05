@@ -5,8 +5,6 @@ import Entities.quiz;
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -219,12 +217,10 @@ if (!q.getRepCorrect().equals(q.getOptionA()) && !q.getRepCorrect().equals(q.get
 
     @FXML
     void handleSubmit(ActionEvent event) {
-
         if (!validateAllQuestionsAnswered()) {
             showAlert("Attention", "Veuillez répondre à toutes les questions avant de soumettre.");
             return;
         }
-
 
         int correctAnswers = 0;
         int incorrectAnswers = 0;
@@ -237,11 +233,9 @@ if (!q.getRepCorrect().equals(q.getOptionA()) && !q.getRepCorrect().equals(q.get
                 String selectedAnswer = group.getSelectedToggle().getUserData().toString();
                 if (selectedAnswer.equals(q.getRepCorrect())) {
                     correctAnswers++;
-
                     showQuestionResult(i, true);
                 } else {
                     incorrectAnswers++;
-
                     showQuestionResult(i, false);
                 }
             } else {
@@ -257,7 +251,17 @@ if (!q.getRepCorrect().equals(q.getOptionA()) && !q.getRepCorrect().equals(q.get
         displayResults(note, correctAnswers, incorrectAnswers, commentaire);
 
         saveResult(note, commentaire, correctAnswers, incorrectAnswers);
-        
+
+        utils.EmailService.sendQuizResultEmail(
+            "douraid.bensalem@gmail.com",
+            userName,
+            note,
+            correctAnswers,
+            (int)totalQuestions
+        );
+
+        showAlert("Succès", "L'email a été envoyé avec succès!");
+
         Label autoCloseLabel = new Label("Les résultats se fermeront automatiquement dans 6 secondes...");
         autoCloseLabel.setStyle("-fx-text-fill: #555555; -fx-font-style: italic;");
         resultContainer.getChildren().add(autoCloseLabel);

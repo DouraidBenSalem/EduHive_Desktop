@@ -109,6 +109,14 @@ public class StatistiqueController {
                 new PieChart.Data("Réponses Incorrectes", totalIncorrect)
         );
 
+        int total = totalCorrect + totalIncorrect;
+        if (total > 0) {
+            String correctLabel = String.format("Réponses Correctes: %.1f%%", (totalCorrect * 100.0 / total));
+            String incorrectLabel = String.format("Réponses Incorrectes: %.1f%%", (totalIncorrect * 100.0 / total));
+            pieChartData.get(0).setName(correctLabel);
+            pieChartData.get(1).setName(incorrectLabel);
+        }
+
 
         reponsesChart.setData(pieChartData);
         reponsesChart.setTitle("Répartition des Réponses");
@@ -117,13 +125,6 @@ public class StatistiqueController {
 
 
 
-        int total = totalCorrect + totalIncorrect;
-        if (total > 0) {
-            String correctLabel = String.format("Réponses Correctes: %.1f%%", (totalCorrect * 100.0 / total));
-            String incorrectLabel = String.format("Réponses Incorrectes: %.1f%%", (totalIncorrect * 100.0 / total));
-            pieChartData.get(0).setName(correctLabel);
-            pieChartData.get(1).setName(incorrectLabel);
-        }
     }
 
     @FXML
