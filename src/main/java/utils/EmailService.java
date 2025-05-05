@@ -10,9 +10,7 @@ import java.util.*;
 
 public class EmailService {
 
-    private static final String BREVO_API_KEY = "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";
-    private static final String FROM_EMAIL = "douraid7d@gmail.com";
-    private static final String FROM_NAME = "EduHive";
+
 
     private static ApiClient getApiClient() {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
