@@ -66,8 +66,9 @@ public class ClasseController {
 
     private ObservableList<Classe> classeList = FXCollections.observableArrayList();
     private Connection connection;
+    private Connection hello123 = MyDatabase.getInstance().getConnection();
     private ClasseService classeService = new ClasseServiceImpl();
-    private UserService userService = new UserServiceImplementation(connection);
+    private UserService userService = new UserServiceImplementation(hello123);
     private ResultService resultService = new ResultServiceImpl();
 
     @FXML

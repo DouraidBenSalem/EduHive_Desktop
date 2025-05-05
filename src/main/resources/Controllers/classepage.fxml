@@ -17,26 +17,12 @@
             <children>
                 <Pane prefHeight="657.0" prefWidth="710.0">
                     <children>
-<<<<<<< HEAD
-                        <TableView fx:id="classetable" layoutX="14.0" layoutY="140.0" prefHeight="406.0" prefWidth="675.0">
-                            <columns>
-                                <TableColumn fx:id="id_classe" prefWidth="100.0" text="ID" />
-                                <TableColumn fx:id="classename" prefWidth="200.0" text="Nom de classe" />
-                                <TableColumn fx:id="num_etudiant" prefWidth="200.0" text="Nombre d'étudiants" />
-                                <TableColumn fx:id="editColumn" prefWidth="134.4000244140625" text="Edit" />
-                                <TableColumn fx:id="deleteColumn" text="Delete" />
-                            </columns>
-                        </TableView>
-                        <Button fx:id="ajouter" layoutX="491.0" layoutY="75.0" mnemonicParsing="false" onAction="#ajoutertable" text="Ajouter" />
-                        <Button fx:id="exporter" layoutX="410.0" layoutY="75.0" mnemonicParsing="false" onAction="#exportertable" prefHeight="25.0" prefWidth="56.0" text="Print" />
-=======
                         <ListView fx:id="classetable" layoutX="14.0" layoutY="140.0" prefHeight="406.0" prefWidth="675.0" styleClass="quiz-list" />
                         <TextField fx:id="searchField" layoutX="138.0" layoutY="75.0" prefHeight="44.0" prefWidth="291.0" promptText="Search classes..." />
                         <Button fx:id="ajouter" layoutX="491.0" layoutY="75.0" mnemonicParsing="false" onAction="#ajoutertable" prefHeight="44.0" prefWidth="120.0" text="Ajouter" />
                         <Button fx:id="exporter" layoutX="563.0" layoutY="559.0" mnemonicParsing="false" onAction="#exportertable" prefHeight="35.0" prefWidth="94.0" text="Print" />
                         <Button fx:id="statisticsBtn" layoutX="450.0" layoutY="559.0" mnemonicParsing="false" onAction="#showStatistics" prefHeight="35.0" prefWidth="94.0" text="Statistiques" />
                         <Button fx:id="equilibrageBtn" layoutX="563.0" layoutY="559.0" mnemonicParsing="false" onAction="#handleEquilibrage" prefHeight="35.0" prefWidth="94.0" text="Équilibrage" styleClass="primary-button" />
->>>>>>> wael
                         <Pane layoutX="1.0" layoutY="-43.0" prefWidth="710.0" styleClass="navbar">
                             <children>
                                 <ImageView fitHeight="29.0" fitWidth="24.0" layoutX="623.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">

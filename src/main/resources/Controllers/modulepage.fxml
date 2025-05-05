@@ -17,21 +17,6 @@
             <children>
                 <Pane prefHeight="657.0" prefWidth="710.0">
                     <children>
-<<<<<<< HEAD
-                        <TableView fx:id="moduletable" layoutX="14.0" layoutY="140.0" prefHeight="406.0" prefWidth="675.0">
-                            <columns>
-                                <TableColumn fx:id="id_module" prefWidth="75.0" text="ID" />
-                                <TableColumn fx:id="nom_module" prefWidth="150.0" text="Nom du module" />
-                                <TableColumn fx:id="description_module" prefWidth="200.0" text="Description" />
-                                <TableColumn fx:id="module_img" prefWidth="100.0" text="Image" />
-                                <TableColumn fx:id="moy_module" prefWidth="75.0" text="Moyenne" />
-                                <TableColumn fx:id="editColumn" prefWidth="75.0" text="Edit" />
-                                <TableColumn fx:id="deleteColumn" prefWidth="75.0" text="Delete" />
-                            </columns>
-                        </TableView>
-                        <Button fx:id="ajouter" layoutX="491.0" layoutY="75.0" mnemonicParsing="false" onAction="#ajoutertable" text="Ajouter" />
-                        <Button fx:id="exporter" layoutX="410.0" layoutY="75.0" mnemonicParsing="false" onAction="#exportertable" prefHeight="25.0" prefWidth="56.0" text="Print" />
-=======
                         <ListView fx:id="moduletable" layoutX="14.0" layoutY="140.0" prefHeight="406.0" prefWidth="675.0" styleClass="quiz-list" />
                         <TextField fx:id="searchField" layoutX="138.0" layoutY="75.0" prefHeight="44.0" prefWidth="291.0" promptText="Search modules..." />
                         <Button fx:id="ajouter" layoutX="443.0" layoutY="76.0" mnemonicParsing="false" onAction="#ajoutertable" prefHeight="44.0" prefWidth="120.0" text="Ajouter" />
@@ -42,7 +27,6 @@
                                 <Font name="System Bold" size="18.0" />
                             </font>
                         </Label>
->>>>>>> wael
                         <Pane layoutX="1.0" layoutY="-43.0" prefWidth="710.0" styleClass="navbar">
                             <children>
                                 <ImageView fitHeight="29.0" fitWidth="24.0" layoutX="623.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
