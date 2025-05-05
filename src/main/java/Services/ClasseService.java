@@ -9,4 +9,10 @@ public interface ClasseService {
     void addClasse(Classe classe);
     void updateClasse(Classe classe);
     void deleteClasse(int id);
+    void updateClasseAverage(int classeId, double average);
+    
+    // New methods for class advancement and balancing
+    void advanceAndBalanceClasses();
+    String getNextClassName(String currentName);
+    void moveStudentToClass(int studentId, int newClassId);
 }

@@ -5,27 +5,24 @@ public class Module {
     private String nom_module;
     private String description_module;
     private String module_img;
-    private double moy;
     
     // 🔹 Constructeur par défaut
     public Module() {
     }
     
     // 🔹 Constructeur avec tous les champs
-    public Module(int id, String nom_module, String description_module, String module_img, double moy) {
+    public Module(int id, String nom_module, String description_module, String module_img) {
         this.id = id;
         this.nom_module = nom_module;
         this.description_module = description_module;
         this.module_img = module_img;
-        this.moy = moy;
     }
     
     // 🔹 Constructeur sans id (pour création)
-    public Module(String nom_module, String description_module, String module_img, double moy) {
+    public Module(String nom_module, String description_module, String module_img) {
         this.nom_module = nom_module;
         this.description_module = description_module;
         this.module_img = module_img;
-        this.moy = moy;
     }
     
     // 🔹 Getters et Setters
@@ -61,13 +58,6 @@ public class Module {
         this.module_img = module_img;
     }
     
-    public double getMoy() {
-        return moy;
-    }
-    
-    public void setMoy(double moy) {
-        this.moy = moy;
-    }
     
     @Override
     public String toString() {
@@ -76,7 +66,6 @@ public class Module {
                 ", nom_module='" + nom_module + '\'' +
                 ", description_module='" + description_module + '\'' +
                 ", module_img='" + module_img + '\'' +
-                ", moy=" + moy +
                 '}';
     }
 }

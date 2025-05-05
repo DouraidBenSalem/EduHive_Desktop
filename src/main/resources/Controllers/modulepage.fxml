@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="900.0" styleClass="screen"
-            stylesheets="@../style_css/style.css"
-            xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="Controllers.ModuleController">
+<AnchorPane prefHeight="650.0" prefWidth="900.0" styleClass="screen" stylesheets="@../style_css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ModuleController">
     <children>
         <fx:include fx:id="navbar" source="navBar.fxml" />
         <AnchorPane layoutX="189.0" prefHeight="657.0" prefWidth="711.0">
             <children>
                 <Pane prefHeight="657.0" prefWidth="710.0">
                     <children>
+<<<<<<< HEAD
                         <TableView fx:id="moduletable" layoutX="14.0" layoutY="140.0" prefHeight="406.0" prefWidth="675.0">
                             <columns>
                                 <TableColumn fx:id="id_module" prefWidth="75.0" text="ID" />
@@ -32,6 +31,18 @@
                         </TableView>
                         <Button fx:id="ajouter" layoutX="491.0" layoutY="75.0" mnemonicParsing="false" onAction="#ajoutertable" text="Ajouter" />
                         <Button fx:id="exporter" layoutX="410.0" layoutY="75.0" mnemonicParsing="false" onAction="#exportertable" prefHeight="25.0" prefWidth="56.0" text="Print" />
+=======
+                        <ListView fx:id="moduletable" layoutX="14.0" layoutY="140.0" prefHeight="406.0" prefWidth="675.0" styleClass="quiz-list" />
+                        <TextField fx:id="searchField" layoutX="138.0" layoutY="75.0" prefHeight="44.0" prefWidth="291.0" promptText="Search modules..." />
+                        <Button fx:id="ajouter" layoutX="443.0" layoutY="76.0" mnemonicParsing="false" onAction="#ajoutertable" prefHeight="44.0" prefWidth="120.0" text="Ajouter" />
+                        <Button fx:id="aiGeneratorBtn" layoutX="569.0" layoutY="76.0" mnemonicParsing="false" onAction="#openAIGenerator" prefHeight="44.0" prefWidth="120.0" text="AI Generator" />
+                        <Button fx:id="exporter" layoutX="563.0" layoutY="559.0" mnemonicParsing="false" onAction="#exportertable" prefHeight="35.0" prefWidth="94.0" text="Print" />
+                        <Label layoutX="30.0" layoutY="84.0" styleClass="search-label" text="Rechercher:">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                        </Label>
+>>>>>>> wael
                         <Pane layoutX="1.0" layoutY="-43.0" prefWidth="710.0" styleClass="navbar">
                             <children>
                                 <ImageView fitHeight="29.0" fitWidth="24.0" layoutX="623.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">

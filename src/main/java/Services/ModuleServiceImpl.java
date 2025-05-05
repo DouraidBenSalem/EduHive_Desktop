@@ -26,8 +26,7 @@ public class ModuleServiceImpl implements ModuleService {
                         rs.getInt("id"),
                         rs.getString("nom_module"),
                         rs.getString("description_module"),
-                        rs.getString("module_img"),
-                        rs.getDouble("moy")
+                        rs.getString("module_img")
                 );
                 moduleList.add(module);
             }
@@ -51,8 +50,7 @@ public class ModuleServiceImpl implements ModuleService {
                         rs.getInt("id"),
                         rs.getString("nom_module"),
                         rs.getString("description_module"),
-                        rs.getString("module_img"),
-                        rs.getDouble("moy")
+                        rs.getString("module_img")
                 );
             }
         } catch (Exception e) {
@@ -65,12 +63,11 @@ public class ModuleServiceImpl implements ModuleService {
     public void addModule(Module module) {
         try {
             Connection conn = MyDatabase.getInstance().getConnection();
-            String query = "INSERT INTO module (nom_module, description_module, module_img, moy) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO module (nom_module, description_module, module_img) VALUES (?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setString(1, module.getNom_module());
             pstmt.setString(2, module.getDescription_module());
             pstmt.setString(3, module.getModule_img());
-            pstmt.setDouble(4, module.getMoy());
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,13 +78,12 @@ public class ModuleServiceImpl implements ModuleService {
     public void updateModule(Module module) {
         try {
             Connection conn = MyDatabase.getInstance().getConnection();
-            String query = "UPDATE module SET nom_module = ?, description_module = ?, module_img = ?, moy = ? WHERE id = ?";
+            String query = "UPDATE module SET nom_module = ?, description_module = ?, module_img = ? WHERE id = ?";
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setString(1, module.getNom_module());
             pstmt.setString(2, module.getDescription_module());
             pstmt.setString(3, module.getModule_img());
-            pstmt.setDouble(4, module.getMoy());
-            pstmt.setInt(5, module.getId());
+            pstmt.setInt(4, module.getId());
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

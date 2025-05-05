@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+
+<AnchorPane prefHeight="650.0" prefWidth="900.0" styleClass="screen" stylesheets="@../style_css/style.css"
+            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="Controllers.AIModuleGeneratorController">
+    <children>
+        <fx:include fx:id="navbar" source="navBar.fxml" />
+        <AnchorPane layoutX="189.0" prefHeight="657.0" prefWidth="711.0">
+            <children>
+                <VBox alignment="TOP_CENTER" prefHeight="657.0" prefWidth="711.0" spacing="15.0" styleClass="content-area">
+                    <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                    </padding>
+                    <children>
+                        <Label text="Générateur de Module AI" styleClass="title-label">
+                            <font>
+                                <Font name="System Bold" size="24.0" />
+                            </font>
+                        </Label>
+
+                        <VBox spacing="10.0">
+                            <Label text="Nom du Module">
+                                <font>
+                                    <Font size="14.0" />
+                                </font>
+                            </Label>
+                            <TextField fx:id="moduleNameField" promptText="Entrez le nom du module...">
+                                <font>
+                                    <Font size="14.0" />
+                                </font>
+                            </TextField>
+                        </VBox>
+
+                        <Button fx:id="generateButton" mnemonicParsing="false" onAction="#handleGenerate"
+                                prefHeight="40.0" prefWidth="200.0" styleClass="generate-button" text="Générer Description">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Button>
+
+                        <Label fx:id="loadingLabel" text="Génération en cours..." visible="false">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+
+                        <VBox spacing="10.0">
+                            <Label text="Description du Module">
+                                <font>
+                                    <Font size="14.0" />
+                                </font>
+                            </Label>
+                            <TextArea fx:id="descriptionArea" prefHeight="150.0" promptText="La description sera générée ici..."
+                                    wrapText="true">
+                                <font>
+                                    <Font size="14.0" />
+                                </font>
+                            </TextArea>
+                        </VBox>
+
+                        <VBox spacing="10.0">
+                            <Label text="Image du Module">
+                                <font>
+                                    <Font size="14.0" />
+                                </font>
+                            </Label>
+                            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                <ImageView fx:id="moduleImageView" fitHeight="100.0" fitWidth="100.0" 
+                                         preserveRatio="true" styleClass="module-image" />
+                                <Button fx:id="chooseImageButton" mnemonicParsing="false" onAction="#handleChooseImage"
+                                        text="Choisir une Image">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Button>
+                            </HBox>
+                        </VBox>
+
+                        <HBox alignment="CENTER" spacing="20.0">
+                            <Button fx:id="saveModuleButton" mnemonicParsing="false" onAction="#handleSaveModule"
+                                    prefHeight="40.0" prefWidth="200.0" styleClass="submit-button" text="Ajouter le Module">
+                                <font>
+                                    <Font name="System Bold" size="14.0" />
+                                </font>
+                            </Button>
+                            <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack"
+                                    prefHeight="40.0" prefWidth="150.0" text="Retour">
+                                <font>
+                                    <Font size="14.0" />
+                                </font>
+                            </Button>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </children>
+</AnchorPane>

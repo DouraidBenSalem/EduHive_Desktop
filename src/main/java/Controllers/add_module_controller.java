@@ -9,7 +9,13 @@ import Entities.Module;
 import utils.MyDatabase;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
@@ -21,8 +27,8 @@ public class add_module_controller {
     @FXML private TextField nom_module;
     @FXML private TextArea description_module;
     @FXML private TextField module_img;
-    @FXML private TextField moy_module;
     @FXML private Button chooseImageBtn;
+    @FXML private ImageView moduleImageView;
 
     private boolean isEditMode = false;
     private Module moduleToEdit;
@@ -42,8 +48,20 @@ public class add_module_controller {
             nom_module.setText(m.getNom_module());
             description_module.setText(m.getDescription_module());
             module_img.setText(m.getModule_img());
-            moy_module.setText(String.valueOf(m.getMoy()));
             selectedImagePath = m.getModule_img();
+            
+            // Load the existing image
+            if (selectedImagePath != null && !selectedImagePath.isEmpty()) {
+                try {
+                    File imageFile = new File("src/main/resources/images/modules/" + selectedImagePath);
+                    if (imageFile.exists()) {
+                        Image image = new Image(imageFile.toURI().toString());
+                        moduleImageView.setImage(image);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -62,8 +80,28 @@ public class add_module_controller {
         
         File selectedFile = fileChooser.showOpenDialog(chooseImageBtn.getScene().getWindow());
         if (selectedFile != null) {
-            selectedImagePath = selectedFile.getName();
-            module_img.setText(selectedImagePath);
+            try {
+                // Create a preview of the image
+                Image image = new Image(selectedFile.toURI().toString());
+                moduleImageView.setImage(image);
+                
+                // Generate unique filename
+                String fileName = System.currentTimeMillis() + "_" + selectedFile.getName();
+                selectedImagePath = fileName;
+                module_img.setText(fileName);
+
+                // Copy image to application's storage
+                String storageDir = "src/main/resources/images/modules/";
+                new File(storageDir).mkdirs();
+                
+                Path destination = Path.of(storageDir + fileName);
+                Files.copy(Path.of(selectedFile.getAbsolutePath()), destination, 
+                    StandardCopyOption.REPLACE_EXISTING);
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+                showError("Error saving image: " + e.getMessage());
+            }
         }
     }
 
@@ -72,7 +110,6 @@ public class add_module_controller {
         String name = nom_module.getText();
         String description = description_module.getText();
         String imagePath = module_img.getText();
-        String moyText = moy_module.getText();
 
         if (name == null || name.trim().isEmpty()) {
             showError("Le nom du module ne doit pas être vide.");
@@ -89,45 +126,25 @@ public class add_module_controller {
             return;
         }
 
-        if (moyText == null || moyText.trim().isEmpty()) {
-            showError("La moyenne du module ne doit pas être vide.");
-            return;
-        }
-
-        double moy;
-        try {
-            moy = Double.parseDouble(moyText);
-        } catch (NumberFormatException e) {
-            showError("La moyenne doit être un nombre valide.");
-            return;
-        }
-
-        if (moy < 0 || moy > 20) {
-            showError("La moyenne doit être comprise entre 0 et 20.");
-            return;
-        }
-
         try {
             Connection conn = MyDatabase.getInstance().getConnection();
 
             if (isEditMode && moduleToEdit != null) {
-                String sql = "UPDATE module SET nom_module=?, description_module=?, module_img=?, moy=? WHERE id=?";
+                String sql = "UPDATE module SET nom_module=?, description_module=?, module_img=? WHERE id=?";
                 PreparedStatement pst = conn.prepareStatement(sql);
                 pst.setString(1, name);
                 pst.setString(2, description);
                 pst.setString(3, imagePath);
-                pst.setDouble(4, moy);
-                pst.setInt(5, moduleToEdit.getId());
+                pst.setInt(4, moduleToEdit.getId());
                 pst.executeUpdate();
 
                 showAlert("Module modifié avec succès !");
             } else {
-                String sql = "INSERT INTO module (nom_module, description_module, module_img, moy) VALUES (?, ?, ?, ?)";
+                String sql = "INSERT INTO module (nom_module, description_module, module_img) VALUES (?, ?, ?)";
                 PreparedStatement pst = conn.prepareStatement(sql);
                 pst.setString(1, name);
                 pst.setString(2, description);
                 pst.setString(3, imagePath);
-                pst.setDouble(4, moy);
                 pst.executeUpdate();
 
                 showAlert("Module ajouté avec succès !");
@@ -135,7 +152,10 @@ public class add_module_controller {
 
             if (onSaveCallback != null) onSaveCallback.run();
 
+<<<<<<< HEAD
        
+=======
+>>>>>>> wael
             Stage stage = (Stage) ajouter.getScene().getWindow();
             stage.close();
 
@@ -166,7 +186,6 @@ public class add_module_controller {
         nom_module.clear();
         description_module.clear();
         module_img.clear();
-        moy_module.clear();
         selectedImagePath = null;
     }
     

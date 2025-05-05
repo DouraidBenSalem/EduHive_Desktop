@@ -176,6 +176,48 @@ public class ResultServiceImpl implements ResultService {
         return results;
     }
 
+    @Override
+    public double calculateStudentAverage(int studentId) {
+        String query = "SELECT note FROM resultat WHERE user_id = ?";
+        double sum = 0.0;
+        int count = 0;
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, studentId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    sum += rs.getDouble("note");
+                    count++;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        // If student has no grades, return 0
+        return count > 0 ? sum / count : 0.0;
+    }
+
+    @Override
+    public double calculateClassAverage(List<Integer> studentIds) {
+        if (studentIds == null || studentIds.isEmpty()) {
+            return 0.0;
+        }
+
+        double totalSum = 0.0;
+        int totalStudents = studentIds.size(); // Count all students, even those with no grades
+        
+        // Calculate sum of all grades
+        for (int studentId : studentIds) {
+            double studentAverage = calculateStudentAverage(studentId);
+            totalSum += studentAverage; // Include zeros in the sum
+        }
+        
+        // Divide by total number of students (including those with zero)
+        return totalStudents > 0 ? totalSum / totalStudents : 0.0;
+    }
+
     private Result extractResultFromResultSet(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         int userId = rs.getInt("user_id");
