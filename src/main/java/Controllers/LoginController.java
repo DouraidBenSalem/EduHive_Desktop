@@ -161,10 +161,13 @@ public class LoginController implements Initializable {
     }
 
     @FXML
-    private void successLogin() throws IOException {
+    private void successLogin(String email) throws IOException {
+        User user = userService.getUserByEmail(email);
+
         Stage currentStage = (Stage) loginEmailField.getScene().getWindow();
         currentStage.close();
         Main mainApp = new Main();
+        mainApp.setUserRole(user.getRole());
         mainApp.start(new Stage());
     }
 
@@ -180,7 +183,7 @@ public class LoginController implements Initializable {
             return;
         }
         try {
-            successLogin();
+            successLogin(email);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -435,6 +438,8 @@ public class LoginController implements Initializable {
             return;
         }
 
+        String email = loginEmailField.getText();
+
         try {
             Webcam webcam = Webcam.getDefault();
             if (webcam == null) {
@@ -465,7 +470,7 @@ public class LoginController implements Initializable {
             tempFile.delete();
 
             if (res) {
-                successLogin();
+                successLogin(email);
             } else {
                 loginPasswordError.setText("identification faciale echouée");
             }
