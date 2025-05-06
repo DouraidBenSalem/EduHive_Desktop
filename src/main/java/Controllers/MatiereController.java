@@ -97,6 +97,15 @@ public class MatiereController {
 
     private FilteredList<Matiere> filteredMatiereList;
 
+    @FXML
+    public void navigateToStatistiques(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/statistiques_view.fxml"));
+        Scene scene = new Scene(loader.load());
+        Stage stage = (Stage) btnAjouter.getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
     // Service for matiere operations
     private MatiereService matiereService = new MatiereServiceImpl();
 

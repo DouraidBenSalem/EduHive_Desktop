@@ -27,6 +27,8 @@
                         <Label text="Liste des Cours" style="-fx-font-size: 24px; -fx-text-fill: #2196f3;"/>
                         <Button fx:id="btnAddCours" text="Ajouter un cours"
                                 style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Button fx:id="btnStats" text="Statistiques" onAction="#navigateToStatistiques"
+                                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"/>
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 10 0;">
