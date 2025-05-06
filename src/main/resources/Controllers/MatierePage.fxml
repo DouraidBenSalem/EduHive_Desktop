@@ -18,7 +18,12 @@
                         <Font name="System Bold" size="24.0" />
                      </font>
                   </Label>
-                  <Button fx:id="btnAjouter" layoutX="14.0" layoutY="60.0" mnemonicParsing="false" onAction="#ajouterMatiere" prefHeight="25.0" prefWidth="143.0" style="-fx-background-color: #58c7fa; -fx-text-fill: white;" text="Ajouter une matière" />
+                  <HBox layoutX="14.0" layoutY="60.0" spacing="10">
+                     <children>
+                        <Button fx:id="btnAjouter" mnemonicParsing="false" onAction="#ajouterMatiere" prefHeight="25.0" prefWidth="143.0" style="-fx-background-color: #58c7fa; -fx-text-fill: white;" text="Ajouter une matière" />
+                        <Button fx:id="btnStats" mnemonicParsing="false" onAction="#navigateToStatistiques" prefHeight="25.0" prefWidth="143.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Statistiques" />
+                     </children>
+                  </HBox>
                   <ListView fx:id="listMatiere" layoutX="14.0" layoutY="100.0" prefHeight="400.0" prefWidth="900.0" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #e0e0e0;" />
                   <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="510.0" spacing="10">
                      <children>

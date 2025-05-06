@@ -5,6 +5,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -47,13 +48,7 @@
                        style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="30.0">
-         <children>
-            <Label text="Status:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
-            <TextField fx:id="statusCours" prefWidth="320.0" promptText="Statut du cours"
-                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
-         </children>
-      </HBox>
+
       <HBox alignment="CENTER_LEFT" spacing="30.0">
          <children>
             <Label text="Niveau:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
@@ -71,16 +66,16 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" spacing="30.0">
          <children>
-            <Label text="Matière ID:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
-            <TextField fx:id="matiereId" prefWidth="320.0" promptText="ID de la matière"
-                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
+            <Label text="Matière:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
+            <ComboBox fx:id="matiereId" prefWidth="320.0" promptText="Sélectionnez une matière"
+                      style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
          </children>
       </HBox>
       <HBox alignment="CENTER_LEFT" spacing="30.0">
          <children>
-            <Label text="Prérequis Cours ID:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
-            <TextField fx:id="prerequisCoursId" prefWidth="320.0" promptText="Optionnel - ID du cours prérequis"
-                       style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
+            <Label text="Prérequis Cours:" style="-fx-font-size: 17px; -fx-font-family: 'Segoe UI'; -fx-text-fill: #333;" />
+            <ComboBox fx:id="prerequisCoursId" prefWidth="320.0" promptText="Optionnel - Sélectionnez un cours prérequis"
+                      style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2;" />
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="80.0" prefWidth="400.0" spacing="40.0">

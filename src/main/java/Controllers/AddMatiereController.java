@@ -7,8 +7,19 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Label;
+import javafx.scene.control.ComboBox;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import Entities.Matiere;
+import Entities.Module;
+import Entities.User;
+import java.util.List;
+import Services.ModuleService;
+import Services.ModuleServiceImpl;
+import Services.UserService;
+import Services.UserServiceImplementation;
+import utils.MyDatabase;
 import Services.MatiereService;
 import Services.MatiereServiceImpl;
 import javafx.stage.Stage;
@@ -31,9 +42,12 @@ public class AddMatiereController {
     @FXML
     private TextField objectifMatiere;
     @FXML
-    private TextField moduleId;
+    private ComboBox<String> moduleId;
     @FXML
-    private TextField enseignantId;
+    private ComboBox<String> enseignantId;
+
+    private ModuleService moduleService = new ModuleServiceImpl();
+    private UserService userService = new UserServiceImplementation(MyDatabase.getInstance().getConnection());
     @FXML
     private TextField prerequisMatiere;
 
@@ -44,9 +58,9 @@ public class AddMatiereController {
     private Label enseignantIdError;
     private Label prerequisError;
 
-    private final String VALID_STYLE = "-fx-border-color: green; -fx-border-width: 2px;";
-    private final String INVALID_STYLE = "-fx-border-color: red; -fx-border-width: 2px;";
-    private final String NORMAL_STYLE = "-fx-border-color: lightgray; -fx-border-width: 1px;";
+    private final String VALID_STYLE = "-fx-border-color: #4CAF50; -fx-border-width: 2px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-effect: dropshadow(three-pass-box, rgba(76,175,80,0.3), 10, 0, 0, 0);";
+    private final String INVALID_STYLE = "-fx-border-color: #f44336; -fx-border-width: 2px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-effect: dropshadow(three-pass-box, rgba(244,67,54,0.3), 10, 0, 0, 0);";
+    private final String NORMAL_STYLE = "-fx-border-color: #E0E0E0; -fx-border-width: 1px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-background-color: #FAFAFA; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0); -fx-focus-color: #2196F3; -fx-faint-focus-color: #2196F322;";
 
     private Tooltip nomTooltip = new Tooltip("Entrez le nom de la matière");
     private Tooltip descriptionTooltip = new Tooltip("Entrez une description pour la matière");
@@ -67,9 +81,61 @@ public class AddMatiereController {
 
     @FXML
     public void initialize() {
-
+        // Style du conteneur principal
+        if (nomMatiere.getParent() != null && nomMatiere.getParent().getParent() instanceof VBox) {
+            VBox mainContainer = (VBox) nomMatiere.getParent().getParent();
+            mainContainer.setStyle(
+                    "-fx-background-color: white; -fx-padding: 20px; -fx-spacing: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+            mainContainer.setPadding(new javafx.geometry.Insets(20));
+        }
         setupErrorLabels();
 
+        // Appliquer le style moderne aux champs
+        String baseStyle = "-fx-font-size: 14px; -fx-padding: 8px; -fx-transition: all 0.3s ease-in-out; -fx-background-insets: 0; "
+                + NORMAL_STYLE;
+        String hoverStyle = baseStyle
+                + "-fx-background-color: #F5F5F5; -fx-effect: dropshadow(three-pass-box, rgba(33,150,243,0.2), 8, 0, 0, 0);";
+        String focusStyle = baseStyle
+                + "-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(33,150,243,0.3), 10, 0, 0, 0);";
+
+        // Appliquer les effets de survol et de focus aux champs
+        for (javafx.scene.Node field : new javafx.scene.Node[] { nomMatiere, descriptionMatiere, objectifMatiere,
+                moduleId, enseignantId, prerequisMatiere }) {
+            field.setOnMouseEntered(e -> field.setStyle(hoverStyle));
+            field.setOnMouseExited(e -> field.setStyle(baseStyle));
+            field.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                field.setStyle(isNowFocused ? focusStyle : baseStyle);
+            });
+        }
+        nomMatiere.setStyle(baseStyle);
+        descriptionMatiere.setStyle(baseStyle + "-fx-pref-height: 100px;");
+        objectifMatiere.setStyle(baseStyle);
+        moduleId.setStyle(baseStyle);
+        enseignantId.setStyle(baseStyle);
+        prerequisMatiere.setStyle(baseStyle);
+
+        // Style des boutons
+        String buttonStyle = "-fx-font-size: 14px; -fx-padding: 10px 20px; -fx-background-radius: 5px; -fx-cursor: hand;";
+        String saveButtonStyle = buttonStyle
+                + "-fx-background-color: #2196F3; -fx-text-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(33,150,243,0.3), 10, 0, 0, 0);";
+        String cancelButtonStyle = buttonStyle
+                + "-fx-background-color: #9E9E9E; -fx-text-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(158,158,158,0.3), 10, 0, 0, 0);";
+
+        btnSave.setStyle(saveButtonStyle);
+        btnCancel.setStyle(cancelButtonStyle);
+
+        // Effet de survol pour les boutons
+        btnSave.setOnMouseEntered(e -> btnSave.setStyle(saveButtonStyle + "-fx-background-color: #1976D2;"));
+        btnSave.setOnMouseExited(e -> btnSave.setStyle(saveButtonStyle));
+        btnSave.setOnMousePressed(e -> btnSave.setStyle(saveButtonStyle + "-fx-background-color: #0D47A1;"));
+        btnSave.setOnMouseReleased(e -> btnSave.setStyle(saveButtonStyle));
+
+        btnCancel.setOnMouseEntered(e -> btnCancel.setStyle(cancelButtonStyle + "-fx-background-color: #757575;"));
+        btnCancel.setOnMouseExited(e -> btnCancel.setStyle(cancelButtonStyle));
+        btnCancel.setOnMousePressed(e -> btnCancel.setStyle(cancelButtonStyle + "-fx-background-color: #424242;"));
+        btnCancel.setOnMouseReleased(e -> btnCancel.setStyle(cancelButtonStyle));
+
+        // Configurer les tooltips
         nomMatiere.setTooltip(nomTooltip);
         descriptionMatiere.setTooltip(descriptionTooltip);
         objectifMatiere.setTooltip(objectifTooltip);
@@ -77,34 +143,73 @@ public class AddMatiereController {
         enseignantId.setTooltip(enseignantIdTooltip);
         prerequisMatiere.setTooltip(prerequisTooltip);
 
+        // Charger les modules
+        List<Module> modules = moduleService.getAllModules();
+        ObservableList<String> moduleItems = FXCollections.observableArrayList();
+        for (Module module : modules) {
+            moduleItems.add(module.getId() + " - " + module.getNom_module());
+        }
+        moduleId.setItems(moduleItems);
+
+        // Charger les enseignants
+        List<User> users = userService.getUsers();
+        ObservableList<String> teacherItems = FXCollections.observableArrayList();
+        for (User user : users) {
+            if (user.getRole().equals("ROLE_TEACHER")) {
+                teacherItems.add(user.getId() + " - " + user.getNom() + " " + user.getPrenom());
+            }
+        }
+        enseignantId.setItems(teacherItems);
+
         setupValidationListeners();
     }
 
     private void setupErrorLabels() {
+        String errorLabelStyle = "-fx-font-size: 12px; -fx-padding: 5px 0; -fx-text-fill: #f44336; -fx-font-style: italic;";
 
         nomError = new Label();
-        nomError.setTextFill(Color.RED);
+        nomError.setStyle(errorLabelStyle);
         nomError.setVisible(false);
 
         descriptionError = new Label();
-        descriptionError.setTextFill(Color.RED);
+        descriptionError.setStyle(errorLabelStyle);
         descriptionError.setVisible(false);
 
         objectifError = new Label();
-        objectifError.setTextFill(Color.RED);
+        objectifError.setStyle(errorLabelStyle);
         objectifError.setVisible(false);
 
         moduleIdError = new Label();
-        moduleIdError.setTextFill(Color.RED);
+        moduleIdError.setStyle(errorLabelStyle);
         moduleIdError.setVisible(false);
 
         enseignantIdError = new Label();
-        enseignantIdError.setTextFill(Color.RED);
+        enseignantIdError.setStyle(errorLabelStyle);
         enseignantIdError.setVisible(false);
 
         prerequisError = new Label();
-        prerequisError.setTextFill(Color.RED);
+        prerequisError.setStyle(errorLabelStyle);
         prerequisError.setVisible(false);
+
+        // Style des tooltips
+        String tooltipStyle = "-fx-font-size: 12px; -fx-padding: 8px; -fx-background-color: #424242; -fx-text-fill: white; -fx-background-radius: 4px;";
+        nomTooltip.setStyle(tooltipStyle);
+        descriptionTooltip.setStyle(tooltipStyle);
+        objectifTooltip.setStyle(tooltipStyle);
+        moduleIdTooltip.setStyle(tooltipStyle);
+        enseignantIdTooltip.setStyle(tooltipStyle);
+        prerequisTooltip.setStyle(tooltipStyle);
+
+        // Ajouter les labels d'erreur avec espacement
+        for (HBox parent : new HBox[] { (HBox) nomMatiere.getParent(),
+                (HBox) descriptionMatiere.getParent(),
+                (HBox) objectifMatiere.getParent(),
+                (HBox) moduleId.getParent(),
+                (HBox) enseignantId.getParent(),
+                (HBox) prerequisMatiere.getParent() }) {
+            parent.setSpacing(10);
+            parent.setPadding(new javafx.geometry.Insets(5, 0, 5, 0));
+        }
 
         ((HBox) nomMatiere.getParent()).getChildren().add(nomError);
         ((HBox) descriptionMatiere.getParent()).getChildren().add(descriptionError);
@@ -112,6 +217,23 @@ public class AddMatiereController {
         ((HBox) moduleId.getParent()).getChildren().add(moduleIdError);
         ((HBox) enseignantId.getParent()).getChildren().add(enseignantIdError);
         ((HBox) prerequisMatiere.getParent()).getChildren().add(prerequisError);
+
+        // Ajouter des transitions pour les messages d'erreur
+        javafx.animation.FadeTransition fadeTransition = new javafx.animation.FadeTransition(
+                javafx.util.Duration.millis(200));
+        fadeTransition.setFromValue(0.0);
+        fadeTransition.setToValue(1.0);
+
+        for (Label errorLabel : new Label[] { nomError, descriptionError, objectifError, moduleIdError,
+                enseignantIdError, prerequisError }) {
+            errorLabel.setOpacity(0);
+            errorLabel.visibleProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    fadeTransition.setNode(errorLabel);
+                    fadeTransition.playFromStart();
+                }
+            });
+        }
     }
 
     private void setupValidationListeners() {
@@ -156,51 +278,25 @@ public class AddMatiereController {
             }
         });
 
-        moduleId.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                if (newValue.trim().isEmpty()) {
-                    moduleId.setStyle(INVALID_STYLE);
-                    moduleIdError.setText("L'ID du module est obligatoire");
-                    moduleIdError.setVisible(true);
-                } else {
-                    int value = Integer.parseInt(newValue);
-                    if (value <= 0) {
-                        moduleId.setStyle(INVALID_STYLE);
-                        moduleIdError.setText("L'ID doit être positif");
-                        moduleIdError.setVisible(true);
-                    } else {
-                        moduleId.setStyle(VALID_STYLE);
-                        moduleIdError.setVisible(false);
-                    }
-                }
-            } catch (NumberFormatException e) {
+        moduleId.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
                 moduleId.setStyle(INVALID_STYLE);
-                moduleIdError.setText("Veuillez entrer un nombre valide");
+                moduleIdError.setText("Le module est obligatoire");
                 moduleIdError.setVisible(true);
+            } else {
+                moduleId.setStyle(VALID_STYLE);
+                moduleIdError.setVisible(false);
             }
         });
 
-        enseignantId.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                if (newValue.trim().isEmpty()) {
-                    enseignantId.setStyle(INVALID_STYLE);
-                    enseignantIdError.setText("L'ID de l'enseignant est obligatoire");
-                    enseignantIdError.setVisible(true);
-                } else {
-                    int value = Integer.parseInt(newValue);
-                    if (value <= 0) {
-                        enseignantId.setStyle(INVALID_STYLE);
-                        enseignantIdError.setText("L'ID doit être positif");
-                        enseignantIdError.setVisible(true);
-                    } else {
-                        enseignantId.setStyle(VALID_STYLE);
-                        enseignantIdError.setVisible(false);
-                    }
-                }
-            } catch (NumberFormatException e) {
+        enseignantId.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
                 enseignantId.setStyle(INVALID_STYLE);
-                enseignantIdError.setText("Veuillez entrer un nombre valide");
+                enseignantIdError.setText("L'enseignant est obligatoire");
                 enseignantIdError.setVisible(true);
+            } else {
+                enseignantId.setStyle(VALID_STYLE);
+                enseignantIdError.setVisible(false);
             }
         });
 
@@ -237,8 +333,21 @@ public class AddMatiereController {
             nomMatiere.setText(matiere.getNomMatiere());
             descriptionMatiere.setText(matiere.getDescriptionMatiere());
             objectifMatiere.setText(matiere.getObjectifMatiere());
-            moduleId.setText(String.valueOf(matiere.getModuleId()));
-            enseignantId.setText(String.valueOf(matiere.getEnseignantId()));
+            // Sélectionner le module
+            for (String item : moduleId.getItems()) {
+                if (item.startsWith(String.valueOf(matiere.getModuleId()))) {
+                    moduleId.setValue(item);
+                    break;
+                }
+            }
+
+            // Sélectionner l'enseignant
+            for (String item : enseignantId.getItems()) {
+                if (item.startsWith(String.valueOf(matiere.getEnseignantId()))) {
+                    enseignantId.setValue(item);
+                    break;
+                }
+            }
 
             if (matiere.getPrerequisMatiere() != null) {
                 prerequisMatiere.setText(String.valueOf(matiere.getPrerequisMatiere()));
@@ -268,13 +377,15 @@ public class AddMatiereController {
         objectifMatiere.setText(objectifValue + " ");
         objectifMatiere.setText(objectifValue);
 
-        String moduleIdValue = moduleId.getText();
-        moduleId.setText(moduleIdValue + " ");
-        moduleId.setText(moduleIdValue);
+        String moduleIdValue = moduleId.getValue();
+        if (moduleIdValue != null) {
+            moduleId.setValue(moduleIdValue);
+        }
 
-        String enseignantIdValue = enseignantId.getText();
-        enseignantId.setText(enseignantIdValue + " ");
-        enseignantId.setText(enseignantIdValue);
+        String enseignantIdValue = enseignantId.getValue();
+        if (enseignantIdValue != null) {
+            enseignantId.setValue(enseignantIdValue);
+        }
 
         String prerequisValue = prerequisMatiere.getText();
         prerequisMatiere.setText(prerequisValue + " ");
@@ -293,8 +404,10 @@ public class AddMatiereController {
             String nom = nomMatiere.getText().trim();
             String description = descriptionMatiere.getText().trim();
             String objectif = objectifMatiere.getText().trim();
-            int moduleIdValue = Integer.parseInt(moduleId.getText().trim());
-            int enseignantIdValue = Integer.parseInt(enseignantId.getText().trim());
+            String selectedModule = moduleId.getValue();
+            int moduleIdValue = Integer.parseInt(selectedModule.split(" - ")[0]);
+            String selectedTeacher = enseignantId.getValue();
+            int enseignantIdValue = Integer.parseInt(selectedTeacher.split(" - ")[0]);
 
             Integer prerequisValue = null;
             if (!prerequisMatiere.getText().trim().isEmpty()) {
@@ -369,46 +482,16 @@ public class AddMatiereController {
             isValid = false;
         }
 
-        try {
-            if (moduleId.getText().trim().isEmpty()) {
-                moduleId.setStyle(INVALID_STYLE);
-                moduleIdError.setText("L'ID du module est obligatoire");
-                moduleIdError.setVisible(true);
-                isValid = false;
-            } else {
-                int value = Integer.parseInt(moduleId.getText().trim());
-                if (value <= 0) {
-                    moduleId.setStyle(INVALID_STYLE);
-                    moduleIdError.setText("L'ID doit être positif");
-                    moduleIdError.setVisible(true);
-                    isValid = false;
-                }
-            }
-        } catch (NumberFormatException e) {
+        if (moduleId.getValue() == null) {
             moduleId.setStyle(INVALID_STYLE);
-            moduleIdError.setText("Veuillez entrer un nombre valide");
+            moduleIdError.setText("Le module est obligatoire");
             moduleIdError.setVisible(true);
             isValid = false;
         }
 
-        try {
-            if (enseignantId.getText().trim().isEmpty()) {
-                enseignantId.setStyle(INVALID_STYLE);
-                enseignantIdError.setText("L'ID de l'enseignant est obligatoire");
-                enseignantIdError.setVisible(true);
-                isValid = false;
-            } else {
-                int value = Integer.parseInt(enseignantId.getText().trim());
-                if (value <= 0) {
-                    enseignantId.setStyle(INVALID_STYLE);
-                    enseignantIdError.setText("L'ID doit être positif");
-                    enseignantIdError.setVisible(true);
-                    isValid = false;
-                }
-            }
-        } catch (NumberFormatException e) {
+        if (enseignantId.getValue() == null) {
             enseignantId.setStyle(INVALID_STYLE);
-            enseignantIdError.setText("Veuillez entrer un nombre valide");
+            enseignantIdError.setText("L'enseignant est obligatoire");
             enseignantIdError.setVisible(true);
             isValid = false;
         }

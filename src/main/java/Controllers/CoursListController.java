@@ -1,6 +1,8 @@
 package Controllers;
 
 import javafx.fxml.FXML;
+import javafx.event.ActionEvent;
+import java.io.IOException;
 import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.scene.layout.HBox;
@@ -49,6 +51,15 @@ public class CoursListController {
     private FilteredList<Cours> filteredCoursList;
 
     @FXML
+    public void navigateToStatistiques(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/statistiques_view.fxml"));
+        Scene scene = new Scene(loader.load());
+        Stage stage = (Stage) btnAddCours.getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    @FXML
     public void initialize() {
         // Configuration du ListView
         listCours.setMinHeight(400);
@@ -82,11 +93,11 @@ public class CoursListController {
                         "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
                 btnViewPdf.setStyle(
                         "-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
-                btnToggleStatus.setStyle("-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
+                btnToggleStatus.setStyle(
+                        "-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
                 container.getChildren().addAll(
-                    new VBox(5, nomLabel, descriptionLabel, detailsLabel),
-                    new HBox(10, btnEdit, btnDelete, btnViewPdf, btnToggleStatus)
-                );
+                        new VBox(5, nomLabel, descriptionLabel, detailsLabel),
+                        new HBox(10, btnEdit, btnDelete, btnViewPdf, btnToggleStatus));
             }
 
             @Override
@@ -106,7 +117,8 @@ public class CoursListController {
                     btnDelete.setOnAction(e -> deleteCours(cours));
                     btnViewPdf.setOnAction(e -> openPdf(cours));
                     btnViewPdf.setVisible(cours.getPdfCours() != null && !cours.getPdfCours().isEmpty());
-                    btnToggleStatus.setText("Non lu".equalsIgnoreCase(cours.getStatusCours()) ? "Marquer comme lu" : "Marquer comme non lu");
+                    btnToggleStatus.setText("Non lu".equalsIgnoreCase(cours.getStatusCours()) ? "Marquer comme lu"
+                            : "Marquer comme non lu");
                     btnToggleStatus.setOnAction(e -> toggleCoursStatus(cours));
                     updateCoursItemStyle(this, cours);
                     setGraphic(container);
@@ -238,17 +250,20 @@ public class CoursListController {
 
         Label descriptionLabel = new Label(cours.getDescriptionCours());
         descriptionLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #666; -fx-wrap-text: true;");
-        
-        Label infoLabel = new Label(String.format("Niveau: %s | Status: %s", cours.getNiveau(), cours.getStatusCours()));
+
+        Label infoLabel = new Label(
+                String.format("Niveau: %s | Status: %s", cours.getNiveau(), cours.getStatusCours()));
         infoLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888; -fx-padding: 0 0 10 0;");
-        
+
         header.getChildren().addAll(titleLabel, descriptionLabel, infoLabel);
-        header.setStyle("-fx-padding: 0 0 15 0; -fx-border-color: transparent transparent #e3f0ff transparent; -fx-border-width: 0 0 2 0;");
+        header.setStyle(
+                "-fx-padding: 0 0 15 0; -fx-border-color: transparent transparent #e3f0ff transparent; -fx-border-width: 0 0 2 0;");
 
         // Barre d'outils moderne
         HBox toolbar = new HBox(15);
         toolbar.setAlignment(Pos.CENTER);
-        toolbar.setStyle("-fx-padding: 15; -fx-background-color: #f7fbff; -fx-border-color: #e3f0ff; -fx-border-width: 1; -fx-background-radius: 8; -fx-border-radius: 8;");
+        toolbar.setStyle(
+                "-fx-padding: 15; -fx-background-color: #f7fbff; -fx-border-color: #e3f0ff; -fx-border-width: 1; -fx-background-radius: 8; -fx-border-radius: 8;");
 
         // Boutons de navigation stylés
         Button previousBtn = new Button("←");
@@ -258,7 +273,7 @@ public class CoursListController {
         Button zoomOutBtn = new Button("Zoom -");
 
         String buttonStyle = "-fx-background-color: #e3f0ff; -fx-text-fill: #2196f3; -fx-font-weight: bold; " +
-                            "-fx-background-radius: 6; -fx-padding: 8 16; -fx-cursor: hand;";
+                "-fx-background-radius: 6; -fx-padding: 8 16; -fx-cursor: hand;";
         String buttonHoverStyle = "-fx-background-color: #2196f3; -fx-text-fill: white;";
 
         previousBtn.setStyle(buttonStyle);
@@ -280,7 +295,7 @@ public class CoursListController {
 
         Separator sep = new Separator(Orientation.VERTICAL);
         sep.setStyle("-fx-background-color: #e3f0ff;");
-        
+
         toolbar.getChildren().addAll(previousBtn, pageLabel, nextBtn, sep, zoomInBtn, zoomOutBtn);
 
         // Zone d'affichage du PDF avec WebView
@@ -296,27 +311,31 @@ public class CoursListController {
 
         Button downloadBtn = new Button("Télécharger");
         downloadBtn.setStyle("-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-weight: bold; " +
-                            "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;");
-        
+                "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;");
+
         Button closeBtn = new Button("Fermer");
         closeBtn.setStyle("-fx-background-color: #f5f5f5; -fx-text-fill: #666; -fx-font-weight: bold; " +
-                          "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;");
+                "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;");
 
         // Effets hover pour les boutons d'action
-        downloadBtn.setOnMouseEntered(_ -> downloadBtn.setStyle("-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-weight: bold; " +
-                                                              "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;"));
-        downloadBtn.setOnMouseExited(_ -> downloadBtn.setStyle("-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-weight: bold; " +
-                                                             "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;"));
-        closeBtn.setOnMouseEntered(_ -> closeBtn.setStyle("-fx-background-color: #eeeeee; -fx-text-fill: #666; -fx-font-weight: bold; " +
-                                                         "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;"));
-        closeBtn.setOnMouseExited(_ -> closeBtn.setStyle("-fx-background-color: #f5f5f5; -fx-text-fill: #666; -fx-font-weight: bold; " +
-                                                        "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;"));
+        downloadBtn.setOnMouseEntered(_ -> downloadBtn
+                .setStyle("-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-weight: bold; " +
+                        "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;"));
+        downloadBtn.setOnMouseExited(_ -> downloadBtn
+                .setStyle("-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-weight: bold; " +
+                        "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;"));
+        closeBtn.setOnMouseEntered(
+                _ -> closeBtn.setStyle("-fx-background-color: #eeeeee; -fx-text-fill: #666; -fx-font-weight: bold; " +
+                        "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;"));
+        closeBtn.setOnMouseExited(
+                _ -> closeBtn.setStyle("-fx-background-color: #f5f5f5; -fx-text-fill: #666; -fx-font-weight: bold; " +
+                        "-fx-background-radius: 6; -fx-padding: 10 20; -fx-cursor: hand;"));
 
         actionButtons.getChildren().addAll(downloadBtn, closeBtn);
 
         // Assemblage de l'interface avec espacement amélioré
         mainContainer.getChildren().addAll(header, toolbar, webView, actionButtons);
-        
+
         // Configuration des actions des boutons
         closeBtn.setOnAction(e -> modalStage.close());
         downloadBtn.setOnAction(e -> {
@@ -651,7 +670,7 @@ public class CoursListController {
         if (cours.getPrerequisCoursId() == null) {
             return true;
         }
-        
+
         // Check if prerequisite course exists and is marked as read
         boolean found = false;
         for (Cours c : coursList) {
@@ -675,9 +694,8 @@ public class CoursListController {
                     break;
                 }
             }
-            String tooltipText = prerequisCoursName.isEmpty() ? 
-                "Le cours prérequis n'est pas disponible" :
-                String.format("Vous devez d'abord compléter le cours '%s'", prerequisCoursName);
+            String tooltipText = prerequisCoursName.isEmpty() ? "Le cours prérequis n'est pas disponible"
+                    : String.format("Vous devez d'abord compléter le cours '%s'", prerequisCoursName);
             cell.setTooltip(new Tooltip(tooltipText));
         } else {
             cell.setStyle("");
@@ -692,7 +710,7 @@ public class CoursListController {
             showError("Vous devez d'abord compléter les prérequis de ce cours.");
             return;
         }
-        
+
         String newStatus = "Non lu".equalsIgnoreCase(cours.getStatusCours()) ? "Lu" : "Non lu";
         cours.setStatusCours(newStatus);
         coursService.updateCours(cours);

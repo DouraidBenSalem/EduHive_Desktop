@@ -65,58 +65,6 @@
                         <Insets bottom="10.0" />
                     </VBox.margin>
                 </HBox>
-                <HBox prefHeight="47.0" prefWidth="151.0" spacing="5.0">
-                    <children>
-                        <ImageView fitHeight="37.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true" styleClass="icon_nav">
-                            <image>
-                                <Image url="@../style_css/images/chart.png" />
-                            </image>
-                            <HBox.margin>
-                                <Insets left="10.0" />
-                            </HBox.margin>
-                        </ImageView>
-                        <Button mnemonicParsing="false" onAction="#navigateToStatistiques" prefHeight="42.0" prefWidth="108.0" styleClass="btn" text="Statistiques" textFill="WHITE">
-                            <HBox.margin>
-                                <Insets left="-10.0" />
-                            </HBox.margin>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                        </Button>
-                    </children>
-                    <padding>
-                        <Insets top="5.0" />
-                    </padding>
-                    <VBox.margin>
-                        <Insets bottom="10.0" />
-                    </VBox.margin>
-                </HBox>
-                <HBox prefHeight="47.0" prefWidth="151.0" spacing="5.0">
-                    <children>
-                        <ImageView fitHeight="37.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true" styleClass="icon_nav">
-                            <image>
-                                <Image url="@../style_css/images/document.png" />
-                            </image>
-                            <HBox.margin>
-                                <Insets left="10.0" />
-                            </HBox.margin>
-                        </ImageView>
-                        <Button mnemonicParsing="false" onAction="#navigateToAIResume" prefHeight="42.0" prefWidth="108.0" styleClass="btn" text="Résumé AI" textFill="WHITE">
-                            <HBox.margin>
-                                <Insets left="-10.0" />
-                            </HBox.margin>
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Button>
-                    </children>
-                    <padding>
-                        <Insets top="5.0" />
-                    </padding>
-                    <VBox.margin>
-                        <Insets bottom="10.0" />
-                    </VBox.margin>
-                </HBox>
             <HBox prefHeight="47.0" prefWidth="151.0" spacing="5.0">
                <children>
                   <ImageView fitHeight="37.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true" styleClass="icon_nav">
