@@ -347,24 +347,7 @@ public class quizcontroller {
         }
     }
     
-    @FXML
-    void prendreQuiz(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Controllers/take_quiz.fxml"));
-            Scene scene = new Scene(loader.load());
 
-            TakeQuizController controller = loader.getController();
-            controller.loadAllQuizzes();
-
-            Stage stage = new Stage();
-            stage.setTitle("Tous les Quiz");
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Erreur", "Impossible de charger la page des quiz.");
-        }
-    }
 
 
 }

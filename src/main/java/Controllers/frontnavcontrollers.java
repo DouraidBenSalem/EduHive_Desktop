@@ -19,15 +19,13 @@ public class frontnavcontrollers {
     @FXML
     private Button matiereButton;
 
-    @FXML
-    private Button coursButton;
 
     @FXML
     private Button logoutButton;
 
     @FXML
     void handleHomeButton(ActionEvent event) {
-        navigateTo("/Controllers/home.fxml");
+        navigateTo("/Controllers/user_matiere.fxml");
     }
 
     @FXML
@@ -40,16 +38,9 @@ public class frontnavcontrollers {
         navigateTo("/Controllers/user_matiere.fxml");
     }
 
-    @FXML
-    void handleCoursButton(ActionEvent event) {
-        // Navigate to cours page when implemented
-        // navigateTo("/Controllers/cours.fxml");
-    }
 
     @FXML
     void handleLogoutButton(ActionEvent event) {
-        // Implement logout functionality
-        // For now, just navigate to login page
         navigateTo("/Controllers/login.fxml");
     }
 
