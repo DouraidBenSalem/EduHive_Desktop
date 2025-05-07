@@ -181,8 +181,8 @@ public class MatiereController {
                         descriptionLabel.setText(description);
                     }
 
-                    detailsLabel.setText(String.format("Module ID: %d | Enseignant ID: %d | Objectif: %s",
-                            matiere.getModuleId(), matiere.getEnseignantId(),
+                    // Afficher uniquement l'objectif sans les IDs
+                    detailsLabel.setText(String.format("Objectif: %s",
                             matiere.getObjectifMatiere() != null ? (matiere.getObjectifMatiere().length() > 50
                                     ? matiere.getObjectifMatiere().substring(0, 50) + "..."
                                     : matiere.getObjectifMatiere()) : "Non défini"));

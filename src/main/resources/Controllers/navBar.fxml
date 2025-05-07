@@ -104,7 +104,6 @@
                       <MenuItem mnemonicParsing="false" onAction="#navigateToModule" text="Module" />
                       <MenuItem mnemonicParsing="false" onAction="#navigateToMatiere" text="Matieres" />
                         <MenuItem mnemonicParsing="false" onAction="#navigateToCours" text="Cours" />
-                        <MenuItem mnemonicParsing="false" onAction="#navigateToMatiereFront" text="Front" />
                     </items>
                   </MenuButton>
                </children>

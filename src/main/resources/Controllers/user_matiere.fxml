@@ -74,15 +74,7 @@
                </padding>
             </HBox>
             
-            <!-- Bouton de retour au menu principal -->
-            <HBox alignment="CENTER" prefHeight="60.0" prefWidth="1000.0" styleClass="back-button-container">
-               <children>
-                  <Button fx:id="btnRetourMain" mnemonicParsing="false" prefHeight="45.0" prefWidth="200.0" styleClass="back-button" text="Retour au Menu Principal" onAction="#handleRetourMainClick" />
-               </children>
-               <padding>
-                  <Insets bottom="20.0" left="20.0" right="20.0" top="5.0" />
-               </padding>
-            </HBox>
+
          </children>
       </VBox>
    </children>
