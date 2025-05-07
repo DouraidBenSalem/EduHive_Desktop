@@ -49,11 +49,6 @@
                      </children>
                   </VBox>
                   <Button fx:id="exporter" layoutX="579.0" layoutY="516.0" mnemonicParsing="false" onAction="#exportertable" prefHeight="35.0" prefWidth="71.0" text="PDF" />
-                  <Button fx:id="prendreQuizButton" layoutX="50.0" layoutY="516.0" mnemonicParsing="false" onAction="#prendreQuiz" prefHeight="35.0" prefWidth="150.0" styleClass="primary-button" text="Prendre Quiz">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Button>
                </children>
             </Pane>
          </children>

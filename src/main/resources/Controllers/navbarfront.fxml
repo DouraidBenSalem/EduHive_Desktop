@@ -13,7 +13,7 @@
     <children>
         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="900.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="244.0" spacing="10.0">
+                <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="307.0" spacing="10.0">
                     <children>
                         <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -41,11 +41,6 @@
                     </font>
                 </Button>
                 <Button fx:id="matiereButton" mnemonicParsing="false" onAction="#handleMatiereButton" style="-fx-background-color: transparent;" text="Matières" textFill="WHITE">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                </Button>
-                <Button fx:id="coursButton" mnemonicParsing="false" onAction="#handleCoursButton" style="-fx-background-color: transparent;" text="Cours" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
                     </font>
