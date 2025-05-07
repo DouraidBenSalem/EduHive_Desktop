@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controllers.CalendarController"
+      spacing="15"
+      style="-fx-padding: 20; -fx-background-color: #f5f5f5;">
+    
+    <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+        <Text text="Calendrier des Événements" 
+              style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2196F3;"/>
+        
+        <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 15 0;">
+            <Label text="Sélectionnez une date:" 
+                   style="-fx-font-size: 14px; -fx-text-fill: #666;"/>
+            <DatePicker fx:id="datePicker" 
+                       style="-fx-font-size: 14px;"/>
+            <Button fx:id="syncButton" 
+                    text="Synchroniser avec Google Calendar" 
+                    style="-fx-background-color: #4285F4; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-background-radius: 5;"/>
+        </HBox>
+        
+        <Label fx:id="selectedDateLabel" 
+               style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-padding: 10 0;"/>
+        
+        <ListView fx:id="eventsList" 
+                  VBox.vgrow="ALWAYS"
+                  style="-fx-pref-height: 400px; -fx-background-color: transparent; -fx-border-color: #e0e0e0; -fx-border-radius: 5;">
+            <placeholder>
+                <VBox alignment="CENTER" spacing="10" style="-fx-padding: 20;">
+                    <Text text="Aucun événement pour cette date" 
+                          style="-fx-font-size: 16px; -fx-fill: #666;"/>
+                    <Text text="Sélectionnez une autre date ou ajoutez un nouvel événement" 
+                          style="-fx-font-size: 14px; -fx-fill: #999;"/>
+                </VBox>
+            </placeholder>
+        </ListView>
+    </VBox>
+</VBox> 

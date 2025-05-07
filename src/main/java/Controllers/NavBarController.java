@@ -123,7 +123,18 @@ public class NavBarController {
     }
 
     @FXML
-    public void navigateToStatistiques(ActionEvent event) throws IOException {
-        navigateToPage("statistiques_view.fxml", event);
+    public void navigateToAnnonce(ActionEvent event) throws IOException {
+        navigateToPage("annonce-view.fxml", event);
     }
+
+    @FXML
+    public void navigateToEvennement(ActionEvent event) throws IOException {
+        navigateToPage("evenement-view.fxml", event);
+    }
+    @FXML
+    public void navigateToStage(ActionEvent event) throws IOException {
+        navigateToPage("stage-view.fxml", event);
+    }
+
+
 }
