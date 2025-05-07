@@ -147,7 +147,7 @@ public class AddMatiereController {
         List<Module> modules = moduleService.getAllModules();
         ObservableList<String> moduleItems = FXCollections.observableArrayList();
         for (Module module : modules) {
-            moduleItems.add(module.getId() + " - " + module.getNom_module());
+            moduleItems.add(module.getNom_module());
         }
         moduleId.setItems(moduleItems);
 
@@ -156,7 +156,7 @@ public class AddMatiereController {
         ObservableList<String> teacherItems = FXCollections.observableArrayList();
         for (User user : users) {
             if (user.getRole().equals("ROLE_TEACHER")) {
-                teacherItems.add(user.getId() + " - " + user.getNom() + " " + user.getPrenom());
+                teacherItems.add(user.getNom() + " " + user.getPrenom());
             }
         }
         enseignantId.setItems(teacherItems);
@@ -334,17 +334,17 @@ public class AddMatiereController {
             descriptionMatiere.setText(matiere.getDescriptionMatiere());
             objectifMatiere.setText(matiere.getObjectifMatiere());
             // Sélectionner le module
-            for (String item : moduleId.getItems()) {
-                if (item.startsWith(String.valueOf(matiere.getModuleId()))) {
-                    moduleId.setValue(item);
+            for (Module module : moduleService.getAllModules()) {
+                if (module.getId() == matiere.getModuleId()) {
+                    moduleId.setValue(module.getNom_module());
                     break;
                 }
             }
 
             // Sélectionner l'enseignant
-            for (String item : enseignantId.getItems()) {
-                if (item.startsWith(String.valueOf(matiere.getEnseignantId()))) {
-                    enseignantId.setValue(item);
+            for (User user : userService.getUsers()) {
+                if (user.getRole().equals("ROLE_TEACHER") && user.getId() == matiere.getEnseignantId()) {
+                    enseignantId.setValue(user.getNom() + " " + user.getPrenom());
                     break;
                 }
             }
@@ -404,10 +404,32 @@ public class AddMatiereController {
             String nom = nomMatiere.getText().trim();
             String description = descriptionMatiere.getText().trim();
             String objectif = objectifMatiere.getText().trim();
-            String selectedModule = moduleId.getValue();
-            int moduleIdValue = Integer.parseInt(selectedModule.split(" - ")[0]);
-            String selectedTeacher = enseignantId.getValue();
-            int enseignantIdValue = Integer.parseInt(selectedTeacher.split(" - ")[0]);
+            String selectedModuleName = moduleId.getValue();
+            String selectedTeacherName = enseignantId.getValue();
+
+            // Trouver l'ID du module sélectionné
+            int moduleIdValue = -1;
+            for (Module module : moduleService.getAllModules()) {
+                if (module.getNom_module().equals(selectedModuleName)) {
+                    moduleIdValue = module.getId();
+                    break;
+                }
+            }
+
+            // Trouver l'ID de l'enseignant sélectionné
+            int enseignantIdValue = -1;
+            for (User user : userService.getUsers()) {
+                if (user.getRole().equals("ROLE_TEACHER") &&
+                        (user.getNom() + " " + user.getPrenom()).equals(selectedTeacherName)) {
+                    enseignantIdValue = user.getId();
+                    break;
+                }
+            }
+
+            if (moduleIdValue == -1 || enseignantIdValue == -1) {
+                showError("Erreur: Module ou enseignant non trouvé");
+                return;
+            }
 
             Integer prerequisValue = null;
             if (!prerequisMatiere.getText().trim().isEmpty()) {

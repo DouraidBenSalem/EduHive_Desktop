@@ -97,7 +97,7 @@ public class AddCoursController {
         List<Matiere> matieres = matiereService.getAllMatieres();
         matiereId.getItems().clear();
         for (Matiere matiere : matieres) {
-            matiereId.getItems().add(matiere.getId() + " - " + matiere.getNomMatiere());
+            matiereId.getItems().add(matiere.getNomMatiere());
         }
 
         // Charger les cours pour les prérequis
@@ -105,22 +105,30 @@ public class AddCoursController {
         prerequisCoursId.getItems().clear();
         prerequisCoursId.getItems().add("Aucun prérequis");
         for (Cours c : cours) {
-            prerequisCoursId.getItems().add(c.getId() + " - " + c.getNomCours());
+            prerequisCoursId.getItems().add(c.getNomCours());
         }
     }
 
     private Integer getSelectedMatiereId() {
-        String selected = matiereId.getValue();
-        if (selected != null && !selected.isEmpty()) {
-            return Integer.parseInt(selected.split(" - ")[0]);
+        String selectedNom = matiereId.getValue();
+        if (selectedNom != null && !selectedNom.isEmpty()) {
+            for (Matiere matiere : matiereService.getAllMatieres()) {
+                if (matiere.getNomMatiere().equals(selectedNom)) {
+                    return matiere.getId();
+                }
+            }
         }
         return null;
     }
 
     private Integer getSelectedPrerequisId() {
-        String selected = prerequisCoursId.getValue();
-        if (selected != null && !selected.isEmpty() && !selected.equals("Aucun prérequis")) {
-            return Integer.parseInt(selected.split(" - ")[0]);
+        String selectedNom = prerequisCoursId.getValue();
+        if (selectedNom != null && !selectedNom.isEmpty() && !selectedNom.equals("Aucun prérequis")) {
+            for (Cours cours : coursService.getAllCours()) {
+                if (cours.getNomCours().equals(selectedNom)) {
+                    return cours.getId();
+                }
+            }
         }
         return null;
     }
@@ -387,16 +395,14 @@ public class AddCoursController {
             // Sélectionner la matière
             Matiere matiere = matiereService.getMatiereById(cours.getMatiereId());
             if (matiere != null) {
-                String matiereItem = matiere.getId() + " - " + matiere.getNomMatiere();
-                matiereId.setValue(matiereItem);
+                matiereId.setValue(matiere.getNomMatiere());
             }
 
             // Sélectionner le prérequis
             if (cours.getPrerequisCoursId() != null) {
                 Cours prerequis = coursService.getCoursById(cours.getPrerequisCoursId());
                 if (prerequis != null) {
-                    String prerequisItem = prerequis.getId() + " - " + prerequis.getNomCours();
-                    prerequisCoursId.setValue(prerequisItem);
+                    prerequisCoursId.setValue(prerequis.getNomCours());
                 }
             } else {
                 prerequisCoursId.setValue("Aucun prérequis");

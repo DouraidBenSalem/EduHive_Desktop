@@ -1,6 +1,13 @@
 package Controllers;
 
 import Entities.Matiere;
+import Entities.Module;
+import Entities.User;
+import Services.ModuleService;
+import Services.ModuleServiceImpl;
+import Services.UserService;
+import Services.UserServiceImplementation;
+import utils.MyDatabase;
 import Services.MatiereService;
 import Services.MatiereServiceImpl;
 import javafx.collections.FXCollections;
@@ -46,7 +53,12 @@ public class MatiereListController implements Initializable {
     @FXML
     private Button btnExportMenu;
 
+    @FXML
+    private ComboBox<String> filterComboBox;
+
     private MatiereService matiereService;
+    private ModuleService moduleService = new ModuleServiceImpl();
+    private UserService userService = new UserServiceImplementation(MyDatabase.getInstance().getConnection());
     private ObservableList<Matiere> matiereList;
     private FilteredList<Matiere> filteredMatieres;
 
@@ -55,6 +67,15 @@ public class MatiereListController implements Initializable {
         matiereService = new MatiereServiceImpl();
         matiereGrid.getStyleClass().add("matiere-grid");
         searchField.getStyleClass().add("search-field");
+
+        // Configuration du ComboBox de filtrage
+        filterComboBox.setItems(FXCollections.observableArrayList(
+                "Nom",
+                "Description",
+                "Module",
+                "Enseignant"));
+        filterComboBox.setValue("Nom");
+
         loadMatieres();
         setupListeners();
         updateMatiereGrid();
@@ -77,17 +98,40 @@ public class MatiereListController implements Initializable {
             filteredMatieres.setPredicate(matiere -> {
                 if (lower.isEmpty())
                     return true;
-                return (matiere.getNomMatiere() != null && matiere.getNomMatiere().toLowerCase().contains(lower))
-                        || (matiere.getDescriptionMatiere() != null
-                                && matiere.getDescriptionMatiere().toLowerCase().contains(lower))
-                        || (matiere.getObjectifMatiere() != null
-                                && matiere.getObjectifMatiere().toLowerCase().contains(lower))
-                        || (String.valueOf(matiere.getModuleId()).contains(lower))
-                        || (String.valueOf(matiere.getEnseignantId()).contains(lower))
-                        || (matiere.getPrerequisMatiere() != null
-                                && String.valueOf(matiere.getPrerequisMatiere()).contains(lower));
+
+                Module module = moduleService.getModuleById(matiere.getModuleId());
+                User enseignant = userService.getUserById(matiere.getEnseignantId());
+                String moduleNom = module != null ? module.getNom_module().toLowerCase() : "";
+                String enseignantNom = enseignant != null
+                        ? (enseignant.getNom() + " " + enseignant.getPrenom()).toLowerCase()
+                        : "";
+
+                String filterCriteria = filterComboBox.getValue();
+                switch (filterCriteria) {
+                    case "Nom":
+                        return matiere.getNomMatiere() != null && matiere.getNomMatiere().toLowerCase().contains(lower);
+                    case "Description":
+                        return matiere.getDescriptionMatiere() != null
+                                && matiere.getDescriptionMatiere().toLowerCase().contains(lower);
+                    case "Module":
+                        return moduleNom.contains(lower);
+                    case "Enseignant":
+                        return enseignantNom.contains(lower);
+                    default:
+                        return false;
+                }
             });
             updateMatiereGrid();
+        });
+
+        // Mise à jour du filtre lorsque le critère change
+        filterComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (!searchField.getText().isEmpty()) {
+                // Déclencher la recherche avec le nouveau critère
+                String currentText = searchField.getText();
+                searchField.setText(currentText + " ");
+                searchField.setText(currentText);
+            }
         });
 
         // Configuration du bouton pour effacer la recherche
@@ -129,14 +173,14 @@ public class MatiereListController implements Initializable {
         // Création du conteneur pour l'image
         StackPane imageContainer = new StackPane();
         imageContainer.getStyleClass().add("matiere-image-container");
-        
+
         // Création de l'ImageView
         ImageView imageView = new ImageView();
         imageView.setFitWidth(280);
         imageView.setFitHeight(160);
         imageView.setPreserveRatio(true);
         imageView.getStyleClass().add("matiere-image");
-        
+
         // Chargement de l'image avec gestion des erreurs
         try {
             String imageUrl = matiere.getImageUrl();
@@ -156,7 +200,7 @@ public class MatiereListController implements Initializable {
                 System.err.println("Impossible de charger l'image par défaut: " + ex.getMessage());
             }
         }
-        
+
         imageContainer.getChildren().add(imageView);
 
         // Titre de la matière
@@ -173,8 +217,13 @@ public class MatiereListController implements Initializable {
         descriptionLabel.getStyleClass().add("matiere-description");
 
         // Détails de la matière
-        Label detailsLabel = new Label(String.format("Module ID: %d | Enseignant ID: %d",
-                matiere.getModuleId(), matiere.getEnseignantId()));
+        Module module = moduleService.getModuleById(matiere.getModuleId());
+        User enseignant = userService.getUserById(matiere.getEnseignantId());
+        String moduleNom = module != null ? module.getNom_module() : "Module inconnu";
+        String enseignantNom = enseignant != null ? enseignant.getNom() + " " + enseignant.getPrenom()
+                : "Enseignant inconnu";
+        Label detailsLabel = new Label(String.format("Module: %s | Enseignant: %s",
+                moduleNom, enseignantNom));
         detailsLabel.getStyleClass().add("matiere-details");
 
         // Conteneur pour les boutons d'action

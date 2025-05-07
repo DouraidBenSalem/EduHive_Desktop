@@ -20,18 +20,11 @@
         <!-- Contenu principal à droite -->
         <VBox spacing="10" style="-fx-padding: 20;" stylesheets="@../style_css/matiere_card.css">
             <children>
-                <HBox alignment="CENTER_LEFT" spacing="20">
-                    <children>
-                        <Label text="Liste des Matières" style="-fx-font-size: 24px; -fx-text-fill: #58c7fa;"/>
-                        <Button fx:id="btnAddMatiere" text="Ajouter une matière"
-                                style="-fx-background-color: #58c7fa; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                    </children>
-                </HBox>
                 <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 10 0;">
                     <children>
                         <!-- Icône recherche Unicode -->
                         <Label text="🔍" style="-fx-font-size: 20px; -fx-text-fill: #58c7fa;"/>
-                        <!-- Le ComboBox sera ajouté dynamiquement par le contrôleur juste après l'icône -->
+                        <ComboBox fx:id="filterComboBox" prefWidth="120" style="-fx-background-radius: 18; -fx-border-radius: 18; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2; -fx-font-size: 15px; -fx-padding: 8 18 8 10;"/>
                         <TextField fx:id="searchField" promptText="Rechercher une matière, un module, un enseignant..."
                             style="-fx-background-radius: 18; -fx-border-radius: 18; -fx-background-color: #f7fbff; -fx-border-color: #b0d0ff; -fx-border-width: 1.2; -fx-font-size: 15px; -fx-padding: 8 18 8 10; -fx-pref-width: 320;"/>
                         <Button fx:id="btnClearSearch" text="✕"
@@ -44,6 +37,13 @@
                                 <Tooltip text="Exporter la liste des matières"/>
                             </tooltip>
                         </Button>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="20">
+                    <children>
+                        <Label text="Liste des Matières" style="-fx-font-size: 24px; -fx-text-fill: #58c7fa;"/>
+                        <Button fx:id="btnAddMatiere" text="Ajouter une matière"
+                                style="-fx-background-color: #58c7fa; -fx-text-fill: white; -fx-font-weight: bold;"/>
                     </children>
                 </HBox>
                 <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-padding: 10;">

@@ -16,7 +16,8 @@
 
 <AnchorPane prefHeight="700.0" prefWidth="1000.0" styleClass="main-container" stylesheets="@../style_css/user_matiere_style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.UserMatiereController">
    <children>
-      <VBox layoutX="10.0" layoutY="10.0" prefHeight="700.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <fx:include fx:id="navbar" source="navbarfront.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <VBox layoutX="10.0" layoutY="60.0" prefHeight="640.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
             <StackPane styleClass="header-stack">
                <children>

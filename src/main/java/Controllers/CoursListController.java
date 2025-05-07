@@ -29,8 +29,11 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import Entities.Cours;
+import Entities.Matiere;
 import Services.CoursService;
 import Services.CoursServiceImpl;
+import Services.MatiereService;
+import Services.MatiereServiceImpl;
 
 public class CoursListController {
     @FXML
@@ -47,6 +50,7 @@ public class CoursListController {
     private ComboBox<String> filterComboBox;
 
     private final CoursService coursService = new CoursServiceImpl();
+    private final MatiereService matiereService = new MatiereServiceImpl();
     private final ObservableList<Cours> coursList = FXCollections.observableArrayList();
     private FilteredList<Cours> filteredCoursList;
 
@@ -64,40 +68,68 @@ public class CoursListController {
         // Configuration du ListView
         listCours.setMinHeight(400);
         listCours.setPrefHeight(500);
-        listCours.setMaxHeight(Double.MAX_VALUE); // Permet à la liste de s'étendre verticalement
+        listCours.setMaxHeight(Double.MAX_VALUE);
+        listCours.setStyle("-fx-background-color: transparent; -fx-padding: 10; -fx-cell-spacing: 10;");
+        listCours.setFixedCellSize(200); // Hauteur fixe pour chaque cellule
 
         // Assurer que la liste peut défiler correctement
         VBox.setVgrow(listCours, javafx.scene.layout.Priority.ALWAYS);
 
+        // Désactiver la sélection pour un meilleur rendu visuel
+        listCours.setSelectionModel(null);
+
         // Configuration des cellules personnalisées
         listCours.setCellFactory(_ -> new ListCell<>() {
-            private final Label nomLabel = new Label();
+            private final VBox card = new VBox(10);
+            private final Label titleLabel = new Label();
             private final Label descriptionLabel = new Label();
             private final Label detailsLabel = new Label();
+            private final HBox actionButtons = new HBox(10);
             private final Button btnEdit = new Button("Modifier");
             private final Button btnDelete = new Button("Supprimer");
             private final Button btnViewPdf = new Button("Voir PDF");
             private final Button btnToggleStatus = new Button("Marquer comme lu");
-            private final HBox container = new HBox(10);
 
             {
+                // Style de la carte
+                card.getStyleClass().add("cours-card");
+                card.setPadding(new Insets(15));
+                card.setStyle(
+                        "-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0); -fx-background-radius: 8;");
+
                 // Style des éléments
-                nomLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2196f3;");
+                titleLabel.getStyleClass().add("cours-title");
+                titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #2196f3;");
+
+                descriptionLabel.getStyleClass().add("cours-description");
                 descriptionLabel.setStyle("-fx-font-size: 14px; -fx-wrap-text: true;");
-                detailsLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #757575;");
+                descriptionLabel.setMaxWidth(500);
+
+                detailsLabel.getStyleClass().add("cours-details");
+                detailsLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #757575;");
 
                 // Style des boutons
+                actionButtons.setAlignment(Pos.CENTER_RIGHT);
+                actionButtons.getStyleClass().add("cours-actions");
+
+                btnEdit.getStyleClass().addAll("cours-button", "cours-button-edit");
                 btnEdit.setStyle(
-                        "-fx-background-color: #64b5f6; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
+                        "-fx-background-color: #64b5f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;");
+
+                btnDelete.getStyleClass().addAll("cours-button", "cours-button-delete");
                 btnDelete.setStyle(
-                        "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
+                        "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;");
+
+                btnViewPdf.getStyleClass().addAll("cours-button", "cours-button-pdf");
                 btnViewPdf.setStyle(
-                        "-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
+                        "-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;");
+
+                btnToggleStatus.getStyleClass().addAll("cours-button", "cours-button-status");
                 btnToggleStatus.setStyle(
-                        "-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 12 6 12;");
-                container.getChildren().addAll(
-                        new VBox(5, nomLabel, descriptionLabel, detailsLabel),
-                        new HBox(10, btnEdit, btnDelete, btnViewPdf, btnToggleStatus));
+                        "-fx-background-color: #ff9800; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;");
+
+                actionButtons.getChildren().addAll(btnEdit, btnDelete, btnViewPdf, btnToggleStatus);
+                card.getChildren().addAll(titleLabel, descriptionLabel, detailsLabel, actionButtons);
             }
 
             @Override
@@ -107,10 +139,20 @@ public class CoursListController {
                     setGraphic(null);
                 } else {
                     // Mise à jour des informations
-                    nomLabel.setText(cours.getNomCours());
-                    descriptionLabel.setText(cours.getDescriptionCours());
-                    detailsLabel.setText(String.format("Niveau: %s | Status: %s | Matière ID: %d",
-                            cours.getNiveau(), cours.getStatusCours(), cours.getMatiereId()));
+                    titleLabel.setText(cours.getNomCours());
+
+                    // Limiter la description à 100 caractères avec des points de suspension
+                    String description = cours.getDescriptionCours();
+                    if (description != null && description.length() > 100) {
+                        description = description.substring(0, 100) + "...";
+                    }
+                    descriptionLabel.setText(description != null ? description : "Aucune description");
+
+                    // Obtenir le nom de la matière
+                    Matiere matiere = matiereService.getMatiereById(cours.getMatiereId());
+                    String nomMatiere = matiere != null ? matiere.getNomMatiere() : "Non défini";
+                    detailsLabel.setText(String.format("Niveau: %s | Status: %s | Matière: %s",
+                            cours.getNiveau(), cours.getStatusCours(), nomMatiere));
 
                     // Configuration des actions des boutons
                     btnEdit.setOnAction(e -> editCours(cours));
@@ -120,8 +162,14 @@ public class CoursListController {
                     btnToggleStatus.setText("Non lu".equalsIgnoreCase(cours.getStatusCours()) ? "Marquer comme lu"
                             : "Marquer comme non lu");
                     btnToggleStatus.setOnAction(e -> toggleCoursStatus(cours));
-                    updateCoursItemStyle(this, cours);
-                    setGraphic(container);
+
+                    // Appliquer le style en fonction du statut
+                    String statusStyle = "Non lu".equalsIgnoreCase(cours.getStatusCours())
+                            ? "-fx-background-color: #f5f5f5;"
+                            : "-fx-background-color: white;";
+                    card.setStyle(card.getStyle() + statusStyle);
+
+                    setGraphic(card);
                 }
             }
         });
@@ -144,7 +192,9 @@ public class CoursListController {
                         || (cours.getStatusCours() != null && cours.getStatusCours().toLowerCase().contains(lower))
                         || (cours.getNiveau() != null && cours.getNiveau().toLowerCase().contains(lower))
                         || (cours.getPdfCours() != null && cours.getPdfCours().toLowerCase().contains(lower))
-                        || (String.valueOf(cours.getMatiereId()).contains(lower))
+                        || (matiereService.getMatiereById(cours.getMatiereId()) != null
+                                && matiereService.getMatiereById(cours.getMatiereId()).getNomMatiere().toLowerCase()
+                                        .contains(lower))
                         || (cours.getPrerequisCoursId() != null
                                 && String.valueOf(cours.getPrerequisCoursId()).contains(lower));
             });
@@ -581,7 +631,7 @@ public class CoursListController {
                 "Status",
                 "Niveau",
                 "PDF",
-                "Matière ID",
+                "Matière",
                 "Prérequis"));
         filterComboBox.setValue("Tous");
 
@@ -653,8 +703,9 @@ public class CoursListController {
                             return cours.getNiveau() != null && cours.getNiveau().toLowerCase().contains(lower);
                         case "PDF":
                             return cours.getPdfCours() != null && cours.getPdfCours().toLowerCase().contains(lower);
-                        case "Matière ID":
-                            return String.valueOf(cours.getMatiereId()).contains(lower);
+                        case "Matière":
+                            Matiere matiere = matiereService.getMatiereById(cours.getMatiereId());
+                            return matiere != null && matiere.getNomMatiere().toLowerCase().contains(lower);
                         case "Prérequis":
                             return cours.getPrerequisCoursId() != null
                                     && String.valueOf(cours.getPrerequisCoursId()).contains(lower);

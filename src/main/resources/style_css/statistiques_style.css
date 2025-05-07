@@ -131,6 +131,7 @@
 .custom-bar-chart .chart-bar {
     -fx-bar-fill: #3f51b5;
     -fx-background-radius: 5;
+    -fx-bar-width: 25px;
 }
 
 .custom-bar-chart .chart-bar:hover {

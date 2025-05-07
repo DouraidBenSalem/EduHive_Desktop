@@ -16,7 +16,6 @@ public class frontnavcontrollers {
     @FXML
     private Button quizButton;
 
-
     @FXML
     private Button matiereButton;
 
@@ -36,12 +35,9 @@ public class frontnavcontrollers {
         navigateTo("/Controllers/take_quiz.fxml");
     }
 
-
-
     @FXML
     void handleMatiereButton(ActionEvent event) {
-        // Navigate to matiere page when implemented
-        // navigateTo("/Controllers/matiere.fxml");
+        navigateTo("/Controllers/user_matiere.fxml");
     }
 
     @FXML
